@@ -19,9 +19,11 @@ module.exports = {
      *
      * @param {Object} options
      * @param {String} [options.projectName]
-     * @param {String} [options.srcDirectory]
-     * @param {String} [options.themeDirectory]
-     * @param {String} [options.filename='views.json']
+     * @param {String} [options.srcDirectory] Directory of javascript views. These should match the appropriate theme files
+     * @param {String} [options.themeDirectory] Directory of WordPress themes files. These should match the appropriate javascript view filename
+     * @param {String} [options.filename='views.json']  for legacy support
+     * @param {String} [options.stubFilename='pages-stub.js']   filename of requirejs javascript file to server as a stub for all dynamic views so that requirejs includes them during compilation
+     * @param {String} [options.debugModuleName='pages-debug']  requirejs module name to ignore. This is used to prevent a debug module from being included in a production build
      * @param {Object} [options.context]
      */
     build: function (options) {
@@ -29,30 +31,32 @@ module.exports = {
                 srcDirectory: path.resolve('src/', 'pages'),
                 themeDirectory: path.resolve('wp-content/themes/', (options && options.projectName) ? options.projectName : 'dp-boilerplate/'),
                 writeDirectory: path.resolve('src/', 'modules/'),
-                filename: 'views.json'
+                filename: 'views.json',
+                stubFilename: 'pages-stub.js',
+                debugModuleName: 'page-debug'
             }, options),
             scriptsList = [],
             pagesList = [],
-            definedPages = [],
+            definedModules = [],
             isPageListComplete = false,
             isScriptListComplete = false;
 
         function onFilesRead() {
             //console.log('Finding intersection between:', scriptsList, pagesList);
             console.log('Finding intersection...');
-            definedPages = _.intersection(scriptsList, pagesList);
+            definedModules = _.intersection(scriptsList, pagesList);
             var jsonPath = path.resolve(_options.writeDirectory, _options.filename),
-                rjsFixPath = path.resolve(_options.writeDirectory, 'pages-stub.js'),
-                productionPages = _.without(definedPages, 'page-debug');
+                rjsFixPath = path.resolve(_options.writeDirectory, _options.stubFilename),
+                productionPages = _.without(definedModules, _options.debugModuleName);
 
             productionPages = productionPages.map(function (pageName) {
                 return 'pages/' + pageName
             });
-            var rjsFix = 'define(' + JSON.stringify(productionPages) + ', function(){});';
+            var rjsFixOutput = 'define(' + JSON.stringify(productionPages) + ', function(){});';
             fs.writeFile(jsonPath, JSON.stringify(productionPages), function () {
                 console.log('Saved to ' + jsonPath);
             });
-            fs.writeFile(rjsFixPath, rjsFix, function () {
+            fs.writeFile(rjsFixPath, rjsFixOutput, function () {
                 console.log('Saved to ' + jsonPath);
             });
         }
