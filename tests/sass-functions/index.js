@@ -1,4 +1,4 @@
-var sassFunctions = require('../../gulp-utils/sass-functions');
+var sassFunctions = require('../../sass-functions').functions;
 
 describe('Sass Functions', function(){
 

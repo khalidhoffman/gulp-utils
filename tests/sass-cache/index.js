@@ -1,5 +1,5 @@
 describe('SassCache', function(){
-    var SassCache = require('../../gulp-utils/sass-cache'),
+    var SassCache = require('../../sass-cache'),
         sassCache;
 
     beforeAll(function(){

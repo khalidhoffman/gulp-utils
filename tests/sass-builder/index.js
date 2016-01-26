@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     libsass = require('node-sass'),
-    SassNode = require('../../gulp-utils/sass-builder/sass-node'),
-    SassNodeSet = require('../../gulp-utils/sass-builder/sass-node-set');
+    SassNode = require('../../sass-builder/sass-node'),
+    SassNodeSet = require('../../sass-builder/sass-node-set');
 
 describe('Sass Builder', function(){
     var defaultSassNode,

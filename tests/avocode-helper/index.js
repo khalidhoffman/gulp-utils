@@ -1,4 +1,4 @@
-var Avocode = require('../../gulp-utils/avocode-helper');
+var Avocode = require('../../avocode-helper');
 
 describe("Avocode Helper", function(){
     beforeAll(function(){

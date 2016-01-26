@@ -3,7 +3,7 @@ var Backbone = require('backbone'),
     lex = require('jade-lexer'),
     parse = require('jade-parser'),
     compileFuncBuilder = require('jade-code-gen'),
-    logger = require('../logger'),
+    logger = require('../../logger'),
     cheerio = require('cheerio'),
     SassCache = Backbone.Model.extend({
 
