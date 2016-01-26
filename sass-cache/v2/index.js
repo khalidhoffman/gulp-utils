@@ -13,7 +13,9 @@ var Backbone = require('backbone'),
 
         defaults: {
             domReady: false,
-            pages : [projectPackage['homepage']]
+            pages : [projectPackage['homepage']],
+            sharedContentSelectors : ['header', 'footer'],
+            pageContentSelector : ['header + div']
         },
 
         /**
@@ -35,16 +37,45 @@ var Backbone = require('backbone'),
                     context: self,
                     silent: (options && typeof options.success == 'function')
                 }, options),
-                _pages = self.get('pages');
+                _pages = self.get('pages'),
+                _readCount = 0,
+                isSharedParsed = false;
             this.$ = cheerio.load("<div id='root'></div>");
             this.$root = this.$('#root').append("<div id='main'></div>");
+            this.$main = self.$root.find('#main');
             logger('SassCache.initialize() - w/ %j', _options);
 
+            // add paths
             _.forEach(self.get('paths'), function(sitePath, index, arr){
                 var pageUrl = url.resolve( projectPackage['homepage'], sitePath );
                 if(_pages.indexOf(pageUrl) < 0){
                     _pages.push(pageUrl);
                 }
+            });
+
+            function updateStatus(){
+
+                if (_readCount == _pages.length && isSharedParsed) {
+                    self.set('domReady', true);
+                    if (!_options.silent) self.trigger('dom:ready');
+                    if (_options.success) _options.success.apply(_options.context, [self]);
+                }
+            }
+
+            request.get({
+                url: projectPackage['homepage']
+            }, function (error, response, body) {
+                if (error) throw error;
+                var $DOM = cheerio.load(body);
+
+                _.forEach(self.get('sharedContentSelectors'), function(selector, index, arr){
+                    // append shared html nodes
+                    self.$main.append($DOM(selector));
+                });
+
+                isSharedParsed = true;
+                updateStatus();
+
             });
 
             _.forEach(_pages, function (url, index, arr) {
@@ -54,24 +85,18 @@ var Backbone = require('backbone'),
                     url: url
                 }, function (error, response, body) {
                     if (error) throw error;
-                    self._source_$ = cheerio.load(body);
-                    var $source = self._source_$('body');
-                    //logger('SassCache.initialize() - appending DOM: %s', $source.html());
-                    self.$root.find('#main').append($source);
+                    var $DOM = cheerio.load(body);
 
-                    if (self.$root.find('body').length == _pages.length) {
-                        self.set('domReady', true);
-                        if (!_options.silent) self.trigger('dom:ready');
-                        if (_options.success) _options.success.apply(_options.context, [self]);
-                    }
+                    _.forEach(self.get('pageContentSelector'), function(selector, index, arr){
+                        // append page specific html nodes
+                        self.$main.append($DOM(selector));
+                    });
+                    _readCount++;
+                    updateStatus();
                 });
 
             });
 
-            //self.set('domReady', true);
-            //if(!_options.silent) self.trigger('dom:ready');
-            //if (_options.success) _options.success.apply(_options.context, [self]);
-            //this._printDOM();
             return self;
         },
 

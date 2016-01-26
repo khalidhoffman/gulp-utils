@@ -19,11 +19,11 @@ SassFunctions = {
     functions : {
 
         "save-cache($selector: '#root', $namespace: 'default', $data: 0)": function saveCache(selector, namespace, data) {
+            var result = sass.types.Null.NULL,
+                _selector = (selector.getValue) ? selector.getValue() : selector,
+                _namespace = (namespace.getValue) ? namespace.getValue() : namespace,
+                _data = (data.getValue) ? data.getValue() : data;
             if(sassCache.get('domReady')){
-
-                var _selector = (selector.getValue) ? selector.getValue() : selector,
-                    _namespace = (namespace.getValue) ? namespace.getValue() : namespace,
-                    _data = (data.getValue) ? data.getValue() : data;
 
                 Logger("\nSassFunctions.save-cache('%s', '%s', '%j')", _selector, _namespace, _data);
 
@@ -32,18 +32,23 @@ SassFunctions = {
                 _data = {};
                 _data[_namespace] = data;
                 sassCache.push(_selector, _data);
-                return data;
+                result = data;
             } else {
+                var args = arguments;
+                Logger("\nSassFunctions.save-cache('%s', '%s', '%j') - waiting", _selector, _namespace, _data);
                 sassCache.once('dom:ready', function(){
-                    saveCache.apply(this, arguments);
+                    result = saveCache.apply(null, args);
+                    Logger("\nSassFunctions.save-cache('%s', '%s', '%j')  = %j", _selector, _namespace, _data, result);
                 })
             }
+            return result;
         },
 
         "load-cache($selector: '#root', $namespace: 'default')": function loadCache(selector, namespace) {
+            var result = sass.types.Null.NULL,
+                _selector = (selector.getValue) ? selector.getValue() : selector,
+                _namespace = (namespace.getValue) ? namespace.getValue() : namespace;
             if(sassCache.get('domReady')){
-                var _selector = (selector.getValue) ? selector.getValue() : selector,
-                    _namespace = (namespace.getValue) ? namespace.getValue() : namespace;
 
                 Logger("\nSassFunctions.load-cache('%s', '%s')", _selector, _namespace);
 
@@ -52,22 +57,26 @@ SassFunctions = {
 
                 if (typeof parentData == 'undefined') {
                     Logger("SassFunctions.load-cache('%s', '%s') = NULL", _selector, _namespace);
-                    return sass.types.Null.NULL;
                 } else {
                     Logger("SassFunctions.load-cache('%s', '%s') = '%s'", _selector, _namespace, parentData[_namespace].getValue());
-                    return parentData[_namespace];
+                    result = parentData[_namespace];
                 }
             } else {
+                var args = arguments;
+                Logger("SassFunctions.load-cache('%s', '%s') - waiting", _selector, _namespace);
                 sassCache.once('dom:ready', function(){
-                    loadCache.apply(this, arguments);
+                    result = loadCache.apply(null, args);
+                    Logger("SassFunctions.load-cache('%s', '%s') = %j", _selector, _namespace, result);
                 });
             }
+            return result;
         },
 
         "load-parent-cache($selector: '#root', $namespace: 'default')": function loadParentCache(selector, namespace) {
+            var result = sass.types.Null.NULL,
+                _selector = (selector.getValue) ? selector.getValue() : selector,
+                _namespace = (namespace.getValue) ? namespace.getValue() : namespace;
             if(sassCache.get('domReady')){
-                var _selector = (selector.getValue) ? selector.getValue() : selector,
-                    _namespace = (namespace.getValue) ? namespace.getValue() : namespace;
 
                 Logger("\nSassFunctions.load-parent-cache('%s', '%s')", _selector, namespace.getValue());
                 var parentSelector = sassCache.get$parentSelector(_selector, {parentLevel: 1}),
@@ -75,16 +84,19 @@ SassFunctions = {
 
                 if (typeof parentData == 'undefined') {
                     Logger("SassFunctions.load-parent-cache('%s', '%s') = NULL", _selector, _namespace);
-                    return sass.types.Null.NULL;
                 } else {
                     Logger("SassFunctions.load-parent-cache('%s', '%s') = '%s'", _selector, _namespace, parentData[_namespace].getValue());
-                    return parentData[_namespace];
+                    result = parentData[_namespace];
                 }
             } else {
+                var args = arguments;
+                Logger("SassFunctions.load-parent-cache('%s', '%s') - waiting", _selector, _namespace);
                 sassCache.once('dom:ready', function(){
-                    loadParentCache.apply(this, arguments);
+                    result = loadParentCache.apply(null, args);
+                    Logger("SassFunctions.load-parent-cache('%s', '%s') = %j", _selector, _namespace, result);
                 });
             }
+            return result;
         },
 
         "save-global($namespace, $data)": function (namespace, data) {
@@ -111,5 +123,5 @@ SassFunctions = {
     }
 };
 
-SassFunctions.clear();
+//SassFunctions.clear();
 module.exports = SassFunctions;
