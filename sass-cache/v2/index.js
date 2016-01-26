@@ -1,17 +1,78 @@
 var Backbone = require('backbone'),
+    path = require('path'),
     _ = require('lodash'),
+    url = require('url'),
     lex = require('jade-lexer'),
     parse = require('jade-parser'),
     compileFuncBuilder = require('jade-code-gen'),
     logger = require('../../logger'),
     cheerio = require('cheerio'),
+    request = require('request'),
+    projectPackage = require('../../package.json'),
     SassCache = Backbone.Model.extend({
 
-        initialize: function () {
+        defaults: {
+            domReady: false,
+            pages : [projectPackage['homepage']]
+        },
+
+        /**
+         *
+         * @param attrs
+         * @param {Object} options an array of urls to load
+         * @param {[String]} options.pages
+         * @param {Object} [options.context]
+         * @param {Function} [options.success]
+         * @param {Boolean} [options.silent]
+         * @param {Function} cb
+         * @returns {SassCache}
+         */
+        initialize: function (attrs, options, cb) {
+
+            var self = this,
+                _options = _.extend({
+                    success: cb,
+                    context: self,
+                    silent: (options && typeof options.success == 'function')
+                }, options),
+                _pages = self.get('pages');
             this.$ = cheerio.load("<div id='root'></div>");
             this.$root = this.$('#root').append("<div id='main'></div>");
+            logger('SassCache.initialize() - w/ %j', _options);
+
+            _.forEach(self.get('paths'), function(sitePath, index, arr){
+                var pageUrl = url.resolve( projectPackage['homepage'], sitePath );
+                if(_pages.indexOf(pageUrl) < 0){
+                    _pages.push(pageUrl);
+                }
+            });
+
+            _.forEach(_pages, function (url, index, arr) {
+                logger('SassCache.initialize() - loading DOM @ %s', url);
+
+                request.get({
+                    url: url
+                }, function (error, response, body) {
+                    if (error) throw error;
+                    self._source_$ = cheerio.load(body);
+                    var $source = self._source_$('body');
+                    //logger('SassCache.initialize() - appending DOM: %s', $source.html());
+                    self.$root.find('#main').append($source);
+
+                    if (self.$root.find('body').length == _pages.length) {
+                        self.set('domReady', true);
+                        if (!_options.silent) self.trigger('dom:ready');
+                        if (_options.success) _options.success.apply(_options.context, [self]);
+                    }
+                });
+
+            });
+
+            //self.set('domReady', true);
+            //if(!_options.silent) self.trigger('dom:ready');
+            //if (_options.success) _options.success.apply(_options.context, [self]);
             //this._printDOM();
-            return this;
+            return self;
         },
 
         /**
@@ -60,7 +121,7 @@ var Backbone = require('backbone'),
                     }
                 }
 
-                logger('SassCache.get$parentSelector("%s")[%d] | [nestDepth: %d][available: %j] | looking for selector: "%s"',selector, i,  nestDepth, selectorNodes, resultSelector);
+                logger('SassCache.get$parentSelector("%s")[%d] | [nestDepth: %d][available: %j] | looking for selector: "%s"', selector, i, nestDepth, selectorNodes, resultSelector);
                 if (resultSelector.length == 0) {
                     logger('SassCache.get$parentSelector("%s")[%d][default] = "%s"', selector, i, _options.rootSelector);
                     return _options.rootSelector;
@@ -104,8 +165,8 @@ var Backbone = require('backbone'),
         },
 
         _printDOM: function () {
-            logger('\ndom:\n%s', this.$.html());
-            logger('root element:\n%s\n', this.$root.html());
+            //logger('\ndom:\n%s', this.$.html());
+            //logger('root element:\n%s\n', this.$root.html());
         },
 
         /**
@@ -128,7 +189,7 @@ var Backbone = require('backbone'),
          * @returns {jQuery}
          * @private
          */
-        _create$elFromSelector : function(selector){
+        _create$elFromSelector: function (selector) {
             eval(compileFuncBuilder(parse(lex(selector))));
             var elHTML = template(); // per jade-code-gen example: https://github.com/pugjs/jade-code-gen
 
@@ -181,7 +242,7 @@ var Backbone = require('backbone'),
                             self.$root.data('sass', _.extend({}, self.$root.data('sass'), _data));
                         }
                         $parent.append($el);
-                        if(newNodeCount == 1) $el.data('sass', _.extend({}, $el.data('sass'), _data));
+                        if (newNodeCount == 1) $el.data('sass', _.extend({}, $el.data('sass'), _data));
                     } else {
                         if (index == (newNodeCount - 1) || _options.propagate) {
                             $el.data('sass', _.extend({}, $el.data('sass'), _data));
