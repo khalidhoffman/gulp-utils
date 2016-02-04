@@ -4,11 +4,21 @@ var through = require('through2'),    // npm install --save through2
     _ = require('lodash'),
     Walker = require('../fs-walk');
 
+/**
+ *
+ * @param {String} fileName
+ * @returns {boolean}
+ */
 function isScript(fileName) {
     var jsRegex = /.*\.js$/;
     return jsRegex.test(fileName);
 }
 
+/**
+ *
+ * @param {String} fileName
+ * @returns {boolean}
+ */
 function isPHP(fileName) {
     var phpRegex = /.*\.php$/;
     return phpRegex.test(fileName);
@@ -28,6 +38,7 @@ module.exports = {
      */
     build: function (options) {
         var _options = _.extend({
+                context: null,
                 srcDirectory: path.resolve('src/', 'pages'),
                 themeDirectory: path.resolve('wp-content/themes/', (options && options.projectName) ? options.projectName : 'dp-boilerplate/'),
                 writeDirectory: path.resolve('src/', 'modules/'),
@@ -41,7 +52,7 @@ module.exports = {
             isPageListComplete = false,
             isScriptListComplete = false;
 
-        function onFilesRead() {
+        function onFileScanComplete() {
             //console.log('Finding intersection between:', scriptsList, pagesList);
             console.log('Finding intersection...');
             definedModules = _.intersection(scriptsList, pagesList);
@@ -70,7 +81,7 @@ module.exports = {
             done: function (err, fileList) {
                 if (err) throw err;
                 isPageListComplete = true;
-                if (isScriptListComplete) onFilesRead.apply(_options.context, fileList);
+                if (isScriptListComplete) onFileScanComplete.apply(_options.context, fileList);
             }
         });
         Walker.recursePath(_options.srcDirectory, {
@@ -82,7 +93,7 @@ module.exports = {
             done: function (err, fileList) {
                 if (err) throw err;
                 isScriptListComplete = true;
-                if (isPageListComplete) onFilesRead.apply(_options.context, fileList);
+                if (isPageListComplete) onFileScanComplete.apply(_options.context, fileList);
             }
         });
     }
