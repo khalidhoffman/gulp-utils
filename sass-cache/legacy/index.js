@@ -4,6 +4,8 @@ var Backbone = require('backbone'),
     parse = require('jade-parser'),
     compileFuncBuilder = require('jade-code-gen'),
     logger = require('../../logger'),
+    DOMDiff = require('diff-dom'),
+    domDiff = new DOMDiff(),
     cheerio = require('cheerio'),
     SassCache = Backbone.Model.extend({
 
@@ -16,7 +18,7 @@ var Backbone = require('backbone'),
 
         /**
          *
-         * @param selector
+         * @param {String} selector
          * @param {Object} [options]
          * @param {Boolean} [options.isEntireSelector = false]
          * @returns {boolean}
@@ -32,7 +34,7 @@ var Backbone = require('backbone'),
 
         /**
          *
-         * @param selector
+         * @param {String} selector
          * @param {Object} [options]
          * @param {String} [options.rootSelector='#main']
          * @param {Number} [options.parentLevel= 0] How many levels above match should be returned as parent
@@ -48,7 +50,6 @@ var Backbone = require('backbone'),
                 nestDepth = selectorNodes.length,
                 foundSelector = _options.rootSelector,
                 resultSelector = '';
-
             for (var i = 0; i < (nestDepth - _options.parentLevel); i++) {
                 // compile selectors from most specific to most general
                 resultSelector = '';
@@ -60,19 +61,19 @@ var Backbone = require('backbone'),
                     }
                 }
 
-                logger('SassCache.get$parentSelector("%s")[%d] | [nestDepth: %d][available: %j] | looking for selector: "%s"',selector, i,  nestDepth, selectorNodes, resultSelector);
+                //logger('SassCache.get$parentSelector("%s")[%d] | [nestDepth: %d][available: %j] | looking for selector: "%s"', selector, i, nestDepth, selectorNodes, resultSelector);
                 if (resultSelector.length == 0) {
-                    logger('SassCache.get$parentSelector("%s")[%d][default] = "%s"', selector, i, _options.rootSelector);
+                    logger('SassCache.get$parentSelector("%s")[%d](no selector passed) = "%s"', selector, i, _options.rootSelector);
                     return _options.rootSelector;
                 } else if (this.contains(resultSelector, {isEntireSelector: true})) {
                     foundSelector = resultSelector;
                 } else {
-                    logger('SassCache.get$parentSelector("%s")[%d][last] = "%s"', selector, i, foundSelector);
+                    logger('SassCache.get$parentSelector("%s")[%d](part of selector found) = "%s"', selector, i, foundSelector);
                     return foundSelector;
                 }
             }
 
-            logger('SassCache.get$parentSelector("%s")[completed] = "%s"', selector, foundSelector);
+            logger('SassCache.get$parentSelector("%s")(entire selector already defined) = "%s"', selector, foundSelector);
             return foundSelector;
         },
 
@@ -95,17 +96,25 @@ var Backbone = require('backbone'),
             return (result != null && typeof result != 'undefined' && result.length > 0);
         },
 
+        /**
+         *
+         * @param {String} selector
+         * @returns {Object}
+         */
         load: function (selector) {
             if (typeof this.$ == 'undefined') throw new Error('Initialization failed. $root is undefined.');
             if (this.$ === null) throw new Error('Cheerio not initialized correctly. $root not found.');
-            logger('SassCache.load("%s")', selector);
+            var _selector = this.get$parentSelector(selector);
+
+            logger('SassCache.load("%s")', _selector);
             //this._printDOM();
-            return this.$(selector).first().data('sass');
+            return this.$(_selector).first().data('sass');
         },
 
         _printDOM: function () {
             logger('\ndom:\n%s', this.$.html());
             logger('root element:\n%s\n', this.$root.html());
+            return;
         },
 
         /**
@@ -118,7 +127,7 @@ var Backbone = require('backbone'),
             if (!_.isString(selector)) throw new Error("Provided selector is not a string");
             //if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
             var formattedSelector = selector.replace(/\s|>|:/gi, '|');
-            logger('SassCache._parseSelector("%s") = %j', selector, formattedSelector.split('|'));
+            //logger('SassCache._parseSelector("%s") = %j', selector, formattedSelector.split('|'));
             return formattedSelector.split('|');
         },
 
@@ -128,7 +137,7 @@ var Backbone = require('backbone'),
          * @returns {jQuery}
          * @private
          */
-        _create$elFromSelector : function(selector){
+        _create$elFromSelector: function (selector) {
             eval(compileFuncBuilder(parse(lex(selector))));
             var elHTML = template(); // per jade-code-gen example: https://github.com/pugjs/jade-code-gen
 
@@ -138,61 +147,57 @@ var Backbone = require('backbone'),
 
         /**
          *
-         * @param selector
+         * @param {String} selector
          * @param {Object} data
          * @param {Object} [options]
-         * @param {Boolean} [options.global=false]
-         * @param {Boolean} [options.propagate=true]
          * @returns {SassCache}
          */
         push: function (selector, data, options) {
-            logger('SassCache.push("%s", %j, %j)', selector, data, options);
             var self = this,
                 _data = _.extend({}, data),
-                _options = _.extend({
-                    global: false,
-                    propagate: true
-                }, options),
-                selectors = this._parseSelector(selector),
+                _options = _.extend({}, options),
+                foo = (function(){ logger('start');})(),
                 parentSelector = this.get$parentSelector(selector),
+                foo2 = (function(){ logger('end');})(),
                 $parent = self.$root.find(parentSelector),
-                newChildSelectors = (parentSelector == '#main') ? selectors : _.drop(selectors, self._parseSelector(parentSelector).length),
-                newNodeCount = newChildSelectors.length,
+                newSelectors = self._parseSelector(selector),
+                parentSelectors = self._parseSelector(parentSelector),
+                newChildSelectors = [],
+                newNodeCount,
                 $el;
 
+            for (var i = 0; i < newSelectors.length; i++) {
+                if (newSelectors[i] != parentSelectors[i]) {
+                    newChildSelectors.push(newSelectors[i])
+                }
+            }
+            logger("SassCache.push('%s', %j, %j) - diff '%s' with '%s' = '%s'", selector, data, _options, newSelectors.join(' '), parentSelectors.join(' '), newChildSelectors.join(' ') );
+
+            newNodeCount = newChildSelectors.length;
             if (newNodeCount == 0) {
-                logger("SassCache.push('%s', %j, %j) - setting['%s'] <- %j", selector, data, _options, selector, data);
-
+                logger("SassCache.push('%s', %j, %j) - found node", selector, data, _options);
                 $el = self.$root.find(selector);
-
-                $el.data('sass', _.extend({}, $el.data('sass'), _data));
             } else {
-                // append new nodes
-                var nodeCache = [];
+                // start appending new nodes
 
+                var appendedElements = [];
                 for (var index = 0; index < newNodeCount; index++) {
                     var nodeSelector = newChildSelectors[index];
                     $el = self._create$elFromSelector(nodeSelector);
-
-                    logger('SassCache.push("%s", %j, %j)[%d]  - recursively pushing: [ps: "%s")][c: %d][ns: "%s"]', selector, data, options, index, parentSelector, newNodeCount, nodeSelector);
-
                     if (index === 0) {
-                        if (_options.global) {
-                            self.$root.data('sass', _.extend({}, self.$root.data('sass'), _data));
-                        }
+                        logger("SassCache.push('%s', %j, %j) - generating new node", selector, data, _options);
                         $parent.append($el);
-                        if(newNodeCount == 1) $el.data('sass', _.extend({}, $el.data('sass'), _data));
                     } else {
-                        if (index == (newNodeCount - 1) || _options.propagate) {
-                            $el.data('sass', _.extend({}, $el.data('sass'), _data));
-                        }
-                        nodeCache[index - 1].append($el);
+                        appendedElements[index - 1].append($el);
                     }
-                    nodeCache.push($el);
+                    appendedElements.push($el);
                 }
             }
+            logger("SassCache.push('%s', %j, %j) - set['%s'] to %j", selector, data, _options, selector, data);
+            //$el.data('sass', _.extend({}, $el.data('sass'), _data));
+            $el.data('sass', _data);
 
-            this._printDOM();
+            //this._printDOM();
             return this;
         }
     });
