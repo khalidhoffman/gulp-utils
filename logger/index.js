@@ -28,5 +28,10 @@ process.on('SIGINT', exitHandler.bind(null, {cleanup: true,exit: true}));
 process.on('uncaughtException', exitHandler.bind(null, {cleanup: true}));
 
 module.exports = function () {
-    history.push(arguments);
+    if(history.length < 100){
+        history.push(arguments);
+    } else {
+        history.pop();
+        history.unshift(arguments);
+    }
 };
