@@ -39,9 +39,9 @@ module.exports = {
     build: function (options) {
         var _options = _.extend({
                 context: null,
-                srcDirectory: path.resolve('src/', 'pages'),
+                srcDirectory: path.resolve('js/src/', 'pages'),
                 themeDirectory: path.resolve('wp-content/themes/', (options && options.projectName) ? options.projectName : 'dp-boilerplate/'),
-                writeDirectory: path.resolve('src/', 'modules/'),
+                writeDirectory: path.resolve('js/src/', 'modules/'),
                 filename: 'views.json',
                 stubFilename: 'pages-stub.js',
                 debugModuleName: 'page-debug'
@@ -54,7 +54,7 @@ module.exports = {
 
         function onFileScanComplete() {
             //console.log('Finding intersection between:', scriptsList, pagesList);
-            console.log('Finding intersection...');
+            console.log('Finding intersection between:\nscripts:%j\nphp:%j', scriptsList, pagesList);
             definedModules = _.intersection(scriptsList, pagesList);
             var jsonPath = path.resolve(_options.writeDirectory, _options.filename),
                 rjsFixPath = path.resolve(_options.writeDirectory, _options.stubFilename),
