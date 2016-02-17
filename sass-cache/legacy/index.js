@@ -126,9 +126,13 @@ var Backbone = require('backbone'),
         _parseSelector: function (selector) {
             if (!_.isString(selector)) throw new Error("Provided selector is not a string");
             //if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
-            var formattedSelector = selector.replace(/\s|>|:/gi, '|');
-            //logger('SassCache._parseSelector("%s") = %j', selector, formattedSelector.split('|'));
-            return formattedSelector.split('|');
+            var formattedSelector = selector
+                .replace(/[\[]/gi, ' ')
+                .replace(/['"=\]]/gi, '')
+                .replace(/\s+|>|:/gi, '|'),
+                selectorNodes = formattedSelector.split('|');
+            logger('SassCache._parseSelector("%s") = %j', selector, selectorNodes);
+            return selectorNodes;
         },
 
         /**
@@ -156,9 +160,7 @@ var Backbone = require('backbone'),
             var self = this,
                 _data = _.extend({}, data),
                 _options = _.extend({}, options),
-                foo = (function(){ logger('start');})(),
                 parentSelector = this.get$parentSelector(selector),
-                foo2 = (function(){ logger('end');})(),
                 $parent = self.$root.find(parentSelector),
                 newSelectors = self._parseSelector(selector),
                 parentSelectors = self._parseSelector(parentSelector),
