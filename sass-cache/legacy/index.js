@@ -128,6 +128,7 @@ var Backbone = require('backbone'),
             //if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
             var formattedSelector = selector
                 .replace(/[\[]/gi, ' ')
+                .replace(/[\*]/gi, ' ALL ')
                 .replace(/['"=\]]/gi, '')
                 .replace(/\s+|>|:/gi, '|'),
                 selectorNodes = formattedSelector.split('|');
