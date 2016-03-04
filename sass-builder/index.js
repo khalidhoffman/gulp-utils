@@ -1,49 +1,51 @@
 var fs = require('fs'),
-    pathUtils = require('path'),
+    path = require('path'),
     _ = require('lodash'),
     Jlex = require('jade-lexer'),
     SassNode = require('./sass-node'),
     SassNodeSet = require('./sass-node-set');
 
 
-
-function jadeToSass(jadeText, writePath) {
-    var jadeData = Jlex(jadeText, pathUtils.resolve('./', 'jade.txt')),
+function jadeToSass(jadeText, writePath, options) {
+    var _options = _.extend({
+            debug: false
+        }, options),
+        jadeData = Jlex(jadeText, path.resolve('./', 'jade.txt')),
         numOfNodes = jadeData.length,
         sassOutputPath = writePath,
         sassOutput = "",
         sassDataSet = new SassNodeSet();
 
     _.forEach(jadeData, function (node) {
-        switch(node.type) {
+        switch (node.type) {
             case 'class':
             case 'tag':
             case 'id':
 
                 if (sassDataSet.hasLine(node.line)) {
                     // additional data at line
-                    console.log('Updating line ['+node.line+']... '+ node.type);
+                    if(_options.debug) console.log('Updating line [' + node.line + ']... ' + node.type);
                     sassDataSet.atLine(node.line).set(node.type, node.val);
                 } else {
                     // new line
-                    console.log('Adding line ['+node.line+']... '+ node.type);
+                    if(_options.debug) console.log('Adding line [' + node.line + ']... ' + node.type);
                     var nodeMeta = {
-                        lineNumber : node.line
+                        lineNumber: node.line
                     };
                     nodeMeta[node.type] = node.val;
                     sassDataSet.push(new SassNode(nodeMeta));
                 }
                 break;
             default:
-                console.log('Bypassing '+node.type);
+                if(_options.debug) console.log('Bypassing ' + node.type);
         }
     });
 
-    console.log('sassDataSet: %j', sassDataSet);
-    for( var lineIndex = 0; lineIndex < numOfNodes; lineIndex++) {
-        if(sassDataSet.hasLine(lineIndex)){
+    if(_options.debug) console.log('sassDataSet: %j', sassDataSet);
+    for (var lineIndex = 0; lineIndex < numOfNodes; lineIndex++) {
+        if (sassDataSet.hasLine(lineIndex)) {
             var sassNode = sassDataSet.atLine(lineIndex);
-            console.log('printing: ', sassNode.getNode());
+            if(_options.debug) console.log('printing: ', sassNode.getNode());
             sassOutput += sassNode.compileCSS();
         }
     }
@@ -57,5 +59,5 @@ function jadeToSass(jadeText, writePath) {
 }
 
 module.exports = {
-    jadeToSass : jadeToSass
+    jadeToSass: jadeToSass
 };
