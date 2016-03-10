@@ -5,10 +5,6 @@ function json2Sass(data) {
 
         var result = '';
 
-        _.forEach(node['siblings'], function (childNode, index, collection) {
-            result += print(childNode);
-        });
-
         result += '\n' + node['tag'] + node['id'] + node['className'] + '{';
 
         _.forEachRight(node.variations, function(className, index, collection){
@@ -20,6 +16,11 @@ function json2Sass(data) {
         });
 
         result += '}';
+
+
+        _.forEach(node['siblings'], function (childNode, index, collection) {
+            result += print(childNode);
+        });
 
         return result;
     }
