@@ -39,8 +39,13 @@ var SassNode = function (el, state) {
         return this.$el[0].classList;
     };
 
+    this.getClassVariations = function () {
+        return _.tail(this.getClassList());
+    };
+
+
     this.isRoot = function () {
-        return (!!this.getClassName().match(/^\.container/i) || this.$el[0].classList.length > 1);
+        return (!!this.getClassName().match(/^\.container/i) || !!this.getClassName().match(/^\.wrap-/i) || this.getClassVariations() > 0);
     };
 
     this.$el.children().each(function (index, el) {
@@ -52,55 +57,81 @@ var SassNode = function (el, state) {
     });
 
 
-    this._generateSiblings = function(){
+    this.shallowMerge = function (node) {
+
+        var self = this;
+        var mergedNode = this;
+        console.log("SassNode.shallowMerge() - adding classes '%s' to %s", node.$el.attr('class'), self.$el.attr('class'));
+        _.mergeWith(mergedNode, node, function (a, b, key, obj, src, stack) {
+            switch(key){
+                case '$el':
+                    a.addClass(b.attr('class'));
+                    return a;
+                case 'siblings':
+                    console.log('SassNode.shallowMerge() - optimizing siblings: %O', a.concat(b));
+                    return self._optimizeCollection(a.concat(b));
+                case 'children':
+                    console.log('SassNode.shallowMerge() - optimizing children: %O', a.concat(b));
+                    return self._optimizeCollection(a.concat(b));
+                default:
+                    if (_.isArray(a) && _.isArray(b)) {
+                        console.log('SassNode.shallowMerge() - @ %s.%s: merging %O && %O', self.getMainClassName(), key, a, b);
+                        return a.concat(b);
+                    } else if (_.isFunction(a) && _.isFunction(b)) {
+                        return a;
+                    }
+                    break;
+            }
+        });
+
+        _.forOwn(mergedNode, function (val, prop) {
+            self[prop] = val;
+        });
+    };
+
+    this._generateSiblings = function () {
         var _self = this;
-        this.siblings = _.remove(_self.children, function (node) {
+        this.siblings = this.siblings.concat(_.remove(_self.children, function (node) {
             if (node.isRoot()) {
-                console.log('SassNode._optimize() - resetting @ %O in %O', node, _self);
+                console.log('SassNode._generateSiblings() - resetting @ %O in %O', node, _self);
             }
             return node.isRoot()
-        });
+        }));
         return this.siblings;
     };
 
-    this._optimizeSiblings = function(siblings){
+    this._optimizeCollection = function (siblings) {
 
-        var currentSiblings = siblings || this.siblings,
-            classlistCache = {};
+        var _siblings = siblings || this.siblings,
+            cacheCollection = {};
 
-        _.forEach(currentSiblings, function (node) {
-            var mainClassName = node.getMainClassName();
-            classlistCache[mainClassName] = _.isObject(classlistCache[mainClassName]) ? classlistCache[mainClassName] : {
-                nodes: [],
-                classList: []
-            };
-            classlistCache[mainClassName].classList = classlistCache[mainClassName].classList.concat(node.getClassVariations());
-            classlistCache[mainClassName].nodes.push(node);
+        _.forEach(_siblings, function cacheByMainClassName(node) {
+            var cacheIndex = node.getMainClassName();
+            cacheCollection[cacheIndex] = (_.isArray(cacheCollection[cacheIndex]) ? cacheCollection[cacheIndex] : []);
+            cacheCollection[cacheIndex].push(node);
         });
 
         var _optimizedSiblings = [];
-        _.forEach(classlistCache, function (classNameCache, mainClassName) {
-            classlistCache[mainClassName].nodes[0].merge(_.rest(classNameCache.nodes));
-            _.remove(currentSiblings, _.rest(classNameCache.nodes));
-            classlistCache[mainClassName].classList = _.uniq(classNameCache.classList);
-            classlistCache[mainClassName].nodes[0].$el.addClass(classNameCache.classList);
-            _optimizedSiblings.push(classlistCache[mainClassName].nodes[0]);
+        _.forEach(cacheCollection, function mergeCacheByMainClassName(nodeCache, cacheIndex) {
+            _.forEach(_.tail(nodeCache), function (node, nodeIndex, collection) {
+                cacheCollection[cacheIndex][0].shallowMerge(node);
+            });
+            _optimizedSiblings.push(cacheCollection[cacheIndex][0]);
         });
-
-        this.siblings = this.siblings.concat(_optimizedSiblings);
+        console.log('SassNode._optimizeCollection() = %O', _optimizedSiblings);
+        return _optimizedSiblings;
     };
 
     this._optimize = function () {
         var _self = this,
             childNode;
         console.log('SassNode._optimize() - optimizing %O + %d', this, _self.children.length);
-        for (var index = 0; index < this.children.length; index++) {
-            childNode = this.children[index];
-            console.log('SassNode._optimize() - optimizing %O @ %O', this, childNode);
+        _.forEach(this.children, function(childNode, nodeIndex) {
+            console.log('SassNode._optimize() - optimizing %O @ %O', _self, childNode);
             childNode._optimize();
-        }
+        });
         this._generateSiblings();
-        this._optimizeSiblings();
+        this.siblings = this._optimizeCollection(this._generateSiblings());
         console.log('SassNode._optimize() - optimized %O', this);
     };
 
@@ -113,11 +144,6 @@ var SassNode = function (el, state) {
     this.getMainClassName = function () {
         return '.' + this.getClassList()[0];
     };
-
-    this.getClassVariations = function () {
-        return _.rest(this.getClassList());
-    };
-
     this.toJSON = function () {
         return {
             tag: this.getTag(),
@@ -131,30 +157,6 @@ var SassNode = function (el, state) {
                 return node.toJSON();
             })
         };
-    };
-
-    this.merge = function (node) {
-
-        _.forEach(this.children, function(childNode, index){
-            childNode._optimize();
-        });
-        var self = this;
-        var mergedNode = this;
-        _.merge(mergedNode, node, function (a, b, key) {
-            if (_.isArray(a) && _.isArray(b)) {
-                return a.concat(b) ;
-            } else if (_.isFunction(a) && _.isFunction(b)) {
-                return a;
-            }
-        });
-
-        _.forIn(mergedNode, function(val, prop){
-            self[prop] = val;
-        });
-
-        this._generateSiblings();
-        this._optimizeSiblings();
-
     };
 
     this.getTag = function () {
