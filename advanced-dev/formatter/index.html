@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/underscore/underscore-min.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="dist/app.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-md-6">
+                <textarea class="form-control" name="from" id="from" rows="50"></textarea>
+            </div>
+            <div class="col-md-6">
+                <textarea class="form-control" name="to" id="to" rows="50"></textarea>
+            </div>
+        </div>
+
+        <script>
+
+            $('#from').on('keydown change mouseup', function() {
+                var text = $(this).val();
+
+                $('#to').val(formatScss(text));
+            });
+
+            //var text = "html {\nwidth: 100%;\nfont-size: 62.5%;\nheight: 100%;\n}\n\n.provisoire {\nbackground: #ad1c1c;\ncolor: #fff;\npadding: 10px;\n}\n\n.provisoire {\nbackground: #ad1c1c;\ncolor: #fff;\npadding: 10px;\n}\n\n.provisoire {\nbackground: #ad1c1c;\ncolor: #fff;\npadding: 10px;\n}";
+            //var text = "html {font-size: 62.5%;height: 100%;width: 100%;}.provisoire {background: #ad1c1c;color: #fff;padding: 10px;}.provisoire {background: #ad1c1c;color: #fff;padding: 10px;}.provisoire {background: #ad1c1c;color: #fff;padding: 10px;}";
+            //var text = ".ie67 .clearfix, .ie67 .line, .ie67 .mod, .ie67 .row, .ie67 .col {zoom: 1;}";
+            //console.log(formatScss(text));
+
+        </script>
+    </body>
+</html>
