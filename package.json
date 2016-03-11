@@ -6,8 +6,8 @@
     "type": "git",
     "url": "ssh://kah8br@khalidhoffman.net:/home/kah8br/nodejs/gulp-utils"
   },
-  "scripts" : {
-    "test" : "jasmine"
+  "scripts": {
+    "test": "jasmine"
   },
   "dependencies": {
     "backbone": "^1.2.3",
@@ -27,7 +27,7 @@
     "jade-lexer": "0.0.8",
     "jade-parser": "0.0.9",
     "js-beautify": "^1.5.10",
-    "lodash": "^3.10.1",
+    "lodash": "^4.6.1",
     "node-sass": "^3.4.2",
     "request": "^2.67.0",
     "socket.io": "^1.3.7",

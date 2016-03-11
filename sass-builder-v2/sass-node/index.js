@@ -45,7 +45,7 @@ var SassNode = function (el, state) {
 
 
     this.isRoot = function () {
-        return (!!this.getClassName().match(/^\.container/i) || !!this.getClassName().match(/^\.wrap-/i) || this.getClassVariations() > 0);
+        return (!!this.getClassName().match(/^\.container/i) || this.getClassVariations() > 0);
     };
 
     this.$el.children().each(function (index, el) {
