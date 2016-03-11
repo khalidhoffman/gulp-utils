@@ -1,24 +1,13 @@
-var through = require('through2'),    // npm install --save through2
-    fs = require('fs'),
+var fs = require('fs'),
     path = require('path'),
     _ = require('lodash'),
-    Walker = require('../fs-walk');
+    glob = require('glob');
 
-/**
- *
- * @param {String} fileName
- * @returns {boolean}
- */
 function isScript(fileName) {
     var jsRegex = /.*\.js$/;
     return jsRegex.test(fileName);
 }
 
-/**
- *
- * @param {String} fileName
- * @returns {boolean}
- */
 function isPHP(fileName) {
     var phpRegex = /.*\.php$/;
     return phpRegex.test(fileName);
@@ -28,73 +17,62 @@ module.exports = {
     /**
      *
      * @param {Object} options
-     * @param {String} [options.projectName]
-     * @param {String} [options.srcDirectory] Directory of javascript views. These should match the appropriate theme files
-     * @param {String} [options.themeDirectory] Directory of WordPress themes files. These should match the appropriate javascript view filename
-     * @param {String} [options.filename='views.json']  for legacy support
-     * @param {String} [options.stubFilename='pages-stub.js']   filename of requirejs javascript file to server as a stub for all dynamic views so that requirejs includes them during compilation
-     * @param {String} [options.debugModuleName='pages-debug']  requirejs module name to ignore. This is used to prevent a debug module from being included in a production build
-     * @param {Object} [options.context]
+     * @param {String} options.srcDirectory path is relative to gulpfile
+     * @param {String} options.themeDirectory path is relative to gulpfile
+     * @param {String} options.writeDirectory path is relative to gulpfile
+     * @param {String} options.filename
      */
     build: function (options) {
-        var _options = _.extend({
-                context: null,
-                srcDirectory: path.resolve('js/src/', 'pages'),
-                themeDirectory: path.resolve('wp-content/themes/', (options && options.projectName) ? options.projectName : 'dp-boilerplate/'),
-                writeDirectory: path.resolve('js/src/', 'modules/'),
+        var defaults = {
+                srcDirectory: './',
+                themeDirectory: './',
+                writeDirectory: './js/src/modules',
                 filename: 'views.json',
-                stubFilename: 'pages-stub.js',
-                debugModuleName: 'page-debug'
-            }, options),
+                prefix: 'pages/',
+                suffix: ''
+            },
             scriptsList = [],
             pagesList = [],
-            definedModules = [],
+            definedPages = [],
             isPageListComplete = false,
-            isScriptListComplete = false;
+            isScriptListComplete = false,
+            settings = _.assign({}, defaults, options);
 
-        function onFileScanComplete() {
+        function onFilesRead() {
             //console.log('Finding intersection between:', scriptsList, pagesList);
-            console.log('Finding intersection between:\nscripts:%j\nphp:%j', scriptsList, pagesList);
-            definedModules = _.intersection(scriptsList, pagesList);
-            var jsonPath = path.resolve(_options.writeDirectory, _options.filename),
-                rjsFixPath = path.resolve(_options.writeDirectory, _options.stubFilename),
-                productionPages = _.without(definedModules, _options.debugModuleName);
-
-            productionPages = productionPages.map(function (pageName) {
-                return 'pages/' + pageName
-            });
-            var rjsFixOutput = 'define(' + JSON.stringify(productionPages) + ', function(){});';
+            console.log('\nFinding intersection of:\nPages: %j\nScripts: %j\n', pagesList, scriptsList);
+            definedPages = _.intersection(scriptsList, pagesList);
+            var jsonPath = path.resolve(settings.writeDirectory, settings.filename),
+                rjsFixPath = path.resolve(settings.writeDirectory, 'pages-stub.js'),
+                productionPages = _.without(definedPages, 'pages/page-debug'),
+                rjsFix = 'define(' + JSON.stringify(productionPages) + ', function(){});';
             fs.writeFile(jsonPath, JSON.stringify(productionPages), function () {
-                console.log('Saved to ' + jsonPath);
+                console.log('Saved to %s', jsonPath);
             });
-            fs.writeFile(rjsFixPath, rjsFixOutput, function () {
-                console.log('Saved to ' + jsonPath);
+            fs.writeFile(rjsFixPath, rjsFix, function () {
+                console.log('Saved to %s', rjsFixPath);
             });
         }
 
-        Walker.recursePath(_options.themeDirectory, {
-            each: function (err, filepath) {
-                if (err) throw err;
-                var filename = path.basename(filepath);
-                if (isPHP(filename)) pagesList.push(path.basename(filepath, '.php'));
-            },
-            done: function (err, fileList) {
-                if (err) throw err;
-                isPageListComplete = true;
-                if (isScriptListComplete) onFileScanComplete.apply(_options.context, fileList);
-            }
+        glob(path.join(settings.themeDirectory, '**/*.php'), {
+            root: path.resolve(process.cwd(), './')
+        }, function (err, filelist) {
+            if (err) throw err;
+            pagesList = filelist.map(function(filename, index, arr){
+                return settings.prefix + filename.replace(/\.\w+$/i, '')+ settings.suffix;
+            });
+            isPageListComplete = true;
+            if (isScriptListComplete) onFilesRead.apply();
         });
-        Walker.recursePath(_options.srcDirectory, {
-            each: function (err, filepath) {
-                if (err) throw err;
-                var filename = path.basename(filepath);
-                if (isScript(filename)) scriptsList.push(path.basename(filepath, '.js'));
-            },
-            done: function (err, fileList) {
-                if (err) throw err;
-                isScriptListComplete = true;
-                if (isPageListComplete) onFileScanComplete.apply(_options.context, fileList);
-            }
+        glob(path.join(settings.srcDirectory, '**/*.js'), {
+            cwd: path.resolve(process.cwd(), 'js/src/pages/')
+        }, function (err, filelist) {
+            if (err) throw err;
+            scriptsList = filelist.map(function(filename, index, arr){
+                return settings.prefix + filename.replace(/\.\w+$/i, '') + settings.suffix;
+            });
+            isScriptListComplete = true;
+            if (isPageListComplete) onFilesRead.apply();
         });
     }
 };
