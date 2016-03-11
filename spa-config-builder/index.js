@@ -25,7 +25,7 @@ module.exports = {
     build: function (options) {
         var defaults = {
                 srcDirectory: './',
-                themeDirectory: './',
+                themeDirectory: './wp-content/themes/dp-*',
                 writeDirectory: './js/src/modules',
                 filename: 'views.json',
                 prefix: 'pages/',
@@ -54,12 +54,10 @@ module.exports = {
             });
         }
 
-        glob(path.join(settings.themeDirectory, '**/*.php'), {
-            root: path.resolve(process.cwd(), './')
-        }, function (err, filelist) {
+        glob(path.join(settings.themeDirectory, '**/*.php'), function (err, filelist) {
             if (err) throw err;
-            pagesList = filelist.map(function(filename, index, arr){
-                return settings.prefix + filename.replace(/\.\w+$/i, '')+ settings.suffix;
+            pagesList = filelist.map(function (filename, index, arr) {
+                return settings.prefix + path.parse(filename).name + settings.suffix;
             });
             isPageListComplete = true;
             if (isScriptListComplete) onFilesRead.apply();
@@ -68,8 +66,8 @@ module.exports = {
             cwd: path.resolve(process.cwd(), 'js/src/pages/')
         }, function (err, filelist) {
             if (err) throw err;
-            scriptsList = filelist.map(function(filename, index, arr){
-                return settings.prefix + filename.replace(/\.\w+$/i, '') + settings.suffix;
+            scriptsList = filelist.map(function (filename, index, arr) {
+                return settings.prefix + path.parse(filename).name + settings.suffix;
             });
             isScriptListComplete = true;
             if (isPageListComplete) onFilesRead.apply();
