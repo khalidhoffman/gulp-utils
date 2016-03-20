@@ -26,7 +26,7 @@ module.exports = {
         var defaults = {
                 srcDirectory: './',
                 themeDirectory: './wp-content/themes/dp-*',
-                writeDirectory: './js/src/modules',
+                writeDirectory: './wp-content/themes/dp-*/js/src/modules',
                 filename: 'views.json',
                 prefix: 'pages/',
                 suffix: ''

@@ -4,9 +4,8 @@ var Backbone = require('backbone'),
     parse = require('jade-parser'),
     compileFuncBuilder = require('jade-code-gen'),
     logger = require('../../logger'),
-    DOMDiff = require('diff-dom'),
-    domDiff = new DOMDiff(),
     cheerio = require('cheerio'),
+    cssParser = require('CSSwhat'),
     SassCache = Backbone.Model.extend({
 
         initialize: function () {
@@ -114,7 +113,6 @@ var Backbone = require('backbone'),
         _printDOM: function () {
             logger('\ndom:\n%s', this.$.html());
             logger('root element:\n%s\n', this.$root.html());
-            return;
         },
 
         /**
@@ -125,13 +123,18 @@ var Backbone = require('backbone'),
          */
         _parseSelector: function (selector) {
             if (!_.isString(selector)) throw new Error("Provided selector is not a string");
-            //if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
+            if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
             var formattedSelector = selector
                 .replace(/[\[]/gi, ' ')
                 .replace(/[\*]/gi, ' ALL ')
                 .replace(/['"=\]]/gi, '')
                 .replace(/\s+|>|:/gi, '|'),
                 selectorNodes = formattedSelector.split('|');
+
+            //logger('SassCache._parseSelector.cssParser("%s") = %J', selector, cssParser(selector));
+            //var selectorNodes = cssParser(selector)[0].map(function(cssNode, index, collection){
+            //    return cssNode['value'] || cssNode['name'] || cssNode['descendant'];
+            //});
             logger('SassCache._parseSelector("%s") = %j', selector, selectorNodes);
             return selectorNodes;
         },
