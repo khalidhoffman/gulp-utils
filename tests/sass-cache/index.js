@@ -2,24 +2,12 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
 
 describe('SassCache', function () {
     var SassCache = require('../../sass-cache'),
-        projectPackage = require('../../package.json'),
-        url = require('url'),
         sassCache;
 
-    beforeAll(function (done) {
-        sassCache = new SassCache({
-            pages: [
-                url.resolve(projectPackage['homepage'], '#tests')
-            ],
-            paths : projectPackage['paths']
-        }, {
-            success: function (cache) {
-                sassCache = cache;
-                done();
-            }
-        });
+    beforeAll(function () {
+        sassCache = new SassCache();
     });
-
+    
     afterAll(function () {
         sassCache._printDOM();
     });
