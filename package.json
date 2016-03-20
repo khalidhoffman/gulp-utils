@@ -1,17 +1,13 @@
 {
   "name": "gulp-utils",
   "version": "0.0.1",
-  "homepage": "http://192.168.1.119/celebrationtt/",
-  "repository": {
-    "type": "git",
-    "url": "ssh://kah8br@khalidhoffman.net:/home/kah8br/nodejs/gulp-utils"
-  },
-  "scripts" : {
-    "test" : "jasmine"
+  "scripts": {
+    "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json"
   },
   "dependencies": {
     "backbone": "^1.2.3",
     "cheerio": "^0.19.0",
+    "diff-dom": "^2.0.1",
     "ftp": "^0.3.10",
     "glob": "^6.0.4",
     "gulp": "^3.9.0",
