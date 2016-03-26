@@ -1,3 +1,5 @@
 language: node_js
+before_script:
+  - npm install -g jasmine
 node_js:
   - "5.1"
