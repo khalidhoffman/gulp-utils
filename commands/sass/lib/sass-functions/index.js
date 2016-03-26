@@ -1,7 +1,8 @@
 var global = [],
     sass = require('node-sass'),
-    SassCache = require("../sass-cache"),
-    Logger = require("../logger"),
+    SassCache = require("../sass-cache/index"),
+    path = require('path'),
+    Logger = require('../../../../logger'),
     sassCache = new SassCache();
 
 module.exports = {

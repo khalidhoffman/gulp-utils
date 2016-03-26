@@ -1,4 +1,4 @@
-var sassFunctions = require('../../sass-functions').functions;
+var sassFunctions = require('../../commands/sass/lib/sass-functions').functions;
 
 describe('Sass Functions', function(){
 

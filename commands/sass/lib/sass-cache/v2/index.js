@@ -2,13 +2,11 @@ var Backbone = require('backbone'),
     path = require('path'),
     _ = require('lodash'),
     url = require('url'),
-    lex = require('jade-lexer'),
-    parse = require('jade-parser'),
     compileFuncBuilder = require('jade-code-gen'),
-    logger = require('../../logger'),
+    logger = require('../../../../../logger'),
     cheerio = require('cheerio'),
     request = require('request'),
-    projectPackage = require('../../package.json'),
+    projectPackage = require(path.resolve(process.cwd(), 'package.json')),
     SassCache = Backbone.Model.extend({
 
         defaults: {
