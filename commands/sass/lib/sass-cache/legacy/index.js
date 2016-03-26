@@ -3,9 +3,12 @@ var Backbone = require('backbone'),
     lex = require('jade-lexer'),
     parse = require('jade-parser'),
     compileFuncBuilder = require('jade-code-gen'),
-    logger = require('../../logger'),
+    path = require('path'),
+    logger = require('../../../../../logger'),
+    DOMDiff = require('diff-dom'),
+    domDiff = new DOMDiff(),
     cheerio = require('cheerio'),
-    cssParser = require('CSSwhat'),
+    cssParser = require('css-what'),
     SassCache = Backbone.Model.extend({
 
         initialize: function () {
@@ -113,6 +116,7 @@ var Backbone = require('backbone'),
         _printDOM: function () {
             logger('\ndom:\n%s', this.$.html());
             logger('root element:\n%s\n', this.$root.html());
+            return;
         },
 
         /**
@@ -123,7 +127,7 @@ var Backbone = require('backbone'),
          */
         _parseSelector: function (selector) {
             if (!_.isString(selector)) throw new Error("Provided selector is not a string");
-            if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
+            //if (selector.length == 0) throw new Error("Provided selector is invalid: "+selector);
             var formattedSelector = selector
                 .replace(/[\[]/gi, ' ')
                 .replace(/[\*]/gi, ' ALL ')

@@ -1,7 +1,7 @@
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
 
 describe('SassCache', function () {
-    var SassCache = require('../../sass-cache'),
+    var SassCache = require('../../commands/sass/lib/sass-cache'),
         sassCache;
 
     beforeAll(function () {

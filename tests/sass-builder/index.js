@@ -1,7 +1,7 @@
 var _ = require('lodash'),
     libsass = require('node-sass'),
-    SassNode = require('../../sass-builder/sass-node'),
-    SassNodeSet = require('../../sass-builder/sass-node-set');
+    SassNode = require('../../commands/sass/lib/sass-builder/sass-node'),
+    SassNodeSet = require('../../commands/sass/lib/sass-builder/sass-node-set');
 
 describe('Sass Builder', function(){
     var defaultSassNode,
