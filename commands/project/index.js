@@ -3,11 +3,11 @@ var fs = require('fs'),
 
     gulp = require('gulp'),
 
-    dump = require('../../dump'),
-    wordpress = require('../wordpress');
+    dump = require('../../dump');
 
 
 function initProject() {
+    var wordpress = require('../wordpress');
     fs.rename(
         path.join(wordpress.theme.path, '../dp-boilerplate'),
         wordpress.theme.path,
@@ -23,6 +23,7 @@ function initProject() {
 }
 
 function watchProject() {
+    var wordpress = require('../wordpress');
     gulp.watch(path.join(wordpress.theme.paths.jade, '/**/*.jade'), ['jade-php']);
     gulp.watch(path.join(wordpress.theme.paths.js, '/**/*.jade'), ['jade-js']);
     gulp.watch(path.join(wordpress.theme.paths.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
