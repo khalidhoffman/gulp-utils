@@ -1,9 +1,10 @@
-
 var fs = require('fs'),
     path = require('path'),
+
     gulp = require('gulp'),
     through2 = require('through2'),
     beautifyJS = require('js-beautify'),
+
     wordpress = require('../wordpress');
 
 function compile() {
@@ -11,11 +12,11 @@ function compile() {
         beautifyJSGlobRegex = path.join(wordpress.theme.paths.js, '/!(vendors)/**/*.js');
 
     console.log('Searching %s for js files', beautifyJSGlobRegex);
-    gulp.src(beautifyJSGlobRegex)
+    return gulp.src(beautifyJSGlobRegex)
         .pipe(through2.obj({
                 allowHalfOpen: false
             },
-            function(file, encoding, done) {
+            function (file, encoding, done) {
                 //console.log('reading %s', file.path);
                 if (file && file.contents) {
                     console.log('beautifying %s', file.path);
@@ -37,11 +38,11 @@ function watch() {
         watchPath = path.join(wordpress.theme.paths.js, '/!(node_modules|vendors)/**/*.js');
 
     console.log('Search %s for javascript files', watchPath);
-    gulp.watch(watchPath, function(event) {
+    gulp.watch(watchPath, function (event) {
 
         if (event.type == 'changed') {
 
-            fs.readFile(event.path, 'utf8', function(err, data) {
+            fs.readFile(event.path, 'utf8', function (err, data) {
                 if (err) {
                     throw err;
                 }
@@ -54,6 +55,6 @@ function watch() {
 }
 
 module.exports = {
-    compile : compile,
-    watch : watch
+    compile: compile,
+    watch: watch
 };

@@ -54,15 +54,16 @@ module.exports = {
      * @param {Object} options
      * @param {String} options.writePath
      * @param {String} options.readPath
+     * @param {Function} options.done
+     * @param {Function} options.context
      */
     jadeToSass: function (jadeStr, options) {
-        var _options = _.extend({
-
-        }, options),
+        var _options = _.extend({}, options),
             output = parseJade(jadeStr, options);
-        fs.writeFile( _options.writePath, output, function (err) {
+        fs.writeFile(_options.writePath, output, function (err) {
             if (err) throw err;
             console.log('saved @ %s', _options.writePath);
+            if (_options.done) _options.done.apply(_options.context, []);
         })
     }
 };

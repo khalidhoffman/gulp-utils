@@ -31,21 +31,22 @@ function jade2Sass (done) {
 
             _.forEach(fileList, function(filePath, index, arr) {
                 var filePathMeta = path.parse(filePath);
-                fs.readFile(filePath, function(err, data) {
-                    if (err) throw err;
-                    //console.log('reading: ', filePath);
-                    //console.log("checking...", parsedPath);
-                    if (filePathMeta.name.indexOf(filename) > -1 || (filename.toLowerCase() == 'all')) {
+                if (filePathMeta.name.indexOf(filename) > -1 || (filename.toLowerCase() == 'all')) {
+                    fs.readFile(filePath, function(err, data) {
+                        if (err) throw err;
+                        //console.log('reading: ', filePath);
+                        //console.log("checking...", parsedPath);
                         sassBuilder.jadeToSass(String(data), {
                             readPath: filePath,
-                            writePath: path.resolve(wordpress.theme.paths.tmp, '_' + filePathMeta.name + '.scss')
+                            writePath: path.resolve(wordpress.theme.paths.tmp, '_' + filePathMeta.name + '.scss'),
+                            done : function(){
+                                if(done) done();
+                            }
                         });
-                    }
-                    index++;
-                });
+                    });
+                }
             });
             prompt.stop();
-            done();
         }
     });
 }

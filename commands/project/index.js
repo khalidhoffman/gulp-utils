@@ -17,8 +17,11 @@ function initProject() {
             } else {
                 console.log('successfully renamed theme folder...');
             }
-            require('./references').update();
-            require('../wordpress').init();
+            require('./references').update({
+                done : function(){
+                    require('../wordpress').init();
+                }
+            });
         });
 }
 
