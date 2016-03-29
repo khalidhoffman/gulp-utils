@@ -6,7 +6,7 @@ var fs = require('fs'),
     dump = require('../../dump');
 
 
-function initProject() {
+function initProject(done) {
     var wordpress = require('../wordpress');
     fs.rename(
         path.join(wordpress.theme.path, '../dp-boilerplate'),
@@ -18,7 +18,7 @@ function initProject() {
                 console.log('successfully renamed theme folder...');
             }
             require('./references').update();
-            require('../wordpress').init();
+            require('../wordpress').init(done);
         });
 }
 
