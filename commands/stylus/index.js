@@ -5,7 +5,7 @@ var fs = require('fs'),
     _ = require('lodash'),
     wordpress = require('../wordpress');
 
-function compileStylus() {
+function compileStylus(done) {
     var stylusFunctions = require('./functions').hookFunc;
 
 
@@ -13,28 +13,35 @@ function compileStylus() {
         _.forEach(files, function (filename, index) {
             console.log('stylus - rendering %s', filename);
             fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
-                stylus(str)
-                    .set('filename', filename)
-                    .use(new require('stylus-type-utils')())
-                    .use(stylusFunctions)
-                    .include(require('nib').path)
-                    .render(function (err, css) {
-                        if (err) {
-                            console.error(err);
-                        } else {
-                            var filenameMeta = path.parse(filename),
-                                writeFilenamePath = path.format({
-                                    root: filenameMeta.root,
-                                    dir: path.join(wordpress.theme.path, 'stylesheets'),
-                                    base: filenameMeta.name + '.css',
-                                    ext: '.css',
-                                    name: filenameMeta.name
-                                });
-                            fs.writeFile(writeFilenamePath, css, {encoding: 'utf8'}, function () {
-                                console.log("Successfully updated %s", writeFilenamePath);
-                            })
-                        }
-                    });
+                if (err) {
+                    console.error(err);
+                    done();
+                } else {
+                    stylus(str)
+                        .set('filename', filename)
+                        .use(new require('stylus-type-utils')())
+                        .use(stylusFunctions)
+                        .include(require('nib').path)
+                        .render(function (err, css) {
+                            if (err) {
+                                console.error(err);
+                                done();
+                            } else {
+                                var filenameMeta = path.parse(filename),
+                                    writeFilenamePath = path.format({
+                                        root: filenameMeta.root,
+                                        dir: path.join(wordpress.theme.path, 'stylesheets'),
+                                        base: filenameMeta.name + '.css',
+                                        ext: '.css',
+                                        name: filenameMeta.name
+                                    });
+                                fs.writeFile(writeFilenamePath, css, {encoding: 'utf8'}, function () {
+                                    console.log("Successfully updated %s", writeFilenamePath);
+                                    done();
+                                })
+                            }
+                        });
+                }
 
             })
         })
@@ -42,5 +49,5 @@ function compileStylus() {
 }
 
 module.exports = {
-    compile : compileStylus
+    compile: compileStylus
 };

@@ -9,7 +9,7 @@ var path = require('path'),
             console.error(err);
             return {};
         }
-    }),
+    })(),
     dbNamePrefix = config.prefix || 'boilerplate_',
     dbPrefix = config.prefix || 'boilerplate',
     projectName = config.name || 'boilerplate';
