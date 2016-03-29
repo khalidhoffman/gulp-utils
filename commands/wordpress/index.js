@@ -1,10 +1,12 @@
 var path = require('path'),
     fs = require('fs'),
     util = require('util'),
+    
     request = require('request'),
-    config = require('../project/config'),
+    
+    config = require('../project').config,
     themeDirectory = path.join(config.rootDirectory, util.format('wp-content/themes/dp-%s', config.projectName)),
-    dbPrefix = 'chcf';
+    dbPrefix = config.prefix;
 
 function initWPConfig() {
     var wpConfigPath = path.resolve(config.rootDirectory, 'wp-config.php');
