@@ -39,4 +39,4 @@ function compile() {
 
 module.exports = {
     compile : compile
-}
+};

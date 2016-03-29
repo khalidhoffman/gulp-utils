@@ -2,23 +2,27 @@ var fs = require('fs'),
     path = require('path'),
     glob = require('glob'),
     _ = require('lodash'),
+
     config = require('./config'),
     wordpress = require('../wordpress');
 
-function updateReferences() {
+function updateReferences(options) {
     // changes all instances of boilerplate to projectName
-    var defaultProjectNamespaceRegex = /boilerplate/gi;
+    var _options = _.extend({
+        defaultProjectNamespaceRegex: /boilerplate/gi
+    }, options);
 
     var themeFilesGlobRegex = path.join(wordpress.theme.path, '/**/*');
-    glob(themeFilesGlobRegex, function(err, files) {
-        _.forEachRight(files, function(filePath, index, arr) {
+    glob(themeFilesGlobRegex, function (err, files) {
+        _.forEachRight(files, function (filePath, index, arr) {
             // executes on each file path
-            fs.readFile(filePath, function(err, data) {
+            fs.readFile(filePath, function (err, data) {
                 var fileContent = String(data);
-                if (defaultProjectNamespaceRegex.test(fileContent)) {
-                    fs.writeFile(filePath, fileContent.replace(defaultProjectNamespaceRegex, config.projectName), function(err) {
+                if (_options.defaultProjectNamespaceRegex.test(fileContent)) {
+                    fs.writeFile(filePath, fileContent.replace(_options.defaultProjectNamespaceRegex, config.projectName), function (err) {
                         if (err) throw err;
                         console.log('updated %s', filePath);
+                        if(_options.done) _options.done.apply(_options.context, [filePath]);
                     });
                 }
             });
@@ -27,5 +31,5 @@ function updateReferences() {
 }
 
 module.exports = {
-    update : updateReferences
+    update: updateReferences
 };

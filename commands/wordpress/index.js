@@ -26,11 +26,11 @@ function initWPConfig(done) {
                 fs.writeFile(wpConfigPath, saltContent, function(err) {
                     if (err) throw err;
                     console.log('successfully updated %s', wpConfigPath);
-                    done();
+                    if(done) done();
                 });
             } else {
                 console.error('received: %s\nerror: %s', body, response.statusCode);
-                done();
+                if(done) done();
             }
         });
     });
