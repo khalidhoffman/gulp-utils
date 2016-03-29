@@ -15,7 +15,7 @@ function initWPConfig() {
             saltRegex = /\/\/SALT_KEYS_HERE/,
             prefixRegex = /prefix_/,
             saltContent = String(data);
-        saltContent = saltContent.replace(databaseRegex, '***REMOVED***' + config.projectName.toLocaleLowerCase());
+        saltContent = saltContent.replace(databaseRegex, config.dbNamePrefix + config.projectName.toLocaleLowerCase());
         saltContent = saltContent.replace(prefixRegex, dbPrefix + '_');
         request({
             url: 'https://api.wordpress.org/secret-key/1.1/salt/',
