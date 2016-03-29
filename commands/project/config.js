@@ -10,11 +10,13 @@ var path = require('path'),
             return {};
         }
     }),
+    dbNamePrefix = config.prefix || 'boilerplate_',
     dbPrefix = config.prefix || 'boilerplate',
     projectName = config.name || 'boilerplate';
 
 module.exports = {
     projectName : projectName,
     prefix: dbPrefix,
+    dbNamePrefix: dbNamePrefix,
     rootDirectory : process.cwd()
 };
