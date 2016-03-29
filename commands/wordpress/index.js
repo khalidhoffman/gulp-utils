@@ -8,7 +8,7 @@ var path = require('path'),
     themeDirectory = path.join(config.rootDirectory, util.format('wp-content/themes/dp-%s', config.projectName)),
     dbPrefix = config.prefix;
 
-function initWPConfig() {
+function initWPConfig(done) {
     var wpConfigPath = path.resolve(config.rootDirectory, 'wp-config.php');
     fs.readFile(wpConfigPath, function(err, data) {
         var databaseRegex = /database_name_here/,
@@ -26,9 +26,11 @@ function initWPConfig() {
                 fs.writeFile(wpConfigPath, saltContent, function(err) {
                     if (err) throw err;
                     console.log('successfully updated %s', wpConfigPath);
+                    if(done) done();
                 });
             } else {
                 console.error('received: %s\nerror: %s', body, response.statusCode);
+                if(done) done();
             }
         });
     });

@@ -1,10 +1,12 @@
 var path = require('path'),
+    
     gulp = require('gulp'),
     customJade = require('jade'),
     jade = require('gulp-jade'),
     _ = require('lodash'),
     rename = require('gulp-rename'),
     argv = require('yargs').argv,
+
     project = require('../project'),
     wordpress = require('../wordpress');
 
@@ -18,7 +20,7 @@ customJade.filters.ejs = function(text) {
 
 function compileJadeEJS() {
     var jadeJSGlob = path.join(wordpress.theme.paths.js, '/[^(vendors)]*/**/[^_]*.jade');
-    gulp.src(jadeJSGlob)
+    return gulp.src(jadeJSGlob)
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
             doctype: 'html',
@@ -39,7 +41,7 @@ function compileJadeEJSAuto() {
 
 function compileJadePHP() {
     var jadePHPGlob = path.join(wordpress.theme.paths.jade, '/**/[^_]*.jade');
-    gulp.src(jadePHPGlob)
+    return gulp.src(jadePHPGlob)
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
             jade: customJade
@@ -55,7 +57,7 @@ function compileJadePHP() {
 function compileJadePHPDebug() {
     var jadeFilesPattern = path.join(wordpress.theme.paths.jade, '/**/[^_]*.jade');
     console.log('Jade: %j', customJade);
-    gulp.src(jadeFilesPattern)
+    return gulp.src(jadeFilesPattern)
         .pipe(through2.obj({
                 allowHalfOpen: false
             },
