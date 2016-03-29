@@ -1,5 +1,6 @@
 var path = require('path'),
-    projectName = 'boilerplate',
+
+    projectName = 'coalition',
     rootDirectory = path.resolve(__dirname, '../../../');
 
 module.exports = {

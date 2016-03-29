@@ -4,7 +4,7 @@ var path = require('path'),
     request = require('request'),
     config = require('../project/config'),
     themeDirectory = path.join(config.rootDirectory, util.format('wp-content/themes/dp-%s', config.projectName)),
-    dbPrefix = 'boilerplate';
+    dbPrefix = 'chcf';
 
 function initWPConfig() {
     var wpConfigPath = path.resolve(config.rootDirectory, 'wp-config.php');
@@ -48,5 +48,5 @@ module.exports = {
             tmp: path.resolve(config.rootDirectory, 'tmp/')
         }
     },
-    initConfig : initWPConfig
+    init : initWPConfig
 };
