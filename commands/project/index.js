@@ -1,6 +1,9 @@
 var fs = require('fs'),
     path = require('path'),
+
     gulp = require('gulp'),
+
+    dump = require('../../dump'),
     wordpress = require('../wordpress');
 
 
@@ -10,7 +13,7 @@ function initProject() {
         wordpress.theme.path,
         function(err) {
             if (err) {
-                console.error('failed to rename theme folder...\n', err);
+                console.error('failed to rename theme folder...\n%s', dump(err));
             } else {
                 console.log('successfully renamed theme folder...');
             }
