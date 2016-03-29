@@ -16,7 +16,7 @@ function updateReferences() {
             fs.readFile(filePath, function(err, data) {
                 var fileContent = String(data);
                 if (defaultProjectNamespaceRegex.test(fileContent)) {
-                    fs.writeFile(filePath, fileContent.replace(defaultProjectNamespaceRegex, config.root), function(err) {
+                    fs.writeFile(filePath, fileContent.replace(defaultProjectNamespaceRegex, config.projectName), function(err) {
                         if (err) throw err;
                         console.log('updated %s', filePath);
                     });
