@@ -6,14 +6,14 @@ var path = require('path'),
     libsass = require('node-sass'),
     wordpress = require('../wordpress');
 
-function compileSass(done) {
+function compileSass() {
     var sassWatchGlobRegex = path.join(wordpress.theme.paths.sass, '/[!_]*[!(compass)].scss'),
         includes = [path.resolve(wordpress.theme.paths.sass, 'external/compass-mixins')],
         SassCache = require('./lib/sass-functions');
 
     SassCache.clear();
 
-    gulp.src(sassWatchGlobRegex)
+    return gulp.src(sassWatchGlobRegex)
         .pipe(sourcemaps.init())
         .pipe(sass({
             includePaths: includes,
@@ -25,13 +25,10 @@ function compileSass(done) {
         .on('error', function () {
             done();
         })
-        .pipe(gulp.dest(wordpress.theme.paths.css))
-        .on('end', function () {
-            done();
-        });
+        .pipe(gulp.dest(wordpress.theme.paths.css));
 }
 
-function debugSass() {
+function debugSass(done) {
     var sassWatchGlobRegex = path.join(wordpress.theme.paths.sass, 'style.scss'),
         includes = [path.resolve(wordpress.theme.paths.sass, './external/compass-mixins')],
         SassCache = require('./lib/sass-functions');
@@ -43,6 +40,7 @@ function debugSass() {
         functions: SassCache.functions
     }, function (err, result) {
         console.log(arguments);
+        if(done) done();
     });
 }
 

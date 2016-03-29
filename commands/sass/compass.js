@@ -6,7 +6,7 @@ var path = require('path'),
 
 function compileCompass() {
     var configPath = path.resolve(config.rootDirectory, 'config.rb');
-    gulp.src(path.join(wordpress.theme.paths.sass, '/**/[!_]*[(compass)].scss'))
+    return gulp.src(path.join(wordpress.theme.paths.sass, '/**/[!_]*[(compass)].scss'))
         .pipe(compass({
             config_file: configPath,
             css: wordpress.theme.paths.css,
