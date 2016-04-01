@@ -6,7 +6,8 @@
     "url": "https://github.com/khalidhoffman/gulp-utils.git"
   },
   "scripts": {
-    "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json"
+    "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json",
+    "postinstall": "cp ./_gulpfile.js ../gulpfile.js; sed -i 's/\\.\\\/commands/\\.\\\/gulp-utils\\\/commands/g' ../gulpfile.js"
   },
   "dependencies": {
     "babel-core": "^6.7.4",
