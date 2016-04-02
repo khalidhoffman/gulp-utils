@@ -51,7 +51,7 @@ function compileJadePHP() {
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(paths.baseAssetsPath));
+        .pipe(gulp.dest(paths.assetsBasePath));
     //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
 }
 
@@ -79,7 +79,7 @@ function compileJadePHPDebug() {
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(paths.baseAssetsPath));
+        .pipe(gulp.dest(paths.assetsBasePath));
     //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
 }
 

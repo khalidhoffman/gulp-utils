@@ -9,7 +9,7 @@ io.on('connection', function(socket) {
     console.log('testing communication with chrome...');
     socket.emit('test');
 
-    glob(path.join(paths.baseAssetsPath, '/**/*.php'), {}, function(err, phpFiles) {
+    glob(path.join(paths.assetsBasePath, '/**/*.php'), {}, function(err, phpFiles) {
 
         gulp.watch(phpFiles, function(evt) {
             //console.log('file change: ', evt.path);
