@@ -4,7 +4,7 @@ var fs = require('fs'),
     _ = require('lodash'),
 
     config = require('./config'),
-    wordpress = require('../wordpress');
+    paths = require('../paths');
 
 function updateReferences(options) {
     // changes all instances of boilerplate to projectName
@@ -12,7 +12,7 @@ function updateReferences(options) {
         defaultProjectNamespaceRegex: /boilerplate/gi
     }, options);
 
-    var themeFilesGlobRegex = path.join(wordpress.theme.path, '/**/*');
+    var themeFilesGlobRegex = path.join(paths.baseAssestsPath, '/**/*');
     glob(themeFilesGlobRegex, function (err, files) {
         _.forEachRight(files, function (filePath, index, arr) {
             // executes on each file path

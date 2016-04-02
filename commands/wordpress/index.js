@@ -42,15 +42,7 @@ module.exports = {
     root: config.rootDirectory,
     dbPrefix: dbPrefix,
     theme: {
-        path: themeDirectory,
-        paths: {
-            css: path.resolve(themeDirectory, 'stylesheets/'),
-            jade: path.resolve(themeDirectory, 'jade/'),
-            js: path.resolve(themeDirectory, 'js/src/'),
-            sass: path.resolve(themeDirectory, 'sass/'),
-            stylus: path.resolve(themeDirectory, 'stylus/'),
-            tmp: path.resolve(config.rootDirectory, 'tmp/')
-        }
+        path: themeDirectory
     },
     init : initWPConfig
 };
