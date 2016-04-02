@@ -1,15 +1,17 @@
 var fs = require('fs'),
     path = require('path'),
+
     glob = require('glob'),
     _ = require('lodash'),
     prompt = require('prompt'),
     argv = require('yargs').argv,
-    wordpress = require('../wordpress');
+
+    paths = require('../paths');
 
 function jade2Sass (done) {
 
-    console.log("Reading ", wordpress.theme.paths.jade);
-    glob(path.join(wordpress.theme.paths.jade, '/**/*.jade'), function(err, fileList) {
+    console.log("Reading ", paths.jade);
+    glob(path.join(paths.jade, '/**/*.jade'), function(err, fileList) {
         var sassBuilder = require('./lib/sass-builder-v2'),
             specifiedFilename = argv['index'];
 
@@ -38,7 +40,7 @@ function jade2Sass (done) {
                         //console.log("checking...", parsedPath);
                         sassBuilder.jadeToSass(String(data), {
                             readPath: filePath,
-                            writePath: path.resolve(wordpress.theme.paths.tmp, '_' + filePathMeta.name + '.scss'),
+                            writePath: path.resolve(paths.tmp, '_' + filePathMeta.name + '.scss'),
                             done : function(){
                                 if(done) done();
                             }

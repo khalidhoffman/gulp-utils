@@ -1,15 +1,17 @@
 var fs = require('fs'),
     path = require('path'),
+    
     glob = require('glob'),
     stylus = require('stylus'),
     _ = require('lodash'),
-    wordpress = require('../wordpress');
+    
+    paths = require('../paths');
 
 function compileStylus(done) {
     var stylusFunctions = require('./functions').hookFunc;
 
 
-    glob(path.join(wordpress.theme.paths.stylus, '**/!(_)*.styl'), function (err, files) {
+    glob(path.join(paths.stylus, '**/!(_)*.styl'), function (err, files) {
         _.forEach(files, function (filename, index) {
             console.log('stylus - rendering %s', filename);
             fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
@@ -30,7 +32,7 @@ function compileStylus(done) {
                                 var filenameMeta = path.parse(filename),
                                     writeFilenamePath = path.format({
                                         root: filenameMeta.root,
-                                        dir: path.join(wordpress.theme.path, 'stylesheets'),
+                                        dir: path.join(paths.assetsBasePath, 'stylesheets'),
                                         base: filenameMeta.name + '.css',
                                         ext: '.css',
                                         name: filenameMeta.name

@@ -5,11 +5,11 @@ var fs = require('fs'),
     through2 = require('through2'),
     beautifyJS = require('js-beautify'),
 
-    wordpress = require('../wordpress');
+    paths = require('../paths');
 
 function compile() {
     var writePath = './',
-        beautifyJSGlobRegex = path.join(wordpress.theme.paths.js, '/!(vendors)/**/*.js');
+        beautifyJSGlobRegex = path.join(paths.js, '/!(vendors)/**/*.js');
 
     console.log('Searching %s for js files', beautifyJSGlobRegex);
     return gulp.src(beautifyJSGlobRegex)
@@ -35,7 +35,7 @@ function compile() {
 
 function watch() {
     var writePath = './',
-        watchPath = path.join(wordpress.theme.paths.js, '/!(node_modules|vendors)/**/*.js');
+        watchPath = path.join(paths.js, '/!(node_modules|vendors)/**/*.js');
 
     console.log('Search %s for javascript files', watchPath);
     gulp.watch(watchPath, function (event) {

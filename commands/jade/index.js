@@ -9,7 +9,7 @@ var path = require('path'),
     argv = require('yargs').argv,
 
     project = require('../project'),
-    wordpress = require('../wordpress');
+    paths = require('../paths');
 
 customJade.filters.php = function(text) {
     return '<?php ' + text + ' ?>';
@@ -20,7 +20,7 @@ customJade.filters.ejs = function(text) {
 };
 
 function compileJadeEJS() {
-    var jadeJSGlob = path.join(wordpress.theme.paths.js, '/[^(vendors)]*/**/[^_]*.jade');
+    var jadeJSGlob = path.join(paths.js, '/[^(vendors)]*/**/[^_]*.jade');
     return gulp.src(jadeJSGlob)
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
@@ -37,11 +37,11 @@ function compileJadeEJS() {
 }
 
 function compileJadeEJSAuto() {
-    gulp.watch(path.join(wordpress.theme.paths.js, '/**/*.jade'), ['jade-js']);
+    gulp.watch(path.join(paths.js, '/**/*.jade'), ['jade-js']);
 }
 
 function compileJadePHP() {
-    var jadePHPGlob = path.join(wordpress.theme.paths.jade, '/**/[^_]*.jade');
+    var jadePHPGlob = path.join(paths.jade, '/**/[^_]*.jade');
     return gulp.src(jadePHPGlob)
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
@@ -51,12 +51,12 @@ function compileJadePHP() {
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(wordpress.theme.path));
+        .pipe(gulp.dest(paths.baseAssetsPath));
     //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
 }
 
 function compileJadePHPDebug() {
-    var jadeFilesPattern = path.join(wordpress.theme.paths.jade, '/**/[^_]*.jade');
+    var jadeFilesPattern = path.join(paths.jade, '/**/[^_]*.jade');
     console.log('Jade: %j', customJade);
     return gulp.src(jadeFilesPattern)
         .pipe(through2.obj({
@@ -79,12 +79,12 @@ function compileJadePHPDebug() {
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(wordpress.theme.path));
+        .pipe(gulp.dest(paths.baseAssetsPath));
     //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
 }
 
 function compileJadePHPAuto() {
-    gulp.watch(path.join(wordpress.theme.paths.jade, '/**/*.jade'), ['jade-php']);
+    gulp.watch(path.join(paths.jade, '/**/*.jade'), ['jade-php']);
 }
 
 module.exports = {

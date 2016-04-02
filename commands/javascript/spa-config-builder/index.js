@@ -21,6 +21,8 @@ module.exports = {
      * @param {String} options.themeDirectory path is relative to gulpfile
      * @param {String} options.writeDirectory path is relative to gulpfile
      * @param {String} options.filename
+     * @param {Function} options.done
+     * @param {Object} options.context
      */
     build: function (options) {
         var defaults = {
@@ -48,9 +50,10 @@ module.exports = {
                 rjsFix = 'define(' + JSON.stringify(productionPages) + ', function(){});';
             fs.writeFile(jsonPath, JSON.stringify(productionPages), function () {
                 console.log('Saved to %s', jsonPath);
-            });
-            fs.writeFile(rjsFixPath, rjsFix, function () {
-                console.log('Saved to %s', rjsFixPath);
+                fs.writeFile(rjsFixPath, rjsFix, function () {
+                    console.log('Saved to %s', rjsFixPath);
+                    if(settings.done) settings.done.apply(settings.context);
+                });
             });
         }
 
