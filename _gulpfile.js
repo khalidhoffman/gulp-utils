@@ -4,7 +4,7 @@
 var path = require('path'),
 
     gulp = require('gulp'),
-    gulpModule = function(moduleName){ var loc = './gulp-utils/commands/'+path.normalize(moduleName); console.log(loc); return require(loc); };
+    gulpModule = function(moduleName){ return require('./gulp-utils/commands/'+path.normalize(moduleName)); };
 
 // dev task that watches and executes appropriate tasks as necessary
 gulp.task('auto', function(){
