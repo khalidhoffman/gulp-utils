@@ -66,3 +66,5 @@ gulp.task('build-js', gulpModule('javascript').build);
 gulp.task('init-wp-config', gulpModule('wordpress').init);
 
 gulp.task('init-project',  gulpModule('project').init);
+
+gulp.task('init-avocode', gulpModule('avocode').init);

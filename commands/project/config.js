@@ -12,11 +12,13 @@ var path = require('path'),
     })(),
     dbNamePrefix = config.prefix || 'boilerplate_',
     dbPrefix = config.prefix || 'boilerplate',
+    avocodeSelector = config.avocodeSelector || 'boilerplate',
     projectName = config.name || 'boilerplate';
 
 module.exports = {
     projectName : projectName,
     prefix: dbPrefix,
     dbNamePrefix: dbNamePrefix,
+    avocodeSelector : avocodeSelector,
     rootDirectory : process.cwd()
 };
