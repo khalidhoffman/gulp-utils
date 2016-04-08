@@ -1,4 +1,6 @@
-var cache = {};
+var _ = require('lodash'),
+
+    cache = {};
 
 
 function initStylusFunctions(style) {
@@ -9,6 +11,12 @@ function initStylusFunctions(style) {
     function sanitizeProp(str) {
         return str.replace(':', ' ').replace(' ', '');
     }
+
+    function toLowerCase(str) {
+        str['val'] = str['val'].toLowerCase();
+        return str;
+    }
+
 
     function cacheSave(prop, val) {
         var _prop = buildKeyFromProp(prop);
@@ -35,6 +43,7 @@ function initStylusFunctions(style) {
     style.define('debugLog', debugLog);
     style.define('logger', debugLog);
     style.define('cacheLoad', cacheLoad);
+    style.define('toLowerCase', toLowerCase);
 };
 
 

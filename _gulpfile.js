@@ -22,17 +22,19 @@ gulp.task('auto', function(){
 gulp.task('babel', gulpModule('babel').compile);
 
 
-// Sass tasks
+// CSS tasks
 gulp.task('sass', gulpModule('sass').compile);
 
 gulp.task('sass-debug', gulpModule('sass').debug);
 
 gulp.task('compass', gulpModule('sass').compass);
 
-gulp.task('jade-2-sass', gulpModule('sass').jade2Sass);
-
+gulp.task('stylus', gulpModule('stylus').compile);
 
 // Jade tasks
+
+gulp.task('jade-2-sass', gulpModule('sass').jade2Sass);
+
 gulp.task('jade-js', gulpModule('jade').js);
 
 gulp.task('jade-js-auto', gulpModule('jade').jsAuto);

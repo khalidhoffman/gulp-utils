@@ -37,6 +37,7 @@
     "jade-parser": "0.0.9",
     "js-beautify": "^1.5.10",
     "lodash": "^4.6.1",
+    "nib": "^1.1.0",
     "node-sass": "^3.4.2",
     "onecolor": "^3.0.1",
     "prompt": "^1.0.0",
