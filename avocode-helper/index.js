@@ -69,12 +69,12 @@ function Avocode(projectIdentifier, options) {
             colors: [
                 {
                     value: "white",
-                    name: 'color-white',
+                    name: '$color-white',
                     type: 'color'
                 },
                 {
                     value: "black",
-                    name: 'color-black',
+                    name: '$color-black',
                     type: 'color'
                 }
             ],
@@ -177,7 +177,7 @@ function Avocode(projectIdentifier, options) {
                             name: (function () {
                                 var _name = _.kebabCase(val.name.name);
                                 self.data._colorCount[_name] = (self.data._colorCount[_name]) ? self.data._colorCount[_name] + 1 : 1;
-                                return util.format('color-%s%s', _name, (self.data._colorCount[_name] > 1) ? '-v' + self.data._colorCount[_name] : '')
+                                return util.format('$color-%s%s', _name, (self.data._colorCount[_name] > 1) ? '-v' + self.data._colorCount[_name] : '')
                             })(),
                             type: 'color'
                         };

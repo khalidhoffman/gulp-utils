@@ -51,14 +51,13 @@ function init() {
             });
             avcdProject.parse({
                 done: function (colors, fonts) {
-                    // var ansiColors = require('ansi-256-colors'),
-                    //     c2xterm = require('color2xterm'),
-                    //     clc = require('cli-color'),
-                    //     prompt = require('prompt'),
-                    //     colors = require('colors');
-
-
-                    fs.writeFile(path.resolve(process.cwd(), 'tmp/avcd.colors.parsed.json'),
+                    var tempPath = path.resolve(process.cwd(), 'tmp/');
+                    try{
+                        fs.mkdirSync(tempPath);
+                    } catch(e){
+                        // ignore if folder exists
+                    }
+                    fs.writeFile(path.resolve(tempPath, 'avcd.colors.parsed.json'),
                         JSON.stringify(colors),
                         {encoding: 'utf8'},
                         function (err) {
@@ -66,7 +65,7 @@ function init() {
                                 reject();
                             } else {
 
-                                fs.writeFile(path.resolve(process.cwd(), 'tmp/avcd.fonts.parsed.json'),
+                                fs.writeFile(path.resolve(tempPath, 'avcd.fonts.parsed.json'),
                                     JSON.stringify(fonts),
                                     {encoding: 'utf8'},
                                     function (err) {
