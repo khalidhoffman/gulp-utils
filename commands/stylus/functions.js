@@ -2,8 +2,6 @@ var _ = require('lodash'),
 
     cache = {};
 
-
-function initStylusFunctions(style) {
     function buildKeyFromProp(prop) {
         return sanitizeProp(prop['val']);
     }
@@ -39,12 +37,13 @@ function initStylusFunctions(style) {
         return arguments[0];
     }
 
+function initStylusFunctions(style) {
     style.define('cacheSave', cacheSave);
     style.define('debugLog', debugLog);
     style.define('logger', debugLog);
     style.define('cacheLoad', cacheLoad);
     style.define('toLowerCase', toLowerCase);
-};
+}
 
 
 module.exports = {

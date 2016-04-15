@@ -80,7 +80,7 @@ function Avocode(projectIdentifier, options) {
             ],
             replaces: [
                 {
-                    value: "([0-9]+)px",
+                    value: "([0-9]+\.?[0-9]*)px",
                     name: "em-auto($1px)",
                     type: "replace"
                 }
