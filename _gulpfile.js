@@ -14,6 +14,7 @@ gulp.task('auto', function(){
     gulp.watch(path.join(paths.js, '/**/*.jade'), ['jade-js']);
     gulp.watch(path.join(paths.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
     gulp.watch(path.join(paths.sass, '/**/*.scss'), ['sass']);
+    gulp.watch(path.join(paths.stylus, '/**/*.styl'), ['stylus']);
     //gulp.watch(cssConfigPath, ['build-json']);
     gulpModule('project/chrome-sync').start();
 });
