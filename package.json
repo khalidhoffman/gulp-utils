@@ -42,6 +42,7 @@
     "onecolor": "^3.0.1",
     "postcss": "^5.0.19",
     "prompt": "^1.0.0",
+    "pug-code-gen": "0.0.7",
     "pug-lexer": "^1.0.1",
     "pug-parser": "^1.0.0",
     "pug-walk": "0.0.3",
