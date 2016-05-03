@@ -34,7 +34,7 @@ gulp.task('stylus', gulpModule('stylus').compile);
 
 // Jade tasks
 
-gulp.task('jade-2-sass', gulpModule('sass').jade2Sass);
+gulp.task('jade-2-stylus', gulpModule('stylus').jade2Stylus);
 
 gulp.task('jade-js', gulpModule('jade').js);
 

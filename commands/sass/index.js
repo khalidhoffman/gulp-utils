@@ -49,6 +49,5 @@ function debugSass(done) {
 module.exports = {
     debug: debugSass,
     compile: compileSass,
-    compass : require('./compass'),
-    jade2Sass : require('./jade-2-sass')
+    compass : require('./compass')
 };

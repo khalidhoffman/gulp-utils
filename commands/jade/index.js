@@ -1,4 +1,5 @@
 var path = require('path'),
+    util = require('util'),
 
     through2 = require('through2'),
     gulp = require('gulp'),
@@ -45,6 +46,9 @@ function compileJadePHP() {
     return gulp.src(jadePHPGlob)
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
+            locals : {
+                util : util
+            },
             jade: customJade
         }))
         .on('error', project.onError)

@@ -102,5 +102,6 @@ function compileStylus(done) {
 }
 
 module.exports = {
-    compile: compileStylus
+    compile: compileStylus,
+    jade2Stylus : require('./jade-2-stylus')
 };
