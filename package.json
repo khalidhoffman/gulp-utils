@@ -8,7 +8,7 @@
   "main": "./index.html",
   "scripts": {
     "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json",
-    "postinstall": "cp ./_gulpfile.js ../gulpfile.js; sed -i 's/\\.\\/commands/\\.\\/gulp-utils\\/commands/g' ../gulpfile.js"
+    "setup": "cp ./_gulpfile.js ../gulpfile.js; sed -i 's/\\.\\/commands/\\.\\/gulp-utils\\/commands/g' ../gulpfile.js"
   },
   "dependencies": {
     "ansi-256-colors": "^1.1.0",
