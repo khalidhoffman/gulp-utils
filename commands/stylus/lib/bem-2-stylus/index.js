@@ -33,7 +33,7 @@ function bem2Stylus(data, callback) {
             var childrenSelectors,
                 iterationCount = 0;
             _.forEachRight(bemNode.modifiers, function(className, index, collection) {
-                childrenSelectors = util.format('\n%s^[-2..-2]', tab(2 + level));
+                childrenSelectors = util.format('\n%s& ^[-2..-2]', tab(2 + level));
                 if (bemNode.elements.length === 0) childrenSelectors += util.format("\n%sempty()", tab(3 + level));
                 _.forEachRight(bemNode.elements, function(childClassName, index, collection) {
                     childrenSelectors += util.format('\n%s\&__%s\n%sempty()', tab(3 + level), childClassName, tab(4 + level));

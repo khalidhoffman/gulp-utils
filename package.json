@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/khalidhoffman/gulp-utils.git"
@@ -53,6 +53,5 @@
     "stylus-type-utils": "0.0.3",
     "through2": "^2.0.0",
     "yargs": "^3.25.0"
-  },
-  "devDependencies": {}
+  }
 }
