@@ -10,7 +10,7 @@ var util = require('util'),
     config = require('../project').config,
     AvocodeProject = require('../../avocode-helper'),
 
-    defaultDocsPath = path.resolve(process.env.HOME, '.avcd/userdata/112895/documents/'),
+    defaultDocsPath = path.resolve(process.env.HOME, '.avocode/userdata/25347/documents/'),
     defaultProjectName = config.avocodeSelector;
 
 function init() {
@@ -46,9 +46,7 @@ function init() {
 
         function initAvocode(projectName, docsPath) {
             console.log('loading %s @ %s', projectName, docsPath);
-            var avcdProject = new AvocodeProject(projectName.toString(), {
-                documentsPath: docsPath
-            });
+            var avcdProject = new AvocodeProject(projectName.toString());
             avcdProject.parse({
                 done: function (colors, fonts) {
                     var tempPath = path.resolve(process.cwd(), 'tmp/');

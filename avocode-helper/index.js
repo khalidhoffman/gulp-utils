@@ -36,31 +36,43 @@ function recurseSearch(obj, options) {
 /**
  *
  * @param {String|RegExp} projectIdentifier
- * @param {Object} options
+ * @param {Object} [options]
  * @param {Object} options.documentsPath
  * @constructor
  */
 function Avocode(projectIdentifier, options) {
     var self = this,
         _avcdOptions = _.extend({
-            documentsPath: path.resolve(process.env.HOME, '.avcd/userdata/112895/documents/')
+            documentsPath: (function () {
+                var state = JSON.parse(fs.readFileSync(path.resolve(process.env.HOME, '.avocode/state.json')));
+
+                return path.resolve(process.env.HOME, util.format('.avocode/userdata/%s/documents/', state['user']['id']));
+            })()
         }, options);
     this.state = {
         allFilesParsed: false
     };
     this.data = {
         _colorCount: {},
-        currentProjectIndex: -1,
+        project : {
+            index : -1,
+            id : -1
+        },
         colors: []
     };
     this.config = {
-        projectsNamespace: 'packageStates.@avocode/core.user.projects',
+        namespaces : {
+            project : {
+                settings : 'project_settings',
+                read : 'user_data.projects'
+            }
+        },
         backup: {
             filename: 'avocode.config.json',
             dir: path.resolve(__dirname, '.cache')
         },
         state: {
-            path: path.resolve(process.env.HOME, '.avcd/storage/state.json')
+            path: path.resolve(process.env.HOME, '.avocode/state.json')
         },
         documents: {
             path: _avcdOptions.documentsPath
@@ -89,7 +101,6 @@ function Avocode(projectIdentifier, options) {
     };
 
     this._stateLocation = this.config.state.path;
-    this._backupDir = this.config.backup.dir;
     this._backupPath = path.resolve(this.config.backup.dir, this.config.backup.filename);
     this._selector = projectIdentifier;
 
@@ -104,10 +115,9 @@ function Avocode(projectIdentifier, options) {
     //     })
     // });
 
-    this._defaultSettings = this.config.defaults;
     this.state = JSON.parse(fs.readFileSync(this._stateLocation, {encoding: 'utf8'}));
-    this.projects = _.result(this.state, self.config.projectsNamespace);
-    this._currentProject = _.find(this.projects, function (project, index, collection) {
+    this.projects = _.result(this.state, self.config.namespaces.project.read);
+    this._project = _.find(this.projects, function (project, index, collection) {
         if (_.isRegExp(self._selector) ?
                 (self._selector.test(project['slug']) ||
                 self._selector.test(project['name']))
@@ -115,7 +125,8 @@ function Avocode(projectIdentifier, options) {
                 (project['slug'].toLowerCase().indexOf(self._selector.toLowerCase()) >= 0 ||
                 project['name'].toLowerCase().indexOf(self._selector.toLowerCase()) >= 0)
         ) {
-            self.data.currentProjectIndex = index;
+            self.data.project.index = index;
+            self.data.project.id = project['id'];
             return true;
         }
         return false;
@@ -134,38 +145,55 @@ function Avocode(projectIdentifier, options) {
             colorNamer = require('color-namer'),
             c2xterm = require('color2xterm');
 
-        async.forEachOf(self._currentProject['documents'],
-            function each(docMeta, index, done) {
-                fs.readFile(path.resolve(self.config.documents.path, docMeta['latest_revision'], 'data.json'), {encoding: 'utf8'}, function(err, docJSON){
-                    if (err){
-                        console.log("%s/%s - ignoring '%s'", index + 1, self._currentProject['documents'].length, err.path);
-                        done();
-                        return;
-                    }
-                    var docData = JSON.parse(docJSON);
-                    recurseSearch(docData, {
-                        each: function (value, key) {
-                            switch (key) {
-                                case 'color':
-                                    var newColor = color(util.format('rgba(%s, %s, %s)', value['r'], value['g'], value['b']));
-                                    colors.push({
-                                        hex: newColor.hex(),
-                                        rgba: value,
-                                        safe: parseInt(c2xterm.hex2xterm(newColor.hex())),
-                                        name: colorNamer(newColor.hex()).ntc[0]
-                                    });
-                                    break;
-                                case 'font':
-                                    fonts.push(value);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    });
-                    console.log('%s/%s - doc parsed', index + 1, self._currentProject['documents'].length);
+        /**
+         *
+         * @param {String} docPath
+         * @param {Function} done
+         * @private
+         */
+        function _parseDoc(docPath, done) {
+            fs.readFile(docPath, {encoding: 'utf8'}, function (err, docJSON) {
+                if (err) {
+                    console.log("ignoring '%s'", err.path);
                     done();
+                    return;
+                }
+                var docData = JSON.parse(docJSON);
+                recurseSearch(docData, {
+                    each: function (value, key) {
+                        switch (key) {
+                            case 'color':
+                                var newColor = color(util.format('rgba(%s, %s, %s)', value['r'], value['g'], value['b']));
+                                colors.push({
+                                    hex: newColor.hex(),
+                                    rgba: value,
+                                    safe: parseInt(c2xterm.hex2xterm(newColor.hex())),
+                                    name: colorNamer(newColor.hex()).ntc[0]
+                                });
+                                break;
+                            case 'font':
+                                fonts.push(value);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 });
+                done();
+            });
+        }
+
+        async.forEachOf(self._project['design_groups'],
+            function each(docMeta, index, done) {
+                async.forEachOf(docMeta['designs'],
+                    function perDoc(singleDocMeta, docIndex, onDoneWithSingleDoc) {
+                        _parseDoc(path.resolve(self.config.documents.path, singleDocMeta['latest_revision_id'], 'data.json'), function(){
+                            console.log('%s/%s - design groups parsed', index + 1, self._project['design_groups'].length);
+                            onDoneWithSingleDoc();
+                        })
+                    }, function onDoneWithGroup() {
+                        done();
+                    })
             },
 
             function onDone() {
@@ -243,8 +271,8 @@ function Avocode(projectIdentifier, options) {
     this.save = function (done, options) {
         var _options = _.extend({}, options),
             _writePath = this._stateLocation || path.resolve(process.cwd(), 'state.json');
-        this.data.settings = _.toArray(_.union(this._defaultSettings.colors, this.data.colors, this._defaultSettings.replaces, this.data.fonts));
-        var _settingsPath = util.format('%s[%d].settings.variables', self.config.projectsNamespace, self.data.currentProjectIndex);
+        this.data.settings = _.toArray(_.union(this.config.defaults.colors, this.data.colors, this.config.defaults.replaces, this.data.fonts));
+        var _settingsPath = util.format('%s.%s.variables', self.config.namespaces.project.settings, self.data.project.id);
         if (done) {
             fs.readFile(this._stateLocation, {encoding: 'utf8'}, function (readErr, stateStr) {
                 self.state = JSON.parse(stateStr);
