@@ -1,6 +1,7 @@
 var fs = require('fs'),
     path = require('path'),
     glob = require('glob'),
+    async = require('async'),
     _ = require('lodash'),
 
     config = require('./config'),
@@ -13,8 +14,9 @@ function updateReferences(options) {
     }, options);
 
     var themeFilesGlobRegex = path.join(paths.assetsBasePath, '/**/*');
+    
     glob(themeFilesGlobRegex, function (err, files) {
-        _.forEachRight(files, function (filePath, index, arr) {
+        async.each(files, function each(filePath, done) {
             // executes on each file path
             fs.readFile(filePath, function (err, data) {
                 var fileContent = String(data);
@@ -22,10 +24,12 @@ function updateReferences(options) {
                     fs.writeFile(filePath, fileContent.replace(_options.defaultProjectNamespaceRegex, config.projectName), function (err) {
                         if (err) throw err;
                         console.log('updated %s', filePath);
-                        if(_options.done) _options.done.apply(_options.context, [filePath]);
+                        done();
                     });
                 }
             });
+        }, function complete(){
+            if(_options.done) _options.done.apply(_options.context, [filePath]);
         });
     });
 }

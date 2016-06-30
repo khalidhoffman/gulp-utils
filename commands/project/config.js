@@ -3,7 +3,7 @@ var path = require('path'),
 
     config = (function(){
         try {
-            var configStr = fs.readFileSync(path.resolve(process.cwd(), 'dp-project.config'));
+            var configStr = fs.readFileSync(path.resolve(process.cwd(), 'dp-project-config.json'));
             return JSON.parse(configStr);
         } catch(err){
             console.error(err);
