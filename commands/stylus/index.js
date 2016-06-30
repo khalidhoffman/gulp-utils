@@ -53,6 +53,7 @@ function compileStylus(done) {
                         .use(new require('stylus-type-utils')())
                         .import('nib')
                         .import(path.resolve(__dirname, '../../node_modules/stylus-type-utils'))
+                        .import(path.resolve(__dirname, 'lib/stylus/*'))
                         .render(function (err, css) {
                             if (err) {
                                 console.error(err);
