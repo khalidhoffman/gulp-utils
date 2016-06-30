@@ -19,7 +19,7 @@ function StylusBuilder(jadeStr, options) {
                 console.log('%s -> %s', _options.readPath, _options.writePath);
                 if (_options.done) _options.done.apply(_options.context, [err, cssText])
             })
-        });
+        }, {useLib: true});
 }
 
 function jade2Stylus(done) {
