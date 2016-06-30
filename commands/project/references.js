@@ -29,7 +29,7 @@ function updateReferences(options) {
                 }
             });
         }, function complete(){
-            if(_options.done) _options.done.apply(_options.context, [filePath]);
+            if(_options.done) _options.done.apply(_options.context, arguments);
         });
     });
 }

@@ -11,7 +11,7 @@ var path = require('path'),
         }
     })(),
     dbNamePrefix = config.prefix || 'boilerplate_',
-    dbPrefix = config.prefix || 'boilerplate',
+    dbPrefix = config.dbNamePrefix || 'boilerplate',
     avocodeSelector = config.avocodeSelector || 'boilerplate',
     projectName = config.name || 'boilerplate';
 
