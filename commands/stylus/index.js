@@ -77,7 +77,7 @@ function compileStylus(done) {
                                 
                                 fs.writeFile(srcCSSPath, css, {encoding: 'utf8'}, function (err) {
                                     if (err) throw err;
-                                    postcss([precision()])
+                                    postcss([precision(), require('postcss-discard-duplicates')])
                                         .process(css, {from: srcCSSPath, to: prodCSSPath})
                                         .then(function (result) {
                                             if (result.map) fs.writeFileSync(mapCSSPath, result.map);

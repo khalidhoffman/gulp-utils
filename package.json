@@ -41,6 +41,7 @@
     "node-sass": "^3.4.2",
     "onecolor": "^3.0.1",
     "postcss": "^5.0.19",
+    "postcss-discard-duplicates": "^2.0.1",
     "prompt": "^1.0.0",
     "pug-code-gen": "0.0.7",
     "pug-lexer": "^1.0.1",
