@@ -6,7 +6,7 @@ var _ = require('lodash'),
  * @param data
  * @param callback
  * @param [options]
- * @param {Boolean} options.useLib
+ * @param {Boolean} options.useLib whether to use block, element, modifier mixins
  * @returns {*}
  */
 function bem2Stylus(data, callback, options) {
@@ -14,10 +14,10 @@ function bem2Stylus(data, callback, options) {
         useLib: false
     }, options);
 
-    function tab(repeat) {
+    function tab(depth) {
         var _tab = '',
             tabSize = 2;
-        for (var i = 0; i < repeat * tabSize; i++) {
+        for (var i = 0; i < depth * tabSize; i++) {
             _tab += ' ';
         }
         return _tab;
@@ -25,54 +25,61 @@ function bem2Stylus(data, callback, options) {
 
     function render(bemClassList) {
 
-        var parentText = '',
+        var rootText = '',
             text = '',
-            level = 0;
+            selectorDepth = 0;
 
         _.forEach(bemClassList, function(bemNode, className) {
-            var blockSelector = util.format(_options.useLib ? "+block('%s')" : ".%s", className),
-                modifierSelector,
-                elementSelector;
+            var blockSelectorText = util.format(_options.useLib ? "+block('%s')" : ".%s", className),
+                elementSelectorText;
 
-
-            if (level === 0) {
-                parentText += util.format('\n%s', blockSelector);
+            // add block selector
+            if (selectorDepth === 0) {
+                rootText += util.format('\n%s', blockSelectorText);
             } else {
-                text += util.format(_options.useLib ? '\n%s%s\n%sempty()' : '\n%s%s\n%sempty()', tab(level), blockSelector, tab(1 + level));
+                text += util.format(_options.useLib ? '\n%s%s\n%sempty()' : '\n%s%s\n%sempty()', tab(selectorDepth), blockSelectorText, tab(1 + selectorDepth));
             }
 
 
 
+            // add element selectors
             _.forEachRight(bemNode.elements, function(className, index, collection) {
-                elementSelector = util.format( _options.useLib ? "+element('%s')" : "\&__%s", className)
-                text += util.format('\n%s%s\n%sempty()', tab(1 + level), elementSelector, tab(2 + level), tab(1 + level));
+                elementSelectorText = util.format( _options.useLib ? "+element('%s', -1)" : "\&__%s", className);
+                text += util.format('\n%s%s\n%sempty()', tab(1 + selectorDepth), elementSelectorText, tab(2 + selectorDepth), tab(1 + selectorDepth));
             });
 
-            var childrenSelectors,
-                iterationCount = 0;
-            _.forEachRight(bemNode.modifiers, function(className, index, collection) {
+            // add element selectors that are scoped with modifiers
+            var scopedChildrenSelectorText;
 
-                childrenSelectors = util.format(_options.useLib ? '' : '\n%s& ^[-2..-2]', tab(2 + level));
+            _.forEachRight(bemNode.modifiers, function(className, index) {
 
-                if (bemNode.elements.length === 0) childrenSelectors += util.format("\n%sempty()", tab(3 + level));
+                // if not using BEM mixins, add selector to reset `&` selector to block
+                scopedChildrenSelectorText = util.format(_options.useLib ? '' : '\n%s& ^[-2..-2]', tab(2 + selectorDepth));
 
+                // a fix for stylus compilation. selectors without css code cause errors
+                if (bemNode.elements.length === 0) scopedChildrenSelectorText += util.format("\n%sempty()", tab(3 + selectorDepth));
+
+                // build children elements that are scoped by a modifier
                 _.forEachRight(bemNode.elements, function(childClassName, index, collection) {
-                    var modifierElementSelector = util.format( _options.useLib ? "+element('%s')" : "\&__%s", childClassName);
-                    childrenSelectors += util.format('\n%s%s\n%sempty()', tab(3 + level), modifierElementSelector, tab(4 + level));
+                    var scopedChildSelectorText = util.format( _options.useLib ? "+element('%s')" : "\&__%s", childClassName);
+                    scopedChildrenSelectorText += util.format('\n%s%s\n%sempty()', tab(3 + selectorDepth), scopedChildSelectorText, tab(4 + selectorDepth));
                 });
 
-                var elementModifierSelector = util.format( _options.useLib ? "+modifier('%s')" : "\&--%s", className);
-                text += util.format('\n%s%s%s%s', tab(1 + level), elementModifierSelector, (_options.useLib && bemNode.elements.length  > 0) ? "" : util.format("\n%sempty()", tab(2 + level)), childrenSelectors);
+                // join the modifier and children elements
+                var modifierSelectorText = util.format( _options.useLib ? "+modifier('%s')" : "\&--%s", className);
+                text += util.format('\n%s%s%s%s',
+                    tab(1 + selectorDepth),
+                    modifierSelectorText,
+                    (_options.useLib && bemNode.elements.length  > 0) ? "" : util.format("\n%sempty()", tab(2 + selectorDepth)),
+                    scopedChildrenSelectorText);
             });
 
-            // if(level != 0) text += util.format('\n%s',tab(level));
-            level = 1;
+            // we have already processed the root selector. so now the depth will start at 1
+            selectorDepth = 1;
         });
-        var result = parentText + text + '\n';
-        // var Formatter = require('./pretty-styl');
-        // var stylusFormatter = new Formatter('zen');
-        // stylusFormatter.processString(result, function(sassText){
-        // });
+
+        var result = rootText + text + '\n';
+
         callback.call(null, result);
         return result;
     }
