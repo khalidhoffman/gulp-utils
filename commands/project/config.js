@@ -13,12 +13,14 @@ var path = require('path'),
     dbNamePrefix = config.prefix || 'boilerplate_',
     dbPrefix = config.dbNamePrefix || 'boilerplate',
     avocodeSelector = config.avocodeSelector || 'boilerplate',
-    projectName = config.name || 'boilerplate';
+    projectName = config.name || 'boilerplate',
+    pathOverrides = config.paths || [];
 
 module.exports = {
     projectName : projectName,
     prefix: dbPrefix,
     dbNamePrefix: dbNamePrefix,
     avocodeSelector : avocodeSelector,
-    rootDirectory : process.cwd()
+    rootDirectory : process.cwd(),
+    paths : pathOverrides
 };

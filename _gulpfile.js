@@ -24,6 +24,8 @@ gulp.task('babel', gulpModule('babel').compile);
 
 
 // CSS tasks
+gulp.task('less', gulpModule('less').compile);
+
 gulp.task('sass', gulpModule('sass').compile);
 
 gulp.task('sass-debug', gulpModule('sass').debug);

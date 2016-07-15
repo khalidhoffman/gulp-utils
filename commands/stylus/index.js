@@ -61,15 +61,15 @@ function compileStylus(done) {
                             } else {
                                 var filenameMeta = path.parse(filename),
                                     srcCSSPath = path.format({
-                                        dir: path.join(paths.assetsBasePath, 'stylesheets'),
+                                        dir: paths.css,
                                         base: filenameMeta.name + '.src.css'
                                     }),
                                     mapCSSPath = path.format({
-                                        dir: path.join(paths.assetsBasePath, 'stylesheets'),
+                                        dir: paths.css,
                                         base: filenameMeta.name + '.css.map'
                                     }),
                                     prodCSSPath = path.format({
-                                        dir: path.join(paths.assetsBasePath, 'stylesheets'),
+                                        dir: paths.css,
                                         base: filenameMeta.name + '.css'
                                     });
 

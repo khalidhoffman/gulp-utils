@@ -1,0 +1,7 @@
+{
+  "name": "boilerplate",
+  "prefix": "boilerplate",
+  "dbNamePrefix" : "hugoazz_",
+  "avocodeSelector" : "boilerplate",
+  "paths" : {}
+}
