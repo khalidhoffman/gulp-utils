@@ -4,8 +4,8 @@ var path = require('path'),
     through2 = require('through2'),
     gulp = require('gulp'),
     insert = require('gulp-insert'),
-    customJade = require('pug'),
-    jade = require('gulp-jade'),
+    customPug = require('pug'),
+    pug = require('gulp-pug'),
     _ = require('lodash'),
     rename = require('gulp-rename'),
     argv = require('yargs').argv,
@@ -13,51 +13,51 @@ var path = require('path'),
     project = require('../project'),
     paths = require('../paths');
 
-customJade.filters.php = function(text) {
+customPug.filters.php = function(text) {
     return '<?php ' + text + ' ?>';
 };
 
-customJade.filters.ejs = function(text) {
+customPug.filters.ejs = function(text) {
     return '<% ' + text + ' %>';
 };
 
-function compileJadeEJS() {
-    var jadeJSGlob = path.join(paths.js, '/[^(vendors)]*/**/[^_]*.jade');
-    return gulp.src(jadeJSGlob)
+function compilePugEJS() {
+    var pugJSGlob = path.join(paths.js, '/[^(vendors)]*/**/[^_]*.pug');
+    return gulp.src(pugJSGlob)
 	.pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
-        .pipe(jade({
+        .pipe(pug({
             pretty: (argv['pretty']) ? true : false,
             doctype: 'html',
             locals : {
                 util : util,
                 namespace : require('../project').config.projectName
             },
-            jade: customJade,
-            basedir: paths.jade
+            pug: customPug,
+            basedir: paths.pug
         }))
         .on('error', project.onError)
         .pipe(rename({
             extname: ".ejs"
         }))
         .pipe(gulp.dest(paths.js));
-    //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
+    //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
 }
 
-function compileJadeEJSAuto() {
-    gulp.watch(path.join(paths.js, '/**/*.jade'), ['jade-js']);
+function compilePugEJSAuto() {
+    gulp.watch(path.join(paths.js, '/**/*.pug'), ['pug-js']);
 }
 
-function compileJadePHP() {
-    var jadePHPGlob = path.join(paths.jade, '/**/[^_]*.jade');
-    return gulp.src(jadePHPGlob)
+function compilePugPHP() {
+    var pugPHPGlob = path.join(paths.pug, '/**/[^_]*.pug');
+    return gulp.src(pugPHPGlob)
         .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
-        .pipe(jade({
+        .pipe(pug({
             pretty: (argv['pretty']) ? true : false,
             locals : {
                 util : util,
                 namespace : require('../project').config.projectName
             },
-            jade: customJade,
+            pug: customPug,
             basedir : path.resolve('/') 
         }))
         .on('error', project.onError)
@@ -65,20 +65,20 @@ function compileJadePHP() {
             extname: ".php"
         }))
         .pipe(gulp.dest(paths.php));
-    //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
+    //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
 }
 
-function compileJadePHPDebug() {
-    var jadeFilesPattern = path.join(paths.jade, '/**/[^_]*.jade');
-    console.log('Jade: %j', customJade);
-    return gulp.src(jadeFilesPattern)
+function compilePugPHPDebug() {
+    var pugFilesPattern = path.join(paths.pug, '/**/[^_]*.pug');
+    console.log('Pug: %j', customPug);
+    return gulp.src(pugFilesPattern)
         .pipe(through2.obj({
                 allowHalfOpen: false
             },
             function(file, encoding, done) {
 
                 //console.log('chunk.path: %j', chunk.path);
-                var html = customJade.render(file.contents.toString(), {
+                var html = customPug.render(file.contents.toString(), {
                     filename: file.path,
                     pretty: (argv['pretty']) ? true : false
                 });
@@ -93,17 +93,17 @@ function compileJadePHPDebug() {
             extname: ".php"
         }))
         .pipe(gulp.dest(paths.assetsBasePath));
-    //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
+    //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
 }
 
-function compileJadePHPAuto() {
-    gulp.watch(path.join(paths.jade, '/**/*.jade'), ['jade-php']);
+function compilePugPHPAuto() {
+    gulp.watch(path.join(paths.pug, '/**/*.pug'), ['pug-php']);
 }
 
 module.exports = {
-    js : compileJadeEJS,
-    jsAuto : compileJadeEJSAuto,
-    php : compileJadePHP,
-    phpDebug : compileJadePHPDebug,
-    phpAuto : compileJadePHPAuto
+    js : compilePugEJS,
+    jsAuto : compilePugEJSAuto,
+    php : compilePugPHP,
+    phpDebug : compilePugPHPDebug,
+    phpAuto : compilePugPHPAuto
 };

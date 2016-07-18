@@ -10,8 +10,8 @@ var path = require('path'),
 gulp.task('auto', function(){
 
     var paths = gulpModule('paths');
-    gulp.watch(path.join(paths.jade, '/**/*.jade'), ['jade-php']);
-    gulp.watch(path.join(paths.js, '/**/*.jade'), ['jade-js']);
+    gulp.watch(path.join(paths.pug, '/**/*.pug'), ['pug-php']);
+    gulp.watch(path.join(paths.js, '/**/*.pug'), ['pug-js']);
     gulp.watch(path.join(paths.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
     gulp.watch(path.join(paths.sass, '/**/*.scss'), ['sass']);
     gulp.watch(path.join(paths.stylus, '/**/*.styl'), ['stylus']);
@@ -36,18 +36,18 @@ gulp.task('stylus', gulpModule('stylus').compile);
 
 // Jade tasks
 
-gulp.task('jade-2-stylus', gulpModule('stylus').jade2Stylus);
+gulp.task('pug-2-stylus', gulpModule('stylus').pug2Stylus);
 
-gulp.task('jade-js', gulpModule('jade').js);
+gulp.task('pug-js', gulpModule('pug').js);
 
-gulp.task('jade-js-auto', gulpModule('jade').jsAuto);
+gulp.task('pug-js-auto', gulpModule('pug').jsAuto);
 
-gulp.task('jade-php', gulpModule('jade').php);
+gulp.task('pug-php', gulpModule('pug').php);
 
-gulp.task('jade-php-debug', gulpModule('jade').phpDebug);
+gulp.task('pug-php-debug', gulpModule('pug').phpDebug);
 
-gulp.task('jade-php-auto', function(){
-    gulp.watch(path.join(gulpModule('paths').jade, '/**/*.jade'), ['jade-php']);
+gulp.task('pug-php-auto', function(){
+    gulp.watch(path.join(gulpModule('paths').pug, '/**/*.pug'), ['pug-php']);
 });
 
 
