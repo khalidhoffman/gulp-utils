@@ -3,6 +3,7 @@ var path = require('path'),
 
     through2 = require('through2'),
     gulp = require('gulp'),
+    insert = require('gulp-insert'),
     customJade = require('jade'),
     jade = require('gulp-jade'),
     _ = require('lodash'),
@@ -23,17 +24,22 @@ customJade.filters.ejs = function(text) {
 function compileJadeEJS() {
     var jadeJSGlob = path.join(paths.js, '/[^(vendors)]*/**/[^_]*.jade');
     return gulp.src(jadeJSGlob)
+	.pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
             doctype: 'html',
+            locals : {
+                util : util,
+                namespace : require('../project').config.projectName
+            },
             jade: customJade,
-            basedir: path.resolve(__dirname, 'jade/')
+            basedir: paths.jade
         }))
         .on('error', project.onError)
         .pipe(rename({
             extname: ".ejs"
         }))
-        .pipe(gulp.dest('./js/src/'));
+        .pipe(gulp.dest(paths.js));
     //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
 }
 
@@ -44,18 +50,21 @@ function compileJadeEJSAuto() {
 function compileJadePHP() {
     var jadePHPGlob = path.join(paths.jade, '/**/[^_]*.jade');
     return gulp.src(jadePHPGlob)
+        .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
         .pipe(jade({
             pretty: (argv['pretty']) ? true : false,
             locals : {
-                util : util
+                util : util,
+                namespace : require('../project').config.projectName
             },
-            jade: customJade
+            jade: customJade,
+            basedir : path.resolve('/') 
         }))
         .on('error', project.onError)
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(paths.assetsBasePath));
+        .pipe(gulp.dest(paths.php));
     //console.log('Saved php files from '+jadeFilesPattern + ' to '+saveDirectory);
 }
 

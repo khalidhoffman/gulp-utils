@@ -13,5 +13,6 @@ module.exports = {
     sass: path.normalize(config.paths.sass || path.resolve(assetsBasePath, 'sass/')),
     less: path.normalize(config.paths.less || path.resolve(assetsBasePath, 'less/')),
     stylus: path.normalize(config.paths.stylus || path.resolve(assetsBasePath, 'stylus/')),
+    php : path.normalize(config.paths.php || assetsBasePath),
     tmp: path.normalize(config.paths.tmp || path.resolve(config.rootDirectory, 'tmp/'))
 };
