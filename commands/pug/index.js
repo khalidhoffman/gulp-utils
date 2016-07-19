@@ -14,34 +14,35 @@ var path = require('path'),
     project = require('../project'),
     paths = require('../paths');
 
-customPug.filters.php = function(text) {
+customPug.filters.php = function (text) {
     return '<?php ' + text + ' ?>';
 };
 
-customPug.filters.ejs = function(text) {
+customPug.filters.ejs = function (text) {
     return '<% ' + text + ' %>';
 };
 
 function compilePugEJS() {
-    var pugJSGlob = projectUtils.buildGlob(paths.inputs.js, '/[^(vendors)]*/**/[^_]*.pug');
+    var pugJSGlob = projectUtils.buildGlob(paths.inputs.pugjs, '**/[^_]*.pug');
     return gulp.src(pugJSGlob)
-	.pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
+        .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
         .pipe(pug({
             pretty: (argv['pretty']) ? true : false,
             doctype: 'html',
-            locals : {
-                util : util,
-                namespace : require('../project').config.projectName
+            locals: {
+                util: util,
+                namespace: require('../project').config.projectName
             },
             pug: customPug,
-            basedir: paths.outputs.pug
+            basedir: path.resolve('/')
         }))
         .on('error', project.onError)
         .pipe(rename({
             extname: ".ejs"
         }))
-        .pipe(gulp.dest(paths.outputs.js));
-    //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
+        .pipe(gulp.dest(paths.outputs.pugjs || function (file) {
+                return file.base;
+            }));
 }
 
 function compilePugEJSAuto() {
@@ -54,12 +55,12 @@ function compilePugPHP() {
         .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
         .pipe(pug({
             pretty: (argv['pretty']) ? true : false,
-            locals : {
-                util : util,
-                namespace : require('../project').config.projectName
+            locals: {
+                util: util,
+                namespace: require('../project').config.projectName
             },
             pug: customPug,
-            basedir : path.resolve('/') 
+            basedir: path.resolve('/')
         }))
         .on('error', project.onError)
         .pipe(rename({
@@ -76,7 +77,7 @@ function compilePugPHPDebug() {
         .pipe(through2.obj({
                 allowHalfOpen: false
             },
-            function(file, encoding, done) {
+            function (file, encoding, done) {
 
                 //console.log('chunk.path: %j', chunk.path);
                 var html = customPug.render(file.contents.toString(), {
@@ -102,9 +103,9 @@ function compilePugPHPAuto() {
 }
 
 module.exports = {
-    js : compilePugEJS,
-    jsAuto : compilePugEJSAuto,
-    php : compilePugPHP,
-    phpDebug : compilePugPHPDebug,
-    phpAuto : compilePugPHPAuto
+    js: compilePugEJS,
+    jsAuto: compilePugEJSAuto,
+    php: compilePugPHP,
+    phpDebug: compilePugPHPDebug,
+    phpAuto: compilePugPHPAuto
 };

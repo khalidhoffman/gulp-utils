@@ -1,7 +1,8 @@
 var fs = require('fs'),
     path = require('path'),
     util = require('util'),
-    
+
+    async = require('async'),
     glob = require('glob'),
     stylus = require('stylus'),
     _ = require('lodash'),
@@ -35,75 +36,79 @@ var precision = postcss.plugin('postcss-precision', function () {
     };
 });
 
-function compileStylus(done) {
-    var stylusFunctions = require('./functions').hookFunc;
+function compileStylus(onCompilationComplete) {
+    var stylusFunctions = require('./functions').hookFunc,
+        stylusGlob = projectUtils.buildGlob(paths.inputs.stylus, '**/!(_)*.styl');
 
-
-    glob(projectUtils.buildGlob(paths.inputs.stylus, '**/!(_)*.styl'), function (err, files) {
-        _.forEach(files, function (filename, index) {
-            // console.log('stylus - rendering %s', filename);
-            fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
-                if (err) {
-                    console.error(err);
-                    done();
-                } else {
-                    stylus(str)
-                        .set('filename', filename)
-                        .use(stylusFunctions)
-                        .use(require('nib')())
-                        .use(new require('stylus-type-utils')())
-                        .import('nib')
-                        .import(path.resolve(__dirname, '../../node_modules/stylus-type-utils'))
-                        .import(path.resolve(__dirname, 'lib/stylus/*'))
-                        .render(function (err, css) {
-                            if (err) {
-                                console.error(err);
-                                done();
-                            } else {
-                                var filenameMeta = path.parse(filename),
-                                    srcCSSPath = path.format({
-                                        dir: paths.outputs.css,
-                                        base: filenameMeta.name + '.src.css'
-                                    }),
-                                    mapCSSPath = path.format({
-                                        dir: paths.outputs.css,
-                                        base: filenameMeta.name + '.css.map'
-                                    }),
-                                    prodCSSPath = path.format({
-                                        dir: paths.outputs.css,
-                                        base: filenameMeta.name + '.css'
-                                    });
-
-                                // console.log("stylus - %s -> %s", srcCSSPath, prodCSSPath);
-                                
-                                fs.writeFile(srcCSSPath, css, {encoding: 'utf8'}, function (err) {
-                                    if (err) throw err;
-                                    postcss([precision(), require('postcss-discard-duplicates')])
-                                        .process(css, {from: srcCSSPath, to: prodCSSPath})
-                                        .then(function (result) {
-                                            if (result.map) fs.writeFileSync(mapCSSPath, result.map);
-
-                                            fs.writeFile(prodCSSPath, result.css, {encoding: 'utf8'}, function (err) {
-                                                if (err) throw err;
-                                                console.log("stylus - successfully saved %s", prodCSSPath);
-                                                done();
-                                            })
-                                        })
-                                        .catch(function (error) {
-                                            console.error(error);
+    glob(stylusGlob, function (err, files) {
+        if (err) return onCompilationComplete();
+        async.each(files, function each(filename, done) {
+                fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
+                    if (err) {
+                        console.error(err);
+                        done();
+                    } else {
+                        console.log('stylus - rendering %s', filename);
+                        stylus(str)
+                            .set('filename', filename)
+                            .use(stylusFunctions)
+                            .use(require('nib')())
+                            .use(new require('stylus-type-utils')())
+                            .import('nib')
+                            .import(path.resolve(__dirname, '../../node_modules/stylus-type-utils'))
+                            .import(path.resolve(__dirname, 'lib/stylus/*'))
+                            .render(function (err, css) {
+                                if (err) {
+                                    console.error(err);
                                     done();
+                                } else {
+                                    var filenameMeta = path.parse(filename),
+                                        srcCSSPath = path.format({
+                                            dir: paths.outputs.css,
+                                            base: filenameMeta.name + '.src.css'
+                                        }),
+                                        mapCSSPath = path.format({
+                                            dir: paths.outputs.css,
+                                            base: filenameMeta.name + '.css.map'
+                                        }),
+                                        prodCSSPath = path.format({
+                                            dir: paths.outputs.css,
+                                            base: filenameMeta.name + '.css'
                                         });
-                                })
-                            }
-                        });
-                }
 
+                                    // console.log("stylus - %s -> %s", srcCSSPath, prodCSSPath);
+
+                                    fs.writeFile(srcCSSPath, css, {encoding: 'utf8'}, function (err) {
+                                        if (err) throw err;
+                                        postcss([precision(), require('postcss-discard-duplicates')])
+                                            .process(css, {from: srcCSSPath, to: prodCSSPath})
+                                            .then(function (result) {
+                                                if (result.map) fs.writeFileSync(mapCSSPath, result.map);
+
+                                                fs.writeFile(prodCSSPath, result.css, {encoding: 'utf8'}, function (err) {
+                                                    if (err) throw err;
+                                                    console.log("stylus - successfully saved %s", prodCSSPath);
+                                                    done();
+                                                })
+                                            })
+                                            .catch(function (error) {
+                                                console.error(error);
+                                                done();
+                                            });
+                                    })
+                                }
+                            });
+                    }
+
+                })
+            },
+            function complete() {
+                onCompilationComplete();
             })
-        })
     })
 }
 
 module.exports = {
     compile: compileStylus,
-    jade2Stylus : require('./jade-2-stylus')
+    jade2Stylus: require('./jade-2-stylus')
 };
