@@ -16,38 +16,15 @@ function initProject(onInitializationComplete) {
     var wordpress = require('../wordpress'),
         submodules = [];
 
+    fs.readFile(path.resolve(config.rootDirectory, '.gitmodules'), {encoding: 'utf8'}, function (err, content) {
+        var submoduleContentPathRegex = /path\s=\s([^\s]+)\n/g,
+            submoduleLinePathRegex = /path\s=\s([^\s]+)\n/;
 
-    function updateRefs() {
-
-        require('./references').update({
-            done: function () {
-                require('../wordpress').init();
-                if (onInitializationComplete) onInitializationComplete.apply();
-            }
+        submodules = content.match(submoduleContentPathRegex).map(function (str) {
+            return path.resolve(config.rootDirectory, submoduleLinePathRegex.exec(str)[1]);
         });
-    }
-
-    function updateGitSubmodules() {
-        async.eachSeries(submodules, function each(submodulePath, done) {
-            var gitProcess = require('child_process').exec,
-                newSubmodulePath = submodulePath.replace('dp-boilerplate', 'dp-' + config.projectName),
-                gitCommand = util.format("git mv %s %s", submodulePath, newSubmodulePath);
-            if(submodulePath != newSubmodulePath){
-                console.log("executing '%s'", gitCommand);
-                gitProcess(gitCommand, function (err, stdout, stderr) {
-                    if (err) throw err;
-                    console.log(stdout);
-                    if (stderr) console.error(stderr);
-                    done();
-                });
-            } else {
-                console.log('ignoring move of git submodule %s', newSubmodulePath);
-                done();
-            }
-        }, function complete(err) {
-            updateRefs();
-        });
-    }
+        createNewTheme();
+    });
 
     function createNewTheme() {
 
@@ -73,15 +50,38 @@ function initProject(onInitializationComplete) {
             });
     }
 
-    fs.readFile(path.resolve(config.rootDirectory, '.gitmodules'), {encoding: 'utf8'}, function (err, content) {
-        var submoduleContentPathRegex = /path\s=\s([^\s]+)\n/g,
-            submoduleLinePathRegex = /path\s=\s([^\s]+)\n/;
-
-        submodules = content.match(submoduleContentPathRegex).map(function (str) {
-            return path.resolve(config.rootDirectory, submoduleLinePathRegex.exec(str)[1]);
+    function updateGitSubmodules() {
+        async.eachSeries(submodules, function each(submodulePath, done) {
+            var gitProcess = require('child_process').exec,
+                newSubmodulePath = submodulePath.replace('dp-boilerplate', 'dp-' + config.projectName),
+                gitCommand = util.format("git mv %s %s", submodulePath, newSubmodulePath);
+            if(submodulePath != newSubmodulePath){
+                console.log("executing '%s'", gitCommand);
+                gitProcess(gitCommand, function (err, stdout, stderr) {
+                    if (err) throw err;
+                    console.log(stdout);
+                    if (stderr) console.error(stderr);
+                    done();
+                });
+            } else {
+                console.log('ignoring move of git submodule %s', newSubmodulePath);
+                done();
+            }
+        }, function complete(err) {
+            updateRefs();
         });
-        createNewTheme();
-    });
+    }
+
+
+    function updateRefs() {
+
+        require('./references').update({
+            done: function () {
+                require('../wordpress').init();
+                if (onInitializationComplete) onInitializationComplete.apply();
+            }
+        });
+    }
 
 }
 
