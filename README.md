@@ -1,6 +1,10 @@
 # gulp-utils [![Build Status](https://travis-ci.org/khalidhoffman/gulp-utils.svg?branch=master)](https://travis-ci.org/khalidhoffman/gulp-utils)
 A personal dev library for quicker for development
 
+#### How To Use
+Install to root of WordPress site (or any project... eventually). Run `npm run setup` from gulp-utils project folder. This will create a `gulpfile.js` and `dp-project-config.json`
+ in the parent folder. Run `gulp --tasks` to see list of tasks.
+ 
 #### Example Config
 ```
 {
