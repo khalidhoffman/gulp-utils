@@ -29,6 +29,6 @@ var path = require('path'),
         }
     };
 
-console.log(dump(paths));
+// console.log(dump(paths));
 
 module.exports = paths;
