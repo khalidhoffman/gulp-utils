@@ -2,8 +2,11 @@
 A personal dev library for quicker for development
 
 #### How To Use
-Install to root of WordPress site (or any project... eventually). Run `npm run setup` from gulp-utils project folder. This will create a `gulpfile.js` and `dp-project-config.json`
- in the parent folder. Run `gulp --tasks` to see list of tasks.
+1. `npm init` in root folder of WordPress site (or any project... eventually)
+2. `git clone https://github.com/khalidhoffman/gulp-utils.git` in root of WordPress site. 
+3. `npm install; npm run setup` in newly created gulp-utils project folder. This will create a `gulpfile.js` and `dp-project-config.json` in the parent/root folder.
+4. `npm i --save gulp` in root folder
+* Run `gulp --tasks` from root folder to see list of tasks.
  
 #### Example Config
 ```
