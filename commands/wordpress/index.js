@@ -6,17 +6,17 @@ var path = require('path'),
     
     config = require('../project').config,
     themeDirectory = path.join(config.rootDirectory, util.format('wp-content/themes/dp-%s', config.projectName)),
-    dbPrefix = config.prefix;
+    dbTablePrefix = config.dbTablePrefix;
 
 function initWPConfig(done) {
     var wpConfigPath = path.resolve(config.rootDirectory, 'wp-config.php');
     fs.readFile(wpConfigPath, function(err, data) {
         var databaseRegex = /database_name_here/,
             saltRegex = /\/\/SALT_KEYS_HERE/,
-            prefixRegex = /prefix_/,
+            tablePrefixRegex = /prefix_/,
             saltContent = String(data);
         saltContent = saltContent.replace(databaseRegex, config.dbNamePrefix + config.projectName.toLocaleLowerCase());
-        saltContent = saltContent.replace(prefixRegex, dbPrefix + '_');
+        saltContent = saltContent.replace(tablePrefixRegex, dbTablePrefix + '_');
         request({
             url: 'https://api.wordpress.org/secret-key/1.1/salt/',
             method: 'GET'
@@ -40,7 +40,6 @@ function initWPConfig(done) {
 
 module.exports = {
     root: config.rootDirectory,
-    dbPrefix: dbPrefix,
     theme: {
         path: themeDirectory
     },

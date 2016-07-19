@@ -10,6 +10,7 @@ var path = require('path'),
     rename = require('gulp-rename'),
     argv = require('yargs').argv,
 
+    projectUtils = require('../utils'),
     project = require('../project'),
     paths = require('../paths');
 
@@ -22,7 +23,7 @@ customPug.filters.ejs = function(text) {
 };
 
 function compilePugEJS() {
-    var pugJSGlob = path.join(paths.js, '/[^(vendors)]*/**/[^_]*.pug');
+    var pugJSGlob = projectUtils.buildGlob(paths.inputs.js, '/[^(vendors)]*/**/[^_]*.pug');
     return gulp.src(pugJSGlob)
 	.pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
         .pipe(pug({
@@ -33,22 +34,22 @@ function compilePugEJS() {
                 namespace : require('../project').config.projectName
             },
             pug: customPug,
-            basedir: paths.pug
+            basedir: paths.outputs.pug
         }))
         .on('error', project.onError)
         .pipe(rename({
             extname: ".ejs"
         }))
-        .pipe(gulp.dest(paths.js));
+        .pipe(gulp.dest(paths.outputs.js));
     //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
 }
 
 function compilePugEJSAuto() {
-    gulp.watch(path.join(paths.js, '/**/*.pug'), ['pug-js']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '/**/*.pug'), ['pug-js']);
 }
 
 function compilePugPHP() {
-    var pugPHPGlob = path.join(paths.pug, '/**/[^_]*.pug');
+    var pugPHPGlob = projectUtils.buildGlob(paths.inputs.pug, '/**/[^_]*.pug');
     return gulp.src(pugPHPGlob)
         .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
         .pipe(pug({
@@ -64,12 +65,12 @@ function compilePugPHP() {
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(paths.php));
+        .pipe(gulp.dest(paths.outputs.php));
     //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
 }
 
 function compilePugPHPDebug() {
-    var pugFilesPattern = path.join(paths.pug, '/**/[^_]*.pug');
+    var pugFilesPattern = projectUtils.buildGlob(paths.inputs.pug, '/**/[^_]*.pug');
     console.log('Pug: %j', customPug);
     return gulp.src(pugFilesPattern)
         .pipe(through2.obj({
@@ -92,12 +93,12 @@ function compilePugPHPDebug() {
         .pipe(rename({
             extname: ".php"
         }))
-        .pipe(gulp.dest(paths.assetsBasePath));
+        .pipe(gulp.dest(paths.outpus.php));
     //console.log('Saved php files from '+pugFilesPattern + ' to '+saveDirectory);
 }
 
 function compilePugPHPAuto() {
-    gulp.watch(path.join(paths.pug, '/**/*.pug'), ['pug-php']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.pug, '/**/*.pug'), ['pug-php']);
 }
 
 module.exports = {

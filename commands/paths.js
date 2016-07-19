@@ -1,18 +1,34 @@
 var path = require('path'),
-    
+
+    _ = require('lodash'),
+
     wordpress = require('./wordpress'),
+    dump = require('../dump'),
     config = require('./project').config,
 
-    assetsBasePath = path.normalize(config.paths.assestsBasePath || wordpress.theme.path);
+    joinArrays = _.union, // in case we need to override with custom function
 
-module.exports = {
-    assetsBasePath: assetsBasePath,
-    css: path.normalize(config.paths.css || path.resolve(assetsBasePath, 'stylesheets/')),
-    pug: path.normalize(config.paths.pug || path.resolve(assetsBasePath, 'pug/')),
-    js: path.normalize(config.paths.js || path.resolve(assetsBasePath, 'js/src/')),
-    sass: path.normalize(config.paths.sass || path.resolve(assetsBasePath, 'sass/')),
-    less: path.normalize(config.paths.less || path.resolve(assetsBasePath, 'less/')),
-    stylus: path.normalize(config.paths.stylus || path.resolve(assetsBasePath, 'stylus/')),
-    php : path.normalize(config.paths.php || assetsBasePath),
-    tmp: path.normalize(config.paths.tmp || path.resolve(config.rootDirectory, 'tmp/'))
-};
+    basePath = path.normalize(config.paths.basePath || wordpress.theme.path),
+    paths = {
+        basePath: basePath,
+        inputs: {
+            pug: joinArrays(config.paths.inputs.pug, [path.resolve(basePath, 'pug/')]),
+            pugjs: joinArrays(config.paths.inputs.pugjs, [path.resolve(basePath, 'js/src/modules/views/html/')]),
+            js: joinArrays(config.paths.inputs.js, [path.resolve(basePath, 'js/src/')]),
+            jsx: joinArrays(config.paths.inputs.jsx, [path.resolve(basePath, 'js/src/')]),
+            sass: joinArrays(config.paths.inputs.sass, [path.resolve(basePath, 'sass/')]),
+            less: joinArrays(config.paths.inputs.less, [path.resolve(basePath, 'less/')]),
+            stylus: joinArrays(config.paths.inputs.stylus, [path.resolve(basePath, 'stylus/')])
+        },
+        outputs: {
+            pugjs : config.paths.outputs.pugjs || path.resolve(basePath, 'js/src/modules/views/html/'),
+            php : config.paths.outputs.php || basePath,
+            js : config.paths.outputs.js || path.resolve(basePath, 'js/'),
+            css : config.paths.outputs.css || path.resolve(basePath, 'stylesheets/'),
+            tmp : config.paths.tmp || path.resolve(config.rootDirectory, 'tmp/')
+        }
+    };
+
+console.log(dump(paths));
+
+module.exports = paths;

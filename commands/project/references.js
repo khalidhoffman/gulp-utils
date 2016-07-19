@@ -13,7 +13,7 @@ function updateReferences(options) {
         defaultProjectNamespaceRegex: /boilerplate/gi
     }, options);
 
-    var themeFilesGlobRegex = path.join(paths.assetsBasePath, '/**/*');
+    var themeFilesGlobRegex = path.join(paths.basePath, '/**/*');
     
     glob(themeFilesGlobRegex, function (err, files) {
         async.each(files, function each(filePath, done) {

@@ -6,6 +6,7 @@ var fs = require('fs'),
     prompt = require('prompt'),
     argv = require('yargs').argv,
 
+    projectUtils = require('../utils'),
     paths = require('../paths');
 
 function StylusBuilder(jadeStr, options) {
@@ -24,8 +25,8 @@ function StylusBuilder(jadeStr, options) {
 
 function jade2Stylus(done) {
 
-    console.log("Reading ", paths.jade);
-    glob(path.join(paths.jade, '/**/*.jade'), function (err, fileList) {
+    console.log("Reading ", paths.inputs.jade);
+    glob(projectUtils.buildGlob(paths.inputs.paths.jade, '/**/*.jade'), function (err, fileList) {
         var specifiedFilename = argv['index'];
 
         if (!specifiedFilename) {
@@ -53,7 +54,7 @@ function jade2Stylus(done) {
                         //console.log("checking...", parsedPath);
                         StylusBuilder(jadeText, {
                             readPath: filePath,
-                            writePath: path.resolve(paths.tmp, '_' + filePathMeta.name + '.styl'),
+                            writePath: path.resolve(paths.outputs.tmp, '_' + filePathMeta.name + '.styl'),
                             done: function () {
                                 if (done) done();
                             }

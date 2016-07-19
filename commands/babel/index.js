@@ -3,10 +3,12 @@ var fs = require('fs'),
     glob = require('glob'),
     _ = require('lodash'),
     babel = require('babel-core'),
+
+    projectUtils = require('../utils'),
     paths = require('../paths');
 
 function compile() {
-    var searchPath = path.join(paths.js, './!(node_modules|vendors)/**/*.jsx');
+    var searchPath = projectUtils.buildGlob(paths.inputs.jsx, './!(node_modules|vendors)/**/*.jsx');
     console.log('reading glob: %s', searchPath);
     glob(searchPath, function (err, fileList) {
         var babelOptions = {

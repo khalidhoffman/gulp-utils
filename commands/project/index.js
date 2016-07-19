@@ -8,6 +8,7 @@ var path = require('path'),
     gulp = require('gulp'),
 
     config = require('./config'),
+    projectUtils = require('../utils'),
     dump = require('../../dump');
 
 
@@ -86,10 +87,11 @@ function initProject(onInitializationComplete) {
 
 function watchProject() {
     var paths = require('../paths');
-    gulp.watch(path.join(paths.jade, '/**/*.jade'), ['jade-php']);
-    gulp.watch(path.join(paths.js, '/**/*.jade'), ['jade-js']);
-    gulp.watch(path.join(paths.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
-    gulp.watch(path.join(paths.sass, '/**/*.scss'), ['sass']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.jade, '/**/*.jade'), ['jade-php']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '/**/*.jade'), ['jade-js']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.sass, '/**/*.scss'), ['sass']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.stylus, '/**/*.styl'), ['stylus']);
     //gulp.watch(cssConfigPath, ['build-json']);
     require('./chrome-sync').start();
 }

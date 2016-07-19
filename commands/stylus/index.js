@@ -6,7 +6,8 @@ var fs = require('fs'),
     stylus = require('stylus'),
     _ = require('lodash'),
     postcss = require('postcss'),
-    
+
+    projectUtils = require('../utils'),
     dump = require('../../dump'),
     paths = require('../paths');
 
@@ -38,7 +39,7 @@ function compileStylus(done) {
     var stylusFunctions = require('./functions').hookFunc;
 
 
-    glob(path.join(paths.stylus, '**/!(_)*.styl'), function (err, files) {
+    glob(projectUtils.buildGlob(paths.inputs.stylus, '**/!(_)*.styl'), function (err, files) {
         _.forEach(files, function (filename, index) {
             // console.log('stylus - rendering %s', filename);
             fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
@@ -61,15 +62,15 @@ function compileStylus(done) {
                             } else {
                                 var filenameMeta = path.parse(filename),
                                     srcCSSPath = path.format({
-                                        dir: paths.css,
+                                        dir: paths.outputs.css,
                                         base: filenameMeta.name + '.src.css'
                                     }),
                                     mapCSSPath = path.format({
-                                        dir: paths.css,
+                                        dir: paths.outputs.css,
                                         base: filenameMeta.name + '.css.map'
                                     }),
                                     prodCSSPath = path.format({
-                                        dir: paths.css,
+                                        dir: paths.outputs.css,
                                         base: filenameMeta.name + '.css'
                                     });
 

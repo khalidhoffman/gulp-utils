@@ -6,13 +6,14 @@ var fs = require('fs'),
     less = require('less'),
     async = require('async'),
 
+    projectUtils = require('../utils'),
     project = require('../project'),
     paths = require('../paths'),
 
     mainFileName = 'custom.less';
 
 function compileLess(onComplete) {
-    glob(path.join(paths.less, util.format('**/%s', mainFileName)), function (err, files) {
+    glob(path.join(paths.inputs.less[0], util.format('**/%s', mainFileName)), function (err, files) {
         if (err || files.length == 0) return onComplete(err);
         async.each(files, function each(filename, done) {
             // console.log('less - reading %s', filename);
@@ -24,7 +25,7 @@ function compileLess(onComplete) {
                     // console.log('less - rendering %s', filename);
                     less.render(str,
                         {
-                            paths: [paths.less],  // Specify search paths for @import directives
+                            paths: paths.inputs.less,  // Specify search paths for @import directives
                             filename: mainFileName, // Specify a filename, for better error messages
                             compress: true          // Minify CSS output
                         },
@@ -33,7 +34,7 @@ function compileLess(onComplete) {
                             // console.log('less - compiled %s', filename);
                             var filenameMeta = path.parse(filename),
                                 outputPath = path.format({
-                                    dir: path.normalize(paths.css),
+                                    dir: path.normalize(paths.outputs.css),
                                     base: filenameMeta.name + '.css'
                                 });
                             fs.writeFile(outputPath, output.css, {encoding: 'utf8'}, function (err) {

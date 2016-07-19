@@ -9,12 +9,13 @@ var path = require('path'),
 // dev task that watches and executes appropriate tasks as necessary
 gulp.task('auto', function(){
 
-    var paths = gulpModule('paths');
-    gulp.watch(path.join(paths.pug, '/**/*.pug'), ['pug-php']);
-    gulp.watch(path.join(paths.js, '/**/*.pug'), ['pug-js']);
-    gulp.watch(path.join(paths.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
-    gulp.watch(path.join(paths.sass, '/**/*.scss'), ['sass']);
-    gulp.watch(path.join(paths.stylus, '/**/*.styl'), ['stylus']);
+    var paths = gulpModule('paths'),
+        projectUtils = gulpModule('utils');
+    gulp.watch(projectUtils.buildGlob(paths.inputs.pug, '/**/*.pug'), ['pug-php']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '/**/*.pug'), ['pug-js']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.sass, '/**/*.scss'), ['sass']);
+    gulp.watch(projectUtils.buildGlob(paths.inputs.stylus, '/**/*.styl'), ['stylus']);
     //gulp.watch(cssConfigPath, ['build-json']);
     gulpModule('project/chrome-sync').start();
 });

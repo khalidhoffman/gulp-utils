@@ -10,15 +10,19 @@ var path = require('path'),
             return {};
         }
     })(),
-    dbNamePrefix = config.prefix || 'boilerplate_',
-    dbPrefix = config.dbNamePrefix || 'boilerplate',
+    dbNamePrefix = config.dbNamePrefix || 'boilerplate_',
+    dbTablePrefix = config.dbTablePrefix || 'boilerplate',
     avocodeSelector = config.avocodeSelector || 'boilerplate',
     projectName = config.name || 'boilerplate',
-    pathOverrides = config.paths || [];
+    pathOverrides = {
+        basePath : (config.paths && config.paths.basePath) ? config.paths.basePath : false,
+        inputs : (config.paths && config.paths.inputs) ? config.paths.inputs : [],
+        outputs : (config.paths && config.paths.outputs) ? config.paths.outputs :[]
+    };
 
 module.exports = {
     projectName : projectName,
-    prefix: dbPrefix,
+    dbTablePrefix: dbTablePrefix,
     dbNamePrefix: dbNamePrefix,
     avocodeSelector : avocodeSelector,
     rootDirectory : process.cwd(),

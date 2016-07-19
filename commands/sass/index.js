@@ -5,12 +5,13 @@ var path = require('path'),
     sass = require('gulp-sass'),
     sourcemaps = require('gulp-sourcemaps'),
     libsass = require('node-sass'),
-    
+
+    projectUtils = require('../utils'),
     paths = require('../paths');
 
 function compileSass() {
-    var sassWatchGlobRegex = path.join(paths.sass, '/[!_]*[!(compass)].scss'),
-        includes = [path.resolve(paths.sass, 'external/compass-mixins')],
+    var sassWatchGlobRegex = projectUtils.buildGlob(paths.inputs.sass, '/[!_]*[!(compass)].scss'),
+        includes = [path.resolve(paths.inputs.sass[0], 'external/compass-mixins')],
         SassCache = require('./lib/sass-functions');
 
     SassCache.clear();
@@ -27,12 +28,12 @@ function compileSass() {
         .on('error', function () {
             done();
         })
-        .pipe(gulp.dest(paths.css));
+        .pipe(gulp.dest(paths.outputs.css));
 }
 
 function debugSass(done) {
-    var sassWatchGlobRegex = path.join(paths.sass, 'style.scss'),
-        includes = [path.resolve(paths.sass, './external/compass-mixins')],
+    var sassWatchGlobRegex = projectUtils.buildGlob(paths.inputs.sass, 'style.scss'),
+        includes = [path.resolve(paths.inputs.sass[0], './external/compass-mixins')],
         SassCache = require('./lib/sass-functions');
     console.log('includes:', includes);
 
