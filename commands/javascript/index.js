@@ -48,33 +48,41 @@ function testJS(done) {
 }
 
 function buildJSProduction(done) {
-    var rjsCmd = (require('os').platform() == 'linux') ? 'r.js' : 'r.js.cmd';
     require('./spa-config-builder').build({
         themeDirectory: wordpress.theme.path,
         writeDirectory: path.resolve(paths.inputs.js[0], 'modules/'),
         srcDirectory: path.resolve(paths.inputs.js[0], 'pages/'),
         done: function () {
             fs.readFile(path.resolve(paths.outputs.css, 'config.css'), function (err, data) {
-                if (err) throw err;
-                var JSONRegex = /%(.*)%/,
-                    cssConfigContent = String(data),
-                    cssConfig = cssConfigContent.replace(/\\a|\s/g, ''),
-                    cssConfigJSONStr = JSONRegex.exec(cssConfig)[1],
-                    cssConfigJSONPath = path.resolve(paths.inputs.js[0], "modules/config.json");
+                if (err) {
+                    console.err(err);
+                    bundleJS(done);
+                } else {
+                    var JSONRegex = /%(.*)%/,
+                        cssConfigContent = String(data),
+                        cssConfig = cssConfigContent.replace(/\\a|\s/g, ''),
+                        cssConfigJSONStr = JSONRegex.exec(cssConfig)[1],
+                        cssConfigJSONPath = path.resolve(paths.inputs.js[0], "modules/config.json");
 
-                fs.writeFile(
-                    cssConfigJSONPath,
-                    cssConfigJSONStr,
-                    function (err) {
-                        if (err) throw err;
-                        console.log('successfully saved css config to %s', cssConfigJSONPath);
-                        exec(rjsCmd + ' -o ' + path.resolve(paths.inputs.js[0], 'build.js'), function (err, stdout, stderr) {
-                            console.log('err:\n%s\n\nresults:\n%s\n\nstderr:\n%s', err, stdout, stderr);
-                            if (done) done();
-                        });
-                    })
+                    fs.writeFile(
+                        cssConfigJSONPath,
+                        cssConfigJSONStr,
+                        function (err) {
+                            if (err) throw err;
+                            console.log('successfully saved css config to %s', cssConfigJSONPath);
+                            bundleJS(done);
+                        })
+                }
             });
         }
+    });
+}
+
+function bundleJS(done){
+    var rjsCmd = (require('os').platform() == 'linux') ? 'r.js' : 'r.js.cmd';
+    exec(rjsCmd + ' -o ' + path.resolve(paths.inputs.js[0], 'build.js'), function (err, stdout, stderr) {
+        console.log('err:\n%s\n\nresults:\n%s\n\nstderr:\n%s', err, stdout, stderr);
+        if (done) done();
     });
 }
 
