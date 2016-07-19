@@ -1,6 +1,6 @@
 {
   "name": "boilerplate",
-  "prefix": "boilerplate",
+  "dbTablePrefix": "boilerplate",
   "dbNamePrefix" : "hugoazz_",
   "avocodeSelector" : "boilerplate",
   "paths" : {}
