@@ -55,7 +55,7 @@ function buildJSProduction(done) {
         done: function () {
             fs.readFile(path.resolve(paths.outputs.css, 'config.css'), function (err, data) {
                 if (err) {
-                    console.err(err);
+                    console.error(err);
                     bundleJS(done);
                 } else {
                     var JSONRegex = /%(.*)%/,
