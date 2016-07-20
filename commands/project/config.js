@@ -14,10 +14,11 @@ var path = require('path'),
     dbTablePrefix = config.dbTablePrefix || 'boilerplate',
     avocodeSelector = config.avocodeSelector || 'boilerplate',
     projectName = config.name || 'boilerplate',
-    pathOverrides = {
-        basePath : (config.paths && config.paths.basePath) ? config.paths.basePath : false,
-        inputs : (config.paths && config.paths.inputs) ? config.paths.inputs : [],
-        outputs : (config.paths && config.paths.outputs) ? config.paths.outputs :[]
+    rootDirectory = process.cwd(),
+    basePath = path.normalize(config.basePath || path.resolve(rootDirectory, util.format('wp-content/themes/dp-%s', projectName))),
+    paths = {
+        basePath: basePath,
+        tmp : config.tmp || path.resolve(rootDirectory, 'tmp/')
     };
 
 module.exports = {
@@ -25,6 +26,7 @@ module.exports = {
     dbTablePrefix: dbTablePrefix,
     dbNamePrefix: dbNamePrefix,
     avocodeSelector : avocodeSelector,
-    rootDirectory : process.cwd(),
-    paths : pathOverrides
+    rootDirectory : rootDirectory,
+    paths : paths,
+    raw: config
 };

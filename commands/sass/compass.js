@@ -3,22 +3,29 @@ var path = require('path'),
     compass = require('gulp-compass'),
     config = require('../project').config,
 
-    projectUtils = require('../utils'),
-    paths = require('../paths');
+    project = require('../project');
 
 function compileCompass() {
     var configPath = path.resolve(config.rootDirectory, 'config.rb');
-    return gulp.src(projectUtils.buildGlob(paths.inputs.sass, '/**/[!_]*[(compass)].scss'))
+    async.each(project.tasks.sass, function each(taskMeta, done) {
+
+        return gulp.src(path.join(taskMeta.input, '/**/[!_]*[(compass)].scss'))
         .pipe(compass({
             config_file: configPath,
-            css: paths.outputs.css,
-            sass: paths.inputs.sass[0]
+            css: taskMeta.output,
+            sass: taskMeta.input
         }))
         .on('error', function onError(err) {
             console.log(err);
             this.emit('end');
         })
-        .pipe(gulp.dest(paths.outputs.css));
+        .pipe(gulp.dest(taskMeta.output))
+        .on('end', function(){
+            done();
+        });
+    }, function complete() {
+        onCompilationComplete.apply(null, arguments);
+    });
 };
 
 module.exports = compileCompass;

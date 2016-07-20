@@ -5,7 +5,7 @@ var fs = require('fs'),
     _ = require('lodash'),
 
     config = require('./config'),
-    paths = require('../paths');
+    project = require('../project');
 
 function updateReferences(options) {
     // changes all instances of boilerplate to projectName
@@ -13,7 +13,7 @@ function updateReferences(options) {
         defaultProjectNamespaceRegex: /boilerplate/gi
     }, options);
 
-    var themeFilesGlobRegex = path.join(paths.basePath, '/**/*');
+    var themeFilesGlobRegex = path.join(project.config.paths.basePath, '/**/*');
     
     glob(themeFilesGlobRegex, function (err, files) {
         async.each(files, function each(filePath, done) {

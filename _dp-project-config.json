@@ -3,5 +3,49 @@
   "dbTablePrefix": "boilerplate",
   "dbNamePrefix" : "hugoazz_",
   "avocodeSelector" : "boilerplate",
-  "paths" : {}
+  "tasks" : [
+    {
+      "name" : "pugjs",
+      "input": "js/src/modules/views/html/",
+      "output": "js/src/modules/views/"
+    },
+    {
+      "name" : "pug",
+      "input": "pug/",
+      "output": "./"
+    },
+    {
+      "name" : "js-beautify",
+      "input": "js/src/"
+    },
+    {
+      "name" : "js-config",
+      "input": "js/src/pages/",
+      "output": "js/src/modules/"
+    },
+    {
+      "name" : "js-bundle",
+      "input": "js/src/build.js",
+      "output": "js/"
+    },
+    {
+      "name" : "jsx",
+      "input": "js/src/"
+    },
+    {
+      "name" : "stylus",
+      "input": "stylus/",
+      "output": "stylesheets/"
+    },
+    {
+      "name": "sass",
+      "input": "sass/",
+      "output": "stylesheets/"
+    },
+    {
+      "name": "less",
+      "input": "less/",
+      "output": "stylesheets/"
+    }
+  ]
 }

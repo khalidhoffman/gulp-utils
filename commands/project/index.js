@@ -8,6 +8,7 @@ var path = require('path'),
     gulp = require('gulp'),
 
     config = require('./config'),
+    tasks = require('./tasks'),
     projectUtils = require('../utils'),
     dump = require('../../dump');
 
@@ -85,17 +86,6 @@ function initProject(onInitializationComplete) {
 
 }
 
-function watchProject() {
-    var paths = require('../paths');
-    gulp.watch(projectUtils.buildGlob(paths.inputs.jade, '/**/*.jade'), ['jade-php']);
-    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '/**/*.jade'), ['jade-js']);
-    gulp.watch(projectUtils.buildGlob(paths.inputs.js, '!(node_modules|vendors)/**/*.jsx'), ['babel']);
-    gulp.watch(projectUtils.buildGlob(paths.inputs.sass, '/**/*.scss'), ['sass']);
-    gulp.watch(projectUtils.buildGlob(paths.inputs.stylus, '/**/*.styl'), ['stylus']);
-    //gulp.watch(cssConfigPath, ['build-json']);
-    require('./chrome-sync').start();
-}
-
 function onError(err) {
     console.log(err);
     this.emit('end');
@@ -104,7 +94,7 @@ function onError(err) {
 
 module.exports = {
     init: initProject,
-    auto: watchProject,
     onError: onError,
-    config: config
+    config: config,
+    tasks : tasks
 };

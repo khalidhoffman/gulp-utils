@@ -7,7 +7,7 @@ var fs = require('fs'),
     argv = require('yargs').argv,
 
     projectUtils = require('../utils'),
-    paths = require('../paths');
+    project = require('../project');
 
 function StylusBuilder(jadeStr, options) {
     var _options = _.extend({}, options),
@@ -23,48 +23,52 @@ function StylusBuilder(jadeStr, options) {
         }, {useLib: true});
 }
 
-function jade2Stylus(done) {
+function jade2Stylus(onCompilationComplete) {
 
-    console.log("Reading ", paths.inputs.jade);
-    glob(projectUtils.buildGlob(paths.inputs.paths.jade, '/**/*.jade'), function (err, fileList) {
-        var specifiedFilename = argv['index'];
+    async.each(project.tasks.pug, function each(taskMeta, done){
 
-        if (!specifiedFilename) {
-            prompt.start();
+        glob(path.join(taskMeta.input, '/**/*.pug'), function (err, fileList) {
+            var specifiedFilename = argv['index'];
 
-            prompt.get(['filename'], function (err, result) {
-                //
-                // Log the results.
-                //
-                specifiedFilename = result.filename;
+            if (!specifiedFilename) {
+                prompt.start();
+
+                prompt.get(['filename'], function (err, result) {
+                    //
+                    // Log the results.
+                    //
+                    specifiedFilename = result.filename;
+                    convertJadeFileToStylus(specifiedFilename);
+                });
+            } else {
                 convertJadeFileToStylus(specifiedFilename);
-            });
-        } else {
-            convertJadeFileToStylus(specifiedFilename);
-        }
+            }
 
-        function convertJadeFileToStylus(filename) {
+            function convertJadeFileToStylus(filename) {
 
-            _.forEach(fileList, function (filePath, index, arr) {
-                var filePathMeta = path.parse(filePath);
-                if (filePathMeta.name.indexOf(filename) > -1 || (filename.toLowerCase() == 'all')) {
-                    fs.readFile(filePath, {encoding: 'utf8'}, function (err, jadeText) {
-                        if (err) throw err;
-                        //console.log('reading: ', filePath);
-                        //console.log("checking...", parsedPath);
-                        StylusBuilder(jadeText, {
-                            readPath: filePath,
-                            writePath: path.resolve(paths.outputs.tmp, '_' + filePathMeta.name + '.styl'),
-                            done: function () {
-                                if (done) done();
-                            }
+                _.forEach(fileList, function (filePath, index, arr) {
+                    var filePathMeta = path.parse(filePath);
+                    if (filePathMeta.name.indexOf(filename) > -1 || (filename.toLowerCase() == 'all')) {
+                        fs.readFile(filePath, {encoding: 'utf8'}, function (err, jadeText) {
+                            if (err) throw err;
+                            //console.log('reading: ', filePath);
+                            //console.log("checking...", parsedPath);
+                            StylusBuilder(jadeText, {
+                                readPath: filePath,
+                                writePath: path.resolve(project.config.paths.tmp, '_' + filePathMeta.name + '.styl'),
+                                done: function () {
+                                    if (done) done();
+                                }
+                            });
                         });
-                    });
-                    return false;
-                }
-            });
-            prompt.stop();
-        }
+                        return false;
+                    }
+                });
+                prompt.stop();
+            }
+        });
+    }, function complete(){
+        onCompilationComplete();
     });
 }
 

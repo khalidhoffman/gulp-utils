@@ -5,13 +5,13 @@ var path = require('path'),
     gulp = require('gulp'),
 
     projectUtils = require('../utils'),
-    paths = require('../paths');
+    project = require('../project');
 
 io.on('connection', function(socket) {
     console.log('testing communication with chrome...');
     socket.emit('test');
 
-    glob(path.join(paths.basePath, '/**/*.php'), {}, function(err, phpFiles) {
+    glob(path.join(project.basePath, '/**/*.php'), {}, function(err, phpFiles) {
 
         gulp.watch(phpFiles, function(evt) {
             //console.log('file change: ', evt.path);

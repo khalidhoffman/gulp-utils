@@ -16,31 +16,36 @@ A personal dev library for quicker for development
   "prefix": "wp_table_prefix",
   "dbNamePrefix" : "for_wordpress_dev",
   "avocodeSelector" : "for_avocode_dev",
-  "paths" : {
-  	"basePath" "absolute/path",
-    "inputs" : {
-      "pug" : "absolute/path/to/pug/src"
+  "basePath" "/an/absolute/path",
+  "tasks" : [
+    {
+      "name" : "stylus",
+      "input": "relative/path/to/stylus/folder/from/basePath",
+      "output": "relative/path/to/stylesheets/folder/from/basePath"
     },
-    "outputs" : {
-      "php" : "absolute/path/to/pug/output"
+    {
+      "name" : "pug",
+      "input": "relative/path/to/pug/folder/from/basePath",
+      "output": "relative/path/to/php/folder/from/basePath"
     }
-  }
+  ]
 }
 ```
-* `name` field should match wp structure `wp-content/themes/dp-{project_name}/`
+* 
 
 ##### Config Details
-* all inputs should be array of strings
-* all output values should be a single string path
-* Paths passed in config are joined with defaults
-* All default paths are relative to `paths.basePath`. Paths passed in config are absolute
+* All paths are relative to `paths.basePath`. Paths passed in config are absolute
+* `basePath` defaults to `{current working directory}/wp-content/themes/dp-{projectName}`
 
-Input Fields | Default Input  | Output Fields | Default Output								 | Details
--------------|---------------|---------------|-----------------------------------------------|---------
-`pug`    	 |`["pug/"]`	 |`php`			 |`./`											 |additional helper functions are included before compilation
-`less`	 	 |`["less/"]`	 |`css`			 |`stylesheets/`								 | compiles first path listed in array
-`jsx`		 |`["js/src/"]`	 |`null`		 |`null`										 | outputs to same directory
-`js`		 |`["js/src/"]`	 |`js`			 |`js/`											 | bundles and minfies with requirejs
-`sass`		 |`["sass/"]`	 |`css`			 |`stylesheets/`								 |
-`stylus`	 |`["stylus/"]`	 |`css`			 |`stylesheets/`								 | additional helper functions are included at compilation
-`pugjs`		 |`["js/src/modules/views/html/"]`|`js`|`js/src/modules/views/html/` 			 | additional helper functions are included before compilation
+###### Task Options
+
+Input Fields | Details
+-------------|---------
+`pug`    	 | additional helper functions are included before compilation
+`stylus`	 | additional helper functions are included at compilation
+`less`	 	 | compiles first path listed in array
+`js`  | beautifies js. overwrites file
+`js-bundle`  | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
+`jsx`		 | compiles js to same directory as original `.jsx` file
+`sass`		 |
+`pugjs`		 | additional helper functions are included before compilation
