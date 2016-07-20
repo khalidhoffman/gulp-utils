@@ -41,11 +41,12 @@ A personal dev library for quicker for development
 
 Task Names   | Details
 -------------|---------
-`pug`    	   | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.php` files
-`stylus`	    | [additional helper functions](commands/stylus/lib/stylus/) are included at compilation. compiles to css
-`less`	 	    | compiles to css
+`pug`        | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.php` files
+`stylus`     | [additional helper functions](commands/stylus/lib/stylus/) are included at compilation. compiles to css
+`less`       | compiles to css
 `js`         | beautifies js. Overwrites file
 `js-bundle`  | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
-`jsx`		      | compiles js to same directory as original `.jsx` file
-`sass`		     | compiles to css
-`pugjs`		    | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.ejs` files
+`compass`    | compiles to css
+`jsx`        | compiles js to same directory as original `.jsx` file
+`sass`       | compiles to css
+`pugjs`      | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.ejs` files
