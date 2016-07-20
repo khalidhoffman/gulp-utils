@@ -1,4 +1,5 @@
 var path = require('path'),
+    util = require('util'),
     fs = require('fs'),
 
     config = (function(){

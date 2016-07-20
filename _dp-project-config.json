@@ -3,6 +3,7 @@
   "dbTablePrefix": "boilerplate",
   "dbNamePrefix" : "hugoazz_",
   "avocodeSelector" : "boilerplate",
+  "basePath" : "default",
   "tasks" : [
     {
       "name" : "pugjs",
