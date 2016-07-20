@@ -16,7 +16,8 @@ var path = require('path'),
     avocodeSelector = config.avocodeSelector || 'boilerplate',
     projectName = config.name || 'boilerplate',
     rootDirectory = process.cwd(),
-    basePath = path.normalize(config.basePath || path.resolve(rootDirectory, util.format('wp-content/themes/dp-%s', projectName))),
+    defaultBasePath = path.join(rootDirectory, util.format('wp-content/themes/dp-%s', projectName)),
+    basePath = (config.basePath == 'default') ? defaultBasePath : path.normalize(config.basePath || defaultBasePath),
     paths = {
         basePath: basePath,
         tmp : config.tmp || path.resolve(rootDirectory, 'tmp/')

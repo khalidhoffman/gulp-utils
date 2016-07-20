@@ -11,11 +11,11 @@ var path = require('path'),
     project = require('../project');
 
 function compileSass(onCompilationComplete) {
-    var includes = [path.resolve(project.tasks.sass[0], 'external/compass-mixins')],
-        SassCache = require('./lib/sass-functions');
+    var SassCache = require('./lib/sass-functions');
 
 
     async.eachSeries(project.tasks.sass, function each(taskMeta, done) {
+        var includes = [path.join(taskMeta.input, 'external/compass-mixins')];
 
         SassCache.clear();
         gulp.src(path.join(taskMeta.input, '/[!_]*[!(compass)].scss'))
