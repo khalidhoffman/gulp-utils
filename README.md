@@ -39,7 +39,7 @@ A personal dev library for quicker for development
 
 ###### Task Options
 
-Input Fields | Details
+Task Names   | Details
 -------------|---------
 `pug`    	 | additional helper functions are included before compilation
 `stylus`	 | additional helper functions are included at compilation
