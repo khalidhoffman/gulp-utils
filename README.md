@@ -34,18 +34,18 @@ A personal dev library for quicker for development
 * 
 
 ##### Config Details
-* All paths are relative to `paths.basePath`. Paths passed in config are absolute
+* All paths are relative to `basePath`. `basePath` is an absolute path.
 * `basePath` defaults to `{current working directory}/wp-content/themes/dp-{projectName}`
 
 ###### Task Options
 
 Task Names   | Details
 -------------|---------
-`pug`    	 | additional helper functions are included before compilation
-`stylus`	 | additional helper functions are included at compilation
-`less`	 	 | compiles first path listed in array
-`js`  | beautifies js. overwrites file
+`pug`    	   | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.php` files
+`stylus`	    | [additional helper functions](commands/stylus/lib/stylus/) are included at compilation. compiles to css
+`less`	 	    | compiles to css
+`js`         | beautifies js. Overwrites file
 `js-bundle`  | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
-`jsx`		 | compiles js to same directory as original `.jsx` file
-`sass`		 |
-`pugjs`		 | additional helper functions are included before compilation
+`jsx`		      | compiles js to same directory as original `.jsx` file
+`sass`		     | compiles to css
+`pugjs`		    | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.ejs` files
