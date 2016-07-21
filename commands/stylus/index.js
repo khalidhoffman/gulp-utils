@@ -125,5 +125,5 @@ function compileStylus(onCompilationComplete) {
 
 module.exports = {
     compile: compileStylus,
-    jade2Stylus: require('./jade-2-stylus')
+    pug2Stylus: require('./pug-2-stylus')
 };

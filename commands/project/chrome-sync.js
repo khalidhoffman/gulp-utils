@@ -11,7 +11,7 @@ io.on('connection', function(socket) {
     console.log('testing communication with chrome...');
     socket.emit('test');
 
-    glob(path.join(project.basePath, '/**/*.php'), {}, function(err, phpFiles) {
+    glob(path.join(project.config.paths.basePath, '/**/*.php'), {}, function(err, phpFiles) {
 
         gulp.watch(phpFiles, function(evt) {
             //console.log('file change: ', evt.path);
