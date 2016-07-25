@@ -25,7 +25,8 @@ customPug.filters.ejs = function (text) {
 
 
 function compilePug(onCompilationComplete, options) {
-    var _options = _.extend({fileExtension: 'php', taskName: 'pug'}, options);
+    var _options = _.extend({fileExtension: 'php', taskName: 'pug'}, options),
+        devIncludesRegex = /(^|\n)[\W]*include\s+.*helpers\/_-all[\W\-]*\n/;
 
     /**
      *
@@ -79,7 +80,23 @@ function compilePug(onCompilationComplete, options) {
     async.each(project.tasks[_options.taskName], function each(taskMeta, done) {
         initPugEnvironment(taskMeta.input, function(){
             gulp.src(path.join(taskMeta.input, '**/[^_]*.pug'))
-                .pipe(insert.prepend(util.format("include %s\n", path.resolve(taskMeta.input, "helpers/_-all"))))
+                .pipe(through2.obj({
+                        allowHalfOpen: false
+                    },
+                    function (file, encoding, done) {
+
+                        if(!devIncludesRegex.test(file.contents.toString())) {
+                            console.log('"%s" dev include reference not found. Reference will be prepended.',file.path);
+                            var referencedContent = util.format("include %s\n%s", path.relative(path.dirname(file.path), path.resolve(taskMeta.input, "helpers/_-all")), file.contents.toString());
+                            file.contents = new Buffer(referencedContent, encoding);
+                            fs.writeFile(file.path, referencedContent, function(err){
+                                done(err, file);
+                            })
+                        } else {
+                            done(null, file); // note we can use the second argument on the callback
+                        }
+                    }
+                ))
                 .pipe(pug({
                     pretty: (argv['pretty']) ? true : false,
                     doctype: 'html',
