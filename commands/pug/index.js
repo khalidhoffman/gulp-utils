@@ -1,5 +1,6 @@
 var path = require('path'),
     util = require('util'),
+    fs = require('fs'),
 
     async = require('async'),
     through2 = require('through2'),
@@ -22,57 +23,81 @@ customPug.filters.ejs = function (text) {
     return '<% ' + text + ' %>';
 };
 
-function compilePugEJS(onCompilationComplete) {
-    async.each(project.tasks['pugjs'], function each(taskMeta, done) {
-        gulp.src(path.join(taskMeta.input, '**/[^_]*.pug'))
-            .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
-            .pipe(pug({
-                pretty: (argv['pretty']) ? true : false,
-                doctype: 'html',
-                locals: {
-                    util: util,
-                    namespace: require('../project').config.projectName
-                },
-                pug: customPug,
-                basedir: path.resolve('/')
-            }))
-            .on('error', project.onError)
-            .pipe(rename({
-                extname: ".ejs"
-            }))
-            .pipe(gulp.dest(taskMeta.output || function (file) {
-                    return file.base;
+
+function compilePug(onCompilationComplete, options) {
+    var _options = _.extend({fileExtension: 'php', taskName: 'pug'}, options);
+
+    /**
+     *
+     * @param dir
+     * @param onInitComplete
+     * @param options
+     */
+    function initPugEnvironment(dir, onInitComplete, options){
+        var localHelpersDir = path.resolve(__dirname, "helpers/"),
+            helpersDir =path.join(dir, "helpers/");
+
+        checkDestDirectory(function(){
+            copyPugDevFiles(onInitComplete);
+        });
+
+        function checkDestDirectory(callback, options){
+            fs.stat(helpersDir, function(err, dirStat){
+                if(err || !dirStat.isDirectory()){
+                    fs.mkdir(helpersDir, function(){
+                        if(callback) callback.call()
+                    })
+                } else {
+                    if(callback) callback.call()
+                }
+            });
+        }
+
+
+        function copyPugDevFiles(callback, options) {
+            fs.readdir(localHelpersDir, function(err, files){
+                async.eachLimit(files, 10, function each(fileName, done){
+                    fs.readFile(path.resolve(localHelpersDir, fileName), {encoding: 'utf8'}, function(err, str){
+                        if(err) return done(err);
+
+                        if(fileName == '_functions.pug'){
+                            // prepend dev util.format function
+                            str = util.format("-\n    var namespace = '%s';\n    var util={format: %s}\n%s", require('../project').config.projectName, util.format.toString().replace(/\n/g, "\n    "), str);
+                        }
+                        fs.writeFile(path.join(helpersDir, fileName), str, function(err){
+                            return done(err);
+                        })
+                    })
+                }, function complete(err){
+                    if(err) throw err;
+                    if(callback) callback.call()
+                })
+            })
+        }
+    }
+
+    async.each(project.tasks[_options.taskName], function each(taskMeta, done) {
+        initPugEnvironment(taskMeta.input, function(){
+            gulp.src(path.join(taskMeta.input, '**/[^_]*.pug'))
+                .pipe(insert.prepend(util.format("include %s\n", path.resolve(taskMeta.input, "helpers/_-all"))))
+                .pipe(pug({
+                    pretty: (argv['pretty']) ? true : false,
+                    doctype: 'html',
+                    pug: customPug,
+                    basedir: path.resolve('/')
                 }))
-            .on('end', function () {
-                done()
-            });
-    }, function complete() {
-        onCompilationComplete();
-    });
+                .on('error', project.onError)
+                .pipe(rename({
+                    extname: util.format(".%s", _options.fileExtension)
+                }))
+                .pipe(gulp.dest(taskMeta.output || function (file) {
+                        return file.base;
+                    }))
+                .on('end', function () {
+                    done()
+                });
+        })
 
-}
-
-function compilePugPHP(onCompilationComplete) {
-    async.each(project.tasks['pug'], function each(taskMeta, done) {
-        gulp.src(path.join(taskMeta.input, '/**/[^_]*.pug'))
-            .pipe(insert.prepend(util.format("include %s\n", path.resolve(__dirname, "helpers/_-all"))))
-            .pipe(pug({
-                pretty: (argv['pretty']) ? true : false,
-                locals: {
-                    util: util,
-                    namespace: require('../project').config.projectName
-                },
-                pug: customPug,
-                basedir: path.resolve('/')
-            }))
-            .on('error', project.onError)
-            .pipe(rename({
-                extname: ".php"
-            }))
-            .pipe(gulp.dest(taskMeta.output))
-            .on('end', function () {
-                done()
-            });
     }, function complete() {
         onCompilationComplete();
     });
@@ -112,7 +137,11 @@ function compilePugPHPDebug() {
 
 
 module.exports = {
-    js: compilePugEJS,
-    php: compilePugPHP,
-    phpDebug: compilePugPHPDebug,
+    js: function(callback){
+        compilePug(callback, {fileExtension: 'ejs', taskName: 'pugjs'})
+    },
+    php: function(callback){
+        compilePug(callback, {fileExtension: 'php', taskName: 'pug'})
+    },
+    phpDebug: compilePugPHPDebug
 };
