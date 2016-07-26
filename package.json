@@ -1,6 +1,9 @@
 {
   "name": "gulp-utils",
-  "version": "0.0.4",
+  "version": "0.1.0",
+  "bin" : {
+    "dp-setup" : "bin/setup"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/khalidhoffman/gulp-utils.git"
@@ -8,7 +11,7 @@
   "main": "./index.html",
   "scripts": {
     "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json",
-    "setup": "cp ./_gulpfile.js ../gulpfile.js; cp  -n _dp-project-config.json ../dp-project-config.json; sed -i 's/\\.\\/commands/\\.\\/gulp-utils\\/commands/g' ../gulpfile.js"
+    "setup": "node bin/setup"
   },
   "dependencies": {
     "ansi-256-colors": "^1.1.0",

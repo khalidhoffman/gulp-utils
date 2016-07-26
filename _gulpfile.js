@@ -5,7 +5,7 @@ var path = require('path'),
 
     gulp = require('gulp'),
 
-    gulpModule = function(moduleName){ return require('./gulp-utils/commands/'+path.normalize(moduleName)); },
+    gulpModule = function(moduleName){ return require('gulp-utils/commands/'+path.normalize(moduleName)); },
 
     project = gulpModule('project'),
     projectUtils = gulpModule('utils');
