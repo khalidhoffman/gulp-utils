@@ -2,7 +2,7 @@
   "name": "gulp-utils",
   "version": "0.1.1",
   "bin": {
-    "dp-setup": "bin/setup"
+    "dp-setup": "bin/setup.js"
   },
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   "main": "./index.html",
   "scripts": {
     "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json",
-    "setup": "node bin/setup"
+    "setup": "node bin/setup.js"
   },
   "dependencies": {
     "ansi-256-colors": "^1.1.0",
