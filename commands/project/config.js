@@ -16,8 +16,20 @@ var path = require('path'),
     avocodeSelector = config.avocodeSelector || 'boilerplate',
     projectName = config.name || 'boilerplate',
     rootDirectory = process.cwd(),
-    defaultBasePath = path.join(rootDirectory, util.format('wp-content/themes/dp-%s', projectName)),
-    basePath = (config.basePath == 'default') ? defaultBasePath : path.normalize(config.basePath || defaultBasePath),
+    defaultWordPressBasePath = path.join(rootDirectory, util.format('wp-content/themes/dp-%s', projectName)),
+    basePath = (function(){
+        switch(config.basePath){
+            case 'default':
+                return process.cwd();
+                break;
+            case 'wordpress':
+                return defaultWordPressBasePath;
+                break;
+            default:
+                path.normalize(config.basePath || process.cwd());
+                break;
+        }
+    })(),
     paths = {
         basePath: basePath,
         tmp : config.tmp || path.resolve(rootDirectory, 'tmp/')

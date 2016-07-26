@@ -2,12 +2,8 @@
 A personal dev library for quicker for development
 
 #### How To Use
-1. `npm init` in root folder of WordPress site (or any project... eventually)
-2. `git clone https://github.com/khalidhoffman/gulp-utils.git` in root of WordPress site. 
-3. `npm install; npm run setup` in newly created gulp-utils project folder. This will create a `gulpfile.js` and `dp-project-config.json` in the parent/root folder.
-4. `npm i --save gulp` in root folder
-
-* Run `gulp --tasks` from root folder to see list of tasks.
+1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
+2. Run `gulp --tasks` from root folder to see list of tasks.
  
 #### Example Config
 ```
@@ -35,13 +31,14 @@ A personal dev library for quicker for development
 
 ##### Config Details
 * All paths are relative to `basePath`. `basePath` is an absolute path.
-* `basePath` defaults to `{current working directory}/wp-content/themes/dp-{projectName}`
+* `basePath` defaults to `{current working directory}`
+* using the predefined value `wordpress` for `basePath`  to `{current working directory}/wp-content/themes/dp-{projectName}`
 
 ###### Task Options
 
 Task Names   | Details
 -------------|---------
-`pug`        | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.php` files
+`pug`        | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
 `stylus`     | [additional helper functions](commands/stylus/lib/stylus/) are included at compilation. compiles to css
 `less`       | compiles to css
 `js`         | beautifies js. Overwrites file
@@ -49,4 +46,4 @@ Task Names   | Details
 `compass`    | compiles to css
 `jsx`        | compiles js to same directory as original `.jsx` file
 `sass`       | compiles to css
-`pugjs`      | [additional helper functions](commands/pug/helpers/_functions.pug) are included before compilation. compiles to `.ejs` files
+`pugjs`      | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
