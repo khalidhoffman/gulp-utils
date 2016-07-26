@@ -1,8 +1,8 @@
 {
   "name": "gulp-utils",
-  "version": "0.1.0",
-  "bin" : {
-    "dp-setup" : "bin/setup"
+  "version": "0.1.1",
+  "bin": {
+    "dp-setup": "bin/setup"
   },
   "repository": {
     "type": "git",
