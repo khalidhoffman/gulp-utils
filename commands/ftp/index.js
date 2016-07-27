@@ -9,7 +9,7 @@ var fs = require('fs'),
     project = require('../project');
 
 function ftpSync(onSyncComplete){
-    fs.readFile(path.resolve(process.cwd(), 'ftp.config'), {encoding: 'utf8'}, function(err, ftpConfigSrc){
+    fs.readFile(path.resolve(process.cwd(), 'dp-ftp-config.json'), {encoding: 'utf8'}, function(err, ftpConfigSrc){
         if (err) throw err;
         var ftpConfig = JSON.parse(ftpConfigSrc);
 
