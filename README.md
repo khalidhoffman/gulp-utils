@@ -3,7 +3,8 @@ A personal dev library for quicker for development
 
 #### How To Use
 1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
-2. Run `gulp --tasks` from root folder to see list of tasks.
+2. Run `dp-setup` in the project root folder to start the setup.
+3. Run `gulp --tasks` from root folder to see list of tasks.
  
 #### Example Config
 ```
@@ -47,3 +48,4 @@ Task Names   | Details
 `jsx`        | compiles js to same directory as original `.jsx` file
 `sass`       | compiles to css
 `pugjs`      | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
+`ftp`        | uploads files from input to output relative to ftp root. ftp root is configured with `ftp.config`. `ftp-config` is generated during the setup process

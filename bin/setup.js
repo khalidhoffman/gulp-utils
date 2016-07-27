@@ -2,9 +2,9 @@
 
 var path = require('path'),
     fs = require('fs'),
+
     prompt = require('prompt'),
     colors = require("colors/safe");
-
 
 fs.readFile(path.resolve(__dirname, '../', '_gulpfile.js'), {encoding: 'utf8'}, function (err, gulpSrc) {
     if (err) throw err;
@@ -12,18 +12,23 @@ fs.readFile(path.resolve(__dirname, '../', '_gulpfile.js'), {encoding: 'utf8'}, 
         if (err) throw err;
     })
 });
+
 prompt.message = '';
 prompt.start();
 prompt.get({
     properties: {
-        isOverwrite: {
+        isMainConfigOverwrite: {
             description: colors.red('Create a new dp-project-config.json file?'),
+            default: 'yes'
+        },
+        isFTPConfigOverwrite: {
+            description: colors.red('Create a new dp-ftp-config.json file? (necessary for ftp tasks)'),
             default: 'yes'
         }
     }
 }, function (err, result) {
     if (err) throw err;
-    if (/^\s*(yes|y)\s*$/.test(result.isOverwrite)) {
+    if (/^\s*(yes|y)\s*$/.test(result.isMainConfigOverwrite)) {
         fs.readFile(path.resolve(__dirname, '../', '_dp-project-config.json'), {encoding: 'utf8'}, function (err, configSrc) {
             if (err) throw err;
             fs.writeFile(path.resolve(process.cwd(), 'dp-project-config.json'), configSrc, function (err) {
@@ -31,5 +36,8 @@ prompt.get({
                 if (err) throw err;
             })
         });
+    }
+    if (/^\s*(yes|y)\s*$/.test(result.isFTPConfigOverwrite)) {
+        require('child_process').exec("dp-ftp-setup");
     }
 });

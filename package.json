@@ -1,9 +1,8 @@
 {
   "name": "gulp-utils",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "bin": {
-    "dp-setup": "bin/setup.js && dp-ftp-setup",
-    "dp-setup-ftp": "dp-ftp-setup"
+    "dp-setup": "bin/setup.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +27,7 @@
     "diff-dom": "^2.0.1",
     "fs-extra": "^0.30.0",
     "ftp": "^0.3.10",
+    "ftp-sync": "git+https://github.com/khalidhoffman/ftp-sync.git",
     "glob": "^6.0.4",
     "gulp": "^3.9.0",
     "gulp-compass": "^2.1.0",
@@ -60,5 +60,6 @@
     "stylus-type-utils": "0.0.3",
     "through2": "^2.0.0",
     "yargs": "^3.25.0"
-  }
+  },
+  "devDependencies": {}
 }
