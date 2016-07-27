@@ -39,5 +39,6 @@ prompt.get({
     }
     if (/^\s*(yes|y)\s*$/.test(result.isFTPConfigOverwrite)) {
         require('child_process').exec("dp-ftp-setup");
+        console.log('created new dp-ftp-config.json file.');
     }
 });
