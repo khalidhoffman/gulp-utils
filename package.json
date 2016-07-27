@@ -1,8 +1,9 @@
 {
   "name": "gulp-utils",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "bin": {
-    "dp-setup": "bin/setup.js"
+    "dp-setup": "bin/setup.js && dp-ftp-setup",
+    "dp-setup-ftp": "dp-ftp-setup"
   },
   "repository": {
     "type": "git",

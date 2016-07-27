@@ -55,7 +55,6 @@ function compileStylusString(filename, options, callback) {
                 .use(require('nib')())
                 .use(new require('stylus-type-utils')())
                 .import('nib')
-                .import(path.resolve(__dirname, '../../node_modules/stylus-type-utils'))
                 .import(path.resolve(__dirname, 'lib/stylus/*'))
                 .render(function (err, css) {
                     if (err) {

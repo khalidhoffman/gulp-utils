@@ -8,14 +8,21 @@ var path = require('path'),
 
 
     _config = config.raw,
-    basePath = config.paths.basePath,
+    inputBasePath = config.paths.basePath,
+    outputBasePath = config.paths.basePath,
     tasks = {};
 
 _.forEach(_config['tasks'], function (taskMeta) {
+    switch(taskMeta.name){
+        case 'ftp':
+            outputBasePath = '';
+            break;
+        default:
+    }
     tasks[taskMeta.name] = tasks[taskMeta.name] || [];
     tasks[taskMeta.name].push({
-        input: path.join(basePath, taskMeta.input),
-        output: (taskMeta.output) ? path.join(basePath, taskMeta.output) : false
+        input: path.join(inputBasePath, taskMeta.input),
+        output: (taskMeta.output) ? path.join(outputBasePath, taskMeta.output) : false
     })
 });
 
