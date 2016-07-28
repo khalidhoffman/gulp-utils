@@ -6,7 +6,7 @@
   "basePath" : "default",
   "tasks" : [
     {
-      "name" : "pugjs",
+      "name" : "pug-ejs",
       "input": "js/src/modules/views/html/",
       "output": "js/src/modules/views/"
     },

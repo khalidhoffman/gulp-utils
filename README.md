@@ -47,5 +47,6 @@ Task Names   | Details
 `compass`    | compiles to css
 `jsx`        | compiles js to same directory as original `.jsx` file
 `sass`       | compiles to css
-`pugjs`      | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
+`pug-ejs`    | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
+`pug-html`   | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
 `ftp`        | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process

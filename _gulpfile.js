@@ -46,12 +46,18 @@ gulp.task('pug-php-auto', function(){
     gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), ['pug-php']);
 });
 
+gulp.task('pug-html', gulpModule('pug').html);
+
+gulp.task('pug-html-auto', function(){
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-html'], '/**/*.pug'), ['pug-html']);
+});
+
 gulp.task('pug-php-debug', gulpModule('pug').phpDebug);
 
-gulp.task('pug-js', gulpModule('pug').js);
+gulp.task('pug-ejs', gulpModule('pug').ejs);
 
-gulp.task('pug-js-auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['pugjs'], '/**/*.pug'), ['pug-js']);
+gulp.task('pug-ejs-auto', function(){
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-ejs'], '/**/*.pug'), ['pug-ejs']);
 });
 
 

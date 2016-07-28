@@ -154,11 +154,14 @@ function compilePugPHPDebug() {
 
 
 module.exports = {
-    js: function(callback){
-        compilePug(callback, {fileExtension: 'ejs', taskName: 'pugjs'})
+    ejs: function(callback){
+        compilePug(callback, {fileExtension: 'ejs', taskName: 'pug-ejs'})
     },
     php: function(callback){
         compilePug(callback, {fileExtension: 'php', taskName: 'pug'})
+    },
+    html: function(callback){
+        compilePug(callback, {fileExtension: 'html', taskName: 'pug-html'})
     },
     phpDebug: compilePugPHPDebug
 };
