@@ -12,8 +12,8 @@ var fs = require('fs'),
 function compile(onCompilationComplete) {
 
     async.each(project.tasks['jsx'], function each(taskMeta, done){
-
-        glob(path.resolve(taskMeta.input, './!(node_modules|vendors)/**/*.jsx'), function (err, fileList) {
+        glob(path.join(taskMeta.input, '/**/*.jsx'), {ignore: ["**/node_modules/**", "**/vendors/**"]}, function (err, fileList) {
+            if(err) return done(err);
             var babelOptions = {
                 "presets": ["es2015"],
                 "plugins": [
@@ -42,7 +42,8 @@ function compile(onCompilationComplete) {
                 done()
             });
         });
-    }, function complete(){
+    }, function complete(err){
+        if (err) throw new Error();
         onCompilationComplete()
     })
     

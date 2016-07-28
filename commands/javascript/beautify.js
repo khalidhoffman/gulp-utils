@@ -13,7 +13,7 @@ var fs = require('fs'),
 function compile(onCompilationComplete) {
 
     async.each(project.tasks['js'], function each(taskMeta, onGlobBeautified) {
-        glob(path.join(taskMeta.input, '/**/*.js'), {ignore: "**/!node_modules/**"}, function (err, fileList) {
+        glob(path.join(taskMeta.input, '/**/*.js'), {ignore: ["**/node_modules/**", "**/vendors/**"]}, function (err, fileList) {
             async.each(fileList, function each(filename, onFileBeautified) {
                 fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
                     fs.writeFile(filename, beautifyJS(str), {encoding: 'utf8'}, function (err) {
