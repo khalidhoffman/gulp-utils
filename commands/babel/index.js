@@ -21,7 +21,7 @@ function compile(onCompilationComplete) {
                 ]
             };
 
-            async.each(fileList, function each (filename, onFileWritten) {
+            async.each(fileList, function each (filename, onFileProcessed) {
                 var originalPathOptions = path.parse(filename),
                     writePath = path.format({
                         dir: originalPathOptions.dir,
@@ -31,10 +31,11 @@ function compile(onCompilationComplete) {
                 babel.transformFile(filename, babelOptions, function (err, result) {
                     if (err) {
                         console.error(err);
+                        onFileProcessed();
                     } else {
                         fs.writeFile(writePath, result.code, function (err) {
                             //console.log('%s -> %s', filename, writePath);
-                            onFileWritten();
+                            onFileProcessed();
                         });
                     }
                 });
