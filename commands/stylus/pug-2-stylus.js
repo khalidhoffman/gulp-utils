@@ -36,7 +36,7 @@ function pug2Stylus(onCompilationComplete) {
             glob(path.join(taskMeta.input, '/**/*.pug'), function (err, fileList) {
                 _.forEach(fileList, function (filePath, index, arr) {
                     filePathMeta = path.parse(filePath);
-                    if (filePathMeta.name.indexOf(filename) > -1 || (filename.toLowerCase() == 'all')) {
+                    if (filePathMeta.base.indexOf(filename) > -1 || (filename.toLowerCase() == 'all')) {
                         isFileExistent = true;
                         fs.readFile(filePath, {encoding: 'utf8'}, function (err, pugText) {
                             if (err) throw err;
