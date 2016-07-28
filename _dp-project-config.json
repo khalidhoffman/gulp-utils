@@ -16,7 +16,7 @@
       "output": "./"
     },
     {
-      "name" : "js-beautify",
+      "name" : "js",
       "input": "js/src/"
     },
     {
