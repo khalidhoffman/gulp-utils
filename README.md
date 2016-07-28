@@ -39,7 +39,7 @@ A personal dev library for quicker for development
 * All paths are relative to `basePath`. `basePath` is an absolute path.
 * `basePath` when set to `"default"`, uses the `process.cwd()` (the current working directory)
 * `jsx`, `stylus`, `less`, and `js` tasks support an ignore field which is a [glob pattern](https://github.com/isaacs/node-glob#glob-primer) to exclude
-* using the predefined value `wordpress` for `basePath`  to `{current working directory}/wp-content/themes/dp-{projectName}`
+* using the predefined value `"wordpress"` for `basePath`  to `{current working directory}/wp-content/themes/dp-{projectName}`
 
 ###### Task Options
 
@@ -55,4 +55,4 @@ Task Names   | Details
 `sass`       | compiles to css
 `pug-ejs`    | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
 `pug-html`   | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
-`ftp`        | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process
+`ftp`        | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process. More Info is posted on [the github page](https://github.com/khalidhoffman/ftp-sync)
