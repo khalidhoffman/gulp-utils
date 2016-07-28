@@ -23,7 +23,7 @@ _.forEach(_config['tasks'], function (taskMeta) {
     tasks[taskMeta.name].push({
         input: path.join(inputBasePath, taskMeta.input),
         output: (taskMeta.output) ? path.join(outputBasePath, taskMeta.output) : false,
-        ignore : (taskMeta.ignore) ? taskMeta.ignore : []
+        ignore : (taskMeta.ignore) ? taskMeta.ignore : false
     })
 });
 
