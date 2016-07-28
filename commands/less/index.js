@@ -13,7 +13,7 @@ var fs = require('fs'),
 
 function compileLess(onComplete) {
     async.each(project.tasks.less, function each (taskMeta, done){
-        glob(path.join(taskMeta.input, util.format('**/%s', mainFileName)), function (err, files) {
+        glob(path.join(taskMeta.input, util.format('**/%s', mainFileName)), {ignore : taskMeta.ignore || []}, function (err, files) {
             if (err || files.length == 0) return done(err);
             async.each(files, function each(filename, onFileCompiled) {
                 // console.log('less - reading %s', filename);

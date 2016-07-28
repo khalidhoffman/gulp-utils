@@ -17,7 +17,8 @@
     },
     {
       "name" : "js",
-      "input": "js/src/"
+      "input": "js/src/",
+      "ignore" : ["**/node_modules/**", "**/vendors/**"]
     },
     {
       "name" : "js-config",
@@ -31,7 +32,8 @@
     },
     {
       "name" : "jsx",
-      "input": "js/src/"
+      "input": "js/src/",
+      "ignore" : ["**/node_modules/**", "**/vendors/**"]
     },
     {
       "name" : "stylus",

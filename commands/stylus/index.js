@@ -106,7 +106,7 @@ function compileStylusString(filename, options, callback) {
 function compileStylus(onCompilationComplete) {
 
     async.each(project.tasks.stylus, function each(taskMeta, done) {
-        glob(path.join(taskMeta.input, '**/!(_)*.styl'), function (err, files) {
+        glob(path.join(taskMeta.input, '**/!(_)*.styl'), {ignore : taskMeta.ignore || []}, function (err, files) {
             if (err) return onCompilationComplete();
             async.each(files, function each(filename, onSingleFileComplete) {
                 compileStylusString(filename, {output : taskMeta.output}, function () {

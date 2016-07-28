@@ -24,6 +24,11 @@ A personal dev library for quicker for development
       "name" : "pug",
       "input": "relative/path/to/pug/folder/from/basePath",
       "output": "relative/path/to/php/folder/from/basePath"
+    },
+    {
+      "name" : "jsx",
+      "input": "relative/path/to/jsx/folder/from/basePath",
+      "ignore": ["glob/pattern/to/ignore", "**/node_modules/**"]
     }
   ]
 }
@@ -32,7 +37,8 @@ A personal dev library for quicker for development
 
 ##### Config Details
 * All paths are relative to `basePath`. `basePath` is an absolute path.
-* `basePath` defaults to `{current working directory}`
+* `basePath` when set to `"default"`, uses the `process.cwd()` (the current working directory)
+* `jsx`, `stylus`, `less`, and `js` tasks support an ignore field which is a [glob pattern](https://github.com/isaacs/node-glob#glob-primer) to exclude
 * using the predefined value `wordpress` for `basePath`  to `{current working directory}/wp-content/themes/dp-{projectName}`
 
 ###### Task Options
