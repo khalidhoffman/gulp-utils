@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "bin": {
     "dp-setup": "bin/setup.js"
   },
@@ -41,6 +41,7 @@
     "gulp-sass": "^2.1.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
+    "html2pug": "git+https://github.com/khalidhoffman/html2pug.git",
     "js-beautify": "^1.5.10",
     "less": "^2.7.1",
     "lodash": "^4.6.1",

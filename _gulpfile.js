@@ -60,6 +60,9 @@ gulp.task('pug-ejs-auto', function(){
     gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-ejs'], '/**/*.pug'), ['pug-ejs']);
 });
 
+gulp.task('html-2-pug', gulpModule('pug').html2Pug);
+
+gulp.task('php-2-pug', gulpModule('pug').php2Pug);
 
 // Javascript tasks
 gulp.task('build-js-config', gulpModule('javascript').config);

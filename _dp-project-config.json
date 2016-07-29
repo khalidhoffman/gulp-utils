@@ -49,6 +49,16 @@
       "name": "less",
       "input": "less/",
       "output": "stylesheets/"
+    },
+    {
+      "name": "html-2-pug",
+      "input": "/",
+      "output": "pug/"
+    },
+    {
+      "name": "php-2-pug",
+      "input": "/",
+      "output": "pug/"
     }
   ]
 }

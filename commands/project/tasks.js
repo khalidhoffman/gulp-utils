@@ -26,5 +26,5 @@ _.forEach(_config['tasks'], function (taskMeta) {
         ignore : (taskMeta.ignore) ? taskMeta.ignore : false
     })
 });
-
+// console.log('tasks: %s', projectUtils.dump(tasks));
 module.exports = tasks;
