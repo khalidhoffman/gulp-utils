@@ -3,7 +3,7 @@ A personal dev library for quicker for development
 
 #### How To Use
 1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
-2. Run `dp-setup` in the project root folder to start the setup.
+2. Run `dp-setup` within the project's npm environment (add `dp-setup` to npm scripts).
 3. Run `gulp --tasks` from root folder to see list of tasks.
  
 #### Example Config
