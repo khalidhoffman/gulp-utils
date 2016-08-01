@@ -16,6 +16,11 @@
       "output": "./"
     },
     {
+      "name" : "jade",
+      "input": "jade/",
+      "output": "./"
+    },
+    {
       "name" : "js",
       "input": "js/src/",
       "ignore" : ["**/node_modules/**", "**/vendors/**"]

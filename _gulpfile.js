@@ -37,7 +37,7 @@ gulp.task('sass-debug', gulpModule('sass').debug);
 gulp.task('compass', gulpModule('sass').compass);
 
 
-// Jade tasks
+// Pug/Jade tasks
 gulp.task('pug-2-stylus', gulpModule('stylus').pug2Stylus);
 
 gulp.task('pug-php', gulpModule('pug').php);
@@ -63,6 +63,13 @@ gulp.task('pug-ejs-auto', function(){
 gulp.task('html-2-pug', gulpModule('pug').html2Pug);
 
 gulp.task('php-2-pug', gulpModule('pug').php2Pug);
+
+gulp.task('jade-php', gulpModule('jade').php);
+
+gulp.task('jade-ejs', gulpModule('jade').ejs);
+
+gulp.task('jade-html', gulpModule('jade').html);
+
 
 // Javascript tasks
 gulp.task('build-js-config', gulpModule('javascript').config);
