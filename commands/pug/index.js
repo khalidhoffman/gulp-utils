@@ -8,27 +8,27 @@ var path = require('path'),
     gulp = require('gulp'),
     insert = require('gulp-insert'),
     html2Pug = require('html2pug'),
-    customPug = require('pug'),
-    pug = require('gulp-pug'),
+    pug = require('pug'),
+
     _ = require('lodash'),
     rename = require('gulp-rename'),
     argv = require('yargs').argv,
 
     projectUtils = require('../utils'),
-    project = require('../project');
+    project = require('../project'),
 
-customPug.filters.php = function (text) {
-    return '<?php ' + text + ' ?>';
-};
-
-customPug.filters.ejs = function (text) {
-    return '<% ' + text + ' %>';
-};
-
+    customPugFilters = {
+        php : function (text, attrs, ast) {
+            return '<?php ' + text + ' ?>';
+        },
+        ejs : function (text) {
+            return '<% ' + text + ' %>';
+        }
+    };
 
 function compilePug(onCompilationComplete, options) {
     var _options = _.extend({fileExtension: 'php', taskName: 'pug'}, options),
-        devIncludesRegex = /(^|\n)[\W]*include\s+.*helpers\/_-all[\W\-]*\n/;
+        devIncludesRegex = /(^|\n)[\W]*include\s+.*_auto-generated\/_-all[\W\-]*\n/;
 
     /**
      *
@@ -38,7 +38,7 @@ function compilePug(onCompilationComplete, options) {
      */
     function initPugEnvironment(dir, onInitComplete, options) {
         var localHelpersDir = path.resolve(__dirname, "helpers/"),
-            helpersDir = path.join(dir, "helpers/");
+            helpersDir = path.join(dir, "_auto-generated/");
 
         checkDestDirectory(function () {
             copyPugDevFiles(onInitComplete);
@@ -72,8 +72,7 @@ function compilePug(onCompilationComplete, options) {
                         })
                     })
                 }, function complete(err) {
-                    if (err) throw err;
-                    if (callback) callback.call()
+                    if (callback) callback.call(err)
                 })
             })
         }
@@ -89,7 +88,7 @@ function compilePug(onCompilationComplete, options) {
 
                         if (!devIncludesRegex.test(file.contents.toString())) {
                             console.log('"%s" dev include reference not found. Reference will be prepended.', file.path);
-                            var referencedContent = util.format("include %s\n%s", path.relative(path.dirname(file.path), path.resolve(taskMeta.input, "helpers/_-all")), file.contents.toString());
+                            var referencedContent = util.format("include %s\n%s", path.relative(path.dirname(file.path), path.resolve(taskMeta.input, "_auto-generated/_-all")), file.contents.toString());
                             file.contents = new Buffer(referencedContent, encoding);
                             fs.writeFile(file.path, referencedContent, function (err) {
                                 done(err, file);
@@ -99,11 +98,19 @@ function compilePug(onCompilationComplete, options) {
                         }
                     }
                 ))
-                .pipe(pug({
-                    pretty: (argv['pretty']) ? true : false,
-                    doctype: 'html',
-                    pug: customPug,
-                    basedir: path.resolve('/')
+                .pipe(through2.obj({
+                    allowHalfOpen: false
+                }, function(file, encoding, done){
+                    pug.filters = _.defaults(pug.filters, customPugFilters);
+                    var result = pug.render(file.contents.toString(), {
+                        filename : file.path,
+                        pretty: (argv['pretty']) ? true : false,
+                        doctype: 'html',
+                        basedir: path.resolve('/')
+                    });
+                    // console.log(result);
+                    file.contents = new Buffer(result, encoding);
+                    done(null, file)
                 }))
                 .on('error', project.onError)
                 .pipe(rename({
@@ -131,7 +138,7 @@ function compilePugPHPDebug(onCompilationComplete) {
                 function (file, encoding, done) {
 
                     //console.log('chunk.path: %j', chunk.path);
-                    var html = customPug.render(file.contents.toString(), {
+                    var html = pug.render(file.contents.toString(), {
                         filename: file.path,
                         pretty: (argv['pretty']) ? true : false
                     });
@@ -183,7 +190,7 @@ function toPug(onCompilationComplete, options) {
                                 fs.writeFile(pugDest, str, function (err) {
                                     done(err);
                                 })
-                            }, function onError(err){
+                            }, function onError(err) {
                                 done(err);
                             })
                     })

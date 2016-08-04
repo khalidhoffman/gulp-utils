@@ -35,18 +35,60 @@ var precision = postcss.plugin('postcss-precision', function () {
     };
 });
 
+function initStylusEnv(dir, onInitComplete, options) {
+    var localHelpersDir = path.resolve(__dirname, "lib/stylus/"),
+        helpersDir = path.join(dir, "_auto-generated/");
+
+    checkDestDirectory(function () {
+        copyStylusDevFiles(onInitComplete);
+    });
+
+    function checkDestDirectory(callback, options) {
+        fs.stat(helpersDir, function (err, dirStat) {
+            if (err || !dirStat.isDirectory()) {
+                fs.mkdir(helpersDir, function () {
+                    if (callback) callback.call()
+                })
+            } else {
+                if (callback) callback.call()
+            }
+        });
+    }
+
+
+    function copyStylusDevFiles(callback, options) {
+        fs.readdir(localHelpersDir, function (err, files) {
+            if (err) {
+                if (callback) callback(err)
+            } else {
+                async.eachLimit(files, 10, function each(fileName, done) {
+                    fs.readFile(path.resolve(localHelpersDir, fileName), {encoding: 'utf8'}, function (err, str) {
+                        if (err) return done(err);
+                        fs.writeFile(path.join(helpersDir, fileName), str, function (err) {
+                            return done(err);
+                        })
+                    })
+                }, function complete(err) {
+                    if (callback) callback.call(err)
+                })
+            }
+        })
+    }
+}
+
 function compileStylusString(filename, options, callback) {
-    var _options = _.extend({
-            output: project.config.paths.tmp
-        }, options),
-        onComplete = callback || function () {
-            },
+    var _options = _.defaults(options, {
+            input: project.config.paths.stylus,
+            output: project.config.paths.tmp,
+            complete: function (err) {
+                if (err) console.error(err)
+            }
+        }),
         stylusFunctions = require('./functions').hookFunc;
 
     fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
         if (err) {
-            console.error(err);
-            onSingleFileComplete();
+            _options.complete(err);
         } else {
             // console.log('stylus - rendering %s', filename);
             stylus(str)
@@ -55,11 +97,10 @@ function compileStylusString(filename, options, callback) {
                 .use(require('nib')())
                 .use(new require('stylus-type-utils')())
                 .import('nib')
-                .import(path.resolve(__dirname, 'lib/stylus/*'))
+                .import(path.resolve(path.dirname(filename), "_auto-generated/*"))
                 .render(function (err, css) {
                     if (err) {
-                        console.error(err);
-                        onComplete();
+                        _options.complete(err);
                     } else {
                         var filenameMeta = path.parse(filename),
                             srcCSSPath = path.format({
@@ -78,22 +119,24 @@ function compileStylusString(filename, options, callback) {
                         // console.log("stylus - %s -> %s", srcCSSPath, prodCSSPath);
 
                         fs.writeFile(srcCSSPath, css, {encoding: 'utf8'}, function (err) {
-                            if (err) throw err;
-                            postcss([precision(), require('postcss-discard-duplicates')])
-                                .process(css, {from: srcCSSPath, to: prodCSSPath})
-                                .then(function (result) {
-                                    if (result.map) fs.writeFileSync(mapCSSPath, result.map);
+                            if (err) {
+                                _options.complete(err);
+                            } else {
 
-                                    fs.writeFile(prodCSSPath, result.css, {encoding: 'utf8'}, function (err) {
-                                        if (err) throw err;
-                                        // console.log("stylus - successfully saved %s", prodCSSPath);
-                                        onComplete();
+                                postcss([precision(), require('postcss-discard-duplicates')])
+                                    .process(css, {from: srcCSSPath, to: prodCSSPath})
+                                    .then(function (result) {
+                                        if (result.map) fs.writeFileSync(mapCSSPath, result.map);
+
+                                        fs.writeFile(prodCSSPath, result.css, {encoding: 'utf8'}, function (err) {
+                                            // console.log("stylus - successfully saved %s", prodCSSPath);
+                                            _options.complete(err);
+                                        })
                                     })
-                                })
-                                .catch(function (error) {
-                                    console.error(error);
-                                    onComplete();
-                                });
+                                    .catch(function (error) {
+                                        _options.complete(error);
+                                    });
+                            }
                         })
                     }
                 });
@@ -106,18 +149,23 @@ function compileStylusString(filename, options, callback) {
 function compileStylus(onCompilationComplete) {
 
     async.each(project.tasks.stylus, function each(taskMeta, done) {
-        glob(path.join(taskMeta.input, '**/!(_)*.styl'), {ignore : taskMeta.ignore || []}, function (err, files) {
-            if (err) return onCompilationComplete();
-            async.each(files, function each(filename, onSingleFileComplete) {
-                compileStylusString(filename, {output : taskMeta.output}, function () {
-                    onSingleFileComplete();
+        initStylusEnv(taskMeta.input, function () {
+            glob(path.join(taskMeta.input, '**/!(_)*.styl'), {ignore: taskMeta.ignore || []}, function (err, files) {
+                if (err) return onCompilationComplete();
+                async.each(files, function each(filename, onSingleFileComplete) {
+                    compileStylusString(filename, {
+                        output: taskMeta.output,
+                        complete: function (err) {
+                            onSingleFileComplete(err);
+                        }
+                    })
+                }, function complete(err) {
+                    done(err);
                 })
-            }, function complete() {
-                done();
             })
         })
-    }, function complete() {
-        onCompilationComplete();
+    }, function complete(err) {
+        onCompilationComplete(err);
     });
 
 }
