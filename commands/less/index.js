@@ -19,8 +19,7 @@ function compileLess(onComplete) {
                 // console.log('less - reading %s', filename);
                 fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
                     if (err) {
-                        console.error(err);
-                        onFileCompiled();
+                        onFileCompiled(err);
                     } else {
                         // console.log('less - rendering %s', filename);
                         less.render(str,
@@ -50,8 +49,8 @@ function compileLess(onComplete) {
                 done(err);
             })
         });
-    }, function complete(){
-        onComplete()
+    }, function complete(err){
+        onComplete(err)
     });
 
 }

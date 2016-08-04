@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "bin": {
     "dp-setup": "bin/setup.js"
   },
@@ -53,9 +53,9 @@
     "postcss": "^5.0.19",
     "postcss-discard-duplicates": "^2.0.1",
     "prompt": "^1.0.0",
-    "pug": "^2.0.0-beta4",
     "pug-code-gen": "0.0.7",
-    "pug-lexer": "^1.0.1",
+    "pug-lexer": "^1.2.0",
+    "pug-load": "^2.0.0",
     "pug-parser": "^1.0.0",
     "pug-walk": "0.0.3",
     "q": "^1.4.1",
