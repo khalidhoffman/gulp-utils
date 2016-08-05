@@ -5,25 +5,29 @@ function build(data) {
 
     var classes = [];
 
-    _.forEach(data, function(rootNode){
+    _.forEach(data, function (rootNode) {
 
 
-
-        function read(node){
+        function read(node) {
             // console.log('reading %O', node);
 
-            if (node.type == 'Tag') {
-                // console.log('parsing %O', node);
-                _.forEach(node.attrs, function(attr){
-                    if(attr.name == 'class') {
-                        // console.log('adding %O', node);
-                        classes.push(_.trim(attr.val, "'"));
-                        // classes.push(attr.val);
+            if (node.type == 'Tag' || node.type == 'Mixin') {
+                // console.log('parsing %s', util.inspect(node));
+                _.forEach(node.attrs, function (attr) {
+                    switch (attr.name) {
+                        case 'class':
+                            classes.push(attr.val.replace(/[\/\"\']/g, ''));
+                            break;
+                        case 'id':
+
+                            break;
+                        default:
+                            break;
                     }
                 });
 
-                if(node.block && node.block.nodes){
-                    _.forEach(node.block.nodes, function(childNode){
+                if (node.block && node.block.nodes) {
+                    _.forEach(node.block.nodes, function (childNode) {
                         read(childNode);
                     });
                 }
@@ -34,33 +38,45 @@ function build(data) {
 
     });
 
-    function optimizeClassList(classList){
-        var _optimizedClassList = {};
-        _.forEach(classList, function(className){
-            var parts;
-            if(/__/.test(className)){
-                parts = className.split('__');
-                _optimizedClassList[parts[0]] = _optimizedClassList[parts[0]] || { modifiers: [], elements: []};
-                _optimizedClassList[parts[0]].elements.push(parts[1]);
-            } else if(/\-\-/.test(className)){
-                parts = className.split('--');
-                _optimizedClassList[parts[0]] = _optimizedClassList[parts[0]] || { modifiers: [], elements: []};
-                _optimizedClassList[parts[0]].modifiers.push(parts[1]);
+    function optimizeClassList(classList) {
+        var rootsClasses = {};
+        _.forEach(classList, function (selector) {
+            var selectorComponents,
+                blockSelector,
+                elementSelector,
+                modifierSelector;
+            if (/__/.test(selector)) {
+                selectorComponents = selector.split('__');
+                blockSelector = selectorComponents[0];
+                elementSelector = selectorComponents[1];
+
+                rootsClasses[blockSelector] = rootsClasses[blockSelector] || {modifiers: [], elements: []};
+                rootsClasses[blockSelector].elements.push(elementSelector);
+            } else if (/\-\-/.test(selector)) {
+                selectorComponents = selector.split('--');
+                blockSelector = selectorComponents[0];
+                modifierSelector = selectorComponents[1];
+
+                rootsClasses[blockSelector] = rootsClasses[blockSelector] || {
+                        modifiers: [],
+                        elements: []
+                    };
+                rootsClasses[blockSelector].modifiers.push(modifierSelector);
             } else {
-                _optimizedClassList[className] = _optimizedClassList[className] || { modifiers: [], elements: []};
+                rootsClasses[selector] = rootsClasses[selector] || {modifiers: [], elements: []};
             }
         });
 
-        _.forEach(_optimizedClassList, function(baseClassData, baseClass){
-            _optimizedClassList[baseClass].elements = _.uniq(baseClassData.elements);
-            _optimizedClassList[baseClass].modifiers = _.uniq(baseClassData.modifiers);
+        _.forEach(rootsClasses, function (baseClassData, baseClass) {
+            rootsClasses[baseClass].name = baseClass;
+            rootsClasses[baseClass].elements = _.uniq(baseClassData.elements);
+            rootsClasses[baseClass].modifiers = _.uniq(baseClassData.modifiers);
         });
 
-        return _optimizedClassList;
+        return rootsClasses;
     }
 
     var optimizedClassList = optimizeClassList(classes);
-    // console.log('%s', util.inspect(optimizedClassList, {colors: true}));
     return optimizedClassList;
 }
 

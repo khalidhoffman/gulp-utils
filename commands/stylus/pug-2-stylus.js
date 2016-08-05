@@ -12,18 +12,20 @@ var fs = require('fs'),
     projectUtils = require('../utils'),
     project = require('../project');
 
-function StylusBuilder(pugStr, options) {
+function convertPugToStylus(pugStr, options) {
     var _options = _.extend({}, options),
         lex = require('pug-lexer'),
         parse = require('pug-parser'),
         tree = parse(lex(pugStr)),
         bemData = require('./lib/pug-2-bem')(tree.nodes),
-        cssText = require('./lib/bem-2-stylus')(bemData, function (stylusText) {
-            fs.writeFile(_options.writePath, stylusText, {encoding: 'utf8'}, function (err) {
-                console.log('%s -> %s', _options.readPath, _options.writePath);
-                if (_options.done) _options.done.apply(_options.context, [err, cssText])
-            })
-        }, {useLib: _options.useLib});
+        bemRender = new require('./lib/bem-2-stylus')({useLib: _options.useLib});
+
+    bemRender.render(bemData, function (stylusText) {
+        fs.writeFile(_options.writePath, stylusText, {encoding: 'utf8'}, function (err) {
+            console.log('%s -> %s', _options.readPath, _options.writePath);
+            if (_options.done) _options.done.apply(_options.context, [err, stylusText])
+        })
+    });
 }
 
 function pug2Stylus(onCompilationComplete) {
@@ -42,7 +44,7 @@ function pug2Stylus(onCompilationComplete) {
                             if (err) throw err;
                             // console.log('reading: ', filePath);
                             // console.log("checking...", parsedPath);
-                            StylusBuilder(pugText, {
+                            convertPugToStylus(pugText, {
                                 readPath: filePath,
                                 writePath: path.resolve(project.config.paths.tmp, '_' + filePathMeta.name + '.styl'),
                                 done: function () {
@@ -54,10 +56,10 @@ function pug2Stylus(onCompilationComplete) {
                         return false;
                     }
                 });
-                if(!isFileExistent) done(new Error(util.format("No file by name of '%s' was not found.", filename)));
+                if (!isFileExistent) done(new Error(util.format("No file by name of '%s' was not found.", filename)));
             });
         }, function complete(err) {
-            if(err) console.error(err);
+            if (err) console.error(err);
             callback();
         });
     }
@@ -86,13 +88,11 @@ function pug2Stylus(onCompilationComplete) {
             specifiedFilename = result.filename;
             convertPugFileToStylus(specifiedFilename, function () {
                 prompt.stop();
-                console.log('done');
                 onCompilationComplete();
             }, {useLib: (/^\s*(yes|y)\s*$/.test(result.isV2Style))});
         });
     } else {
         convertPugFileToStylus(specifiedFilename, function () {
-            console.log('done');
             onCompilationComplete();
         });
     }

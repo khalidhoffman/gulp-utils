@@ -9,14 +9,25 @@ block($selector)
     {block}
 
 
-modifier($modifier)
+mod($modifier)
   $modifier-selector-part = $modifier
   unless typeof($modifier) == 'string'
     $modifier-selector-part = s('%s',$modifier);
   &--{$modifier-selector-part}
     {block}
 
-element($element, $depth=-2)
+modifier=mod
+
+element($element, $depth=-1)
+  $element-selector-part = $element
+  unless typeof($element) == 'string'
+    $element-selector-part = "%s" % $element
+  $parent = s("& ^[%s..%s]", $depth, $depth)
+  {$parent}
+    &__{$element-selector-part}
+      {block}
+
+mod-element($element, $depth=-2)
   $element-selector-part = $element
   unless typeof($element) == 'string'
     $element-selector-part = "%s" % $element

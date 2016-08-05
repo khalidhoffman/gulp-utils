@@ -9,83 +9,209 @@ var _ = require('lodash'),
  * @param {Boolean} options.useLib whether to use block, element, modifier mixins
  * @returns {*}
  */
-function bem2Stylus(data, callback, options) {
-    var _options = _.extend({
-        useLib: false
-    }, options);
+function BemRenderer(options) {
+    var _options = _.defaults(options, {
+        useLib: false,
+        rootSelector: 'page-content',
+        stylusEmptyText: 'empty()',
+        tabSize: 2
+    });
 
-    function tab(depth) {
-        var _tab = '',
-            tabSize = 2;
-        for (var i = 0; i < depth * tabSize; i++) {
+    this.depth = 0;
+    this._buffer = '';
+    this.stylusText = '';
+    
+    this.buffer = function(str){
+        return this._buffer += str;
+    };
+
+    /**
+     *
+     * @param {Number} charCount
+     * @returns {String}
+     */
+    this.popBuffer = function(charCount){
+        if (charCount){
+            return this._buffer = this._buffer.substr(0, this._buffer.length - charCount)
+        }
+        return this._buffer = '';
+    };
+
+    this.print = function(){
+        this.stylusText += this._buffer;
+        this.popBuffer();
+    };
+
+    this.indent = function (depth) {
+        var _depth = depth || this.depth,
+            _tab = '',
+            tabSize = _options.tabSize;
+        for (var i = 0; i < _depth * tabSize; i++) {
             _tab += ' ';
         }
-        return _tab;
-    }
+        return this.buffer(_tab);
+    };
 
-    function render(bemClassList) {
+    this.increaseIndent = function (depth) {
+        this.depth = (depth || this.depth) + 1;
+    };
 
-        var rootText = '',
-            text = '',
-            selectorDepth = 0;
+    this.decreaseIndent = function (depth) {
+        this.depth = (depth || this.depth) - 1;
+    };
 
-        _.forEach(bemClassList, function(bemNode, className) {
-            var blockSelectorText = util.format(_options.useLib ? "+block('%s')" : ".%s", className),
-                elementSelectorText;
+    this.selector = function(selector){
+        return this.buffer(selector);
+    };
 
-            // add block selector
-            if (selectorDepth === 0) {
-                rootText += util.format('\n%s', blockSelectorText);
+    this.emptyText = function(){
+        return this.buffer(_options.stylusEmptyText);
+    };
+
+    this.block = function(selector){
+        return this.buffer(util.format(_options.useLib ? "+block('%s')" : ".%s", selector));
+    };
+
+    this.modifier = function(selector){
+        return this.buffer(util.format(_options.useLib ? "+mod('%s')" : "\&--%s", selector));
+    };
+
+    this.element = function(selector){
+        return this.buffer(util.format(_options.useLib ? "+element('%s')" : "\&__%s", selector));
+    };
+
+    this.modElement = function(selector){
+        return this.buffer(util.format(_options.useLib ? "+mod-element('%s')" : "\&__%s", selector));
+    };
+
+
+    this.newLine = function(){
+        var _newLine = "\n";
+        return this.buffer(_newLine);
+    };
+
+    this.deleteLine = function(){
+        this._buffer = this._buffer.replace(/\n.*$/, '');
+        return this._buffer;
+    };
+
+    this.isRoot = function () {
+        return this.depth == 0;
+    };
+
+    this.isCustomRoot = function (bemNode) {
+        return this.depth == 0 && bemNode.name == _options.rootSelector && bemNode.modifiers.length > 0;
+    };
+
+    this.reset = function(){
+        this.depth = 0;
+        this.popBuffer();
+    };
+
+    this.printElements = function(elements){
+        var isModElements = depth > 2,
+            self = this;
+        if (elements.length == 0) {
+            self.emptyText();
+            self.newLine();
+            self.indent();
+            return
+        }
+
+        // if not using BEM mixins, add selector to reset `&` selector to block
+        if (isModElements && !_options.useLib) {
+            self.selector('& ^[-2..-2]');
+            self.newLine();
+            self.increaseIndent();
+            self.indent();
+        }
+
+        _.forEachRight(elements, function(selector){
+            if (isModElements) {
+                self.modElement(selector)
             } else {
-                text += util.format(_options.useLib ? '\n%s%s\n%sempty()' : '\n%s%s\n%sempty()', tab(selectorDepth), blockSelectorText, tab(1 + selectorDepth));
+                self.element(selector);
             }
 
+            self.newLine();
+            self.increaseIndent();
+            self.indent();
 
+            self.emptyText();
 
-            // add element selectors
-            _.forEachRight(bemNode.elements, function(className, index, collection) {
-                elementSelectorText = util.format( _options.useLib ? "+element('%s', -1)" : "\&__%s", className);
-                text += util.format('\n%s%s\n%sempty()', tab(1 + selectorDepth), elementSelectorText, tab(2 + selectorDepth), tab(1 + selectorDepth));
-            });
-
-            // add element selectors that are scoped with modifiers
-            var scopedChildrenSelectorText;
-
-            _.forEachRight(bemNode.modifiers, function(className, index) {
-
-                // if not using BEM mixins, add selector to reset `&` selector to block
-                scopedChildrenSelectorText = util.format(_options.useLib ? '' : '\n%s& ^[-2..-2]', tab(2 + selectorDepth));
-
-                // a fix for stylus compilation. selectors without css code cause errors
-                if (bemNode.elements.length === 0) scopedChildrenSelectorText += util.format("\n%sempty()", tab(3 + selectorDepth));
-
-                // build children elements that are scoped by a modifier
-                _.forEachRight(bemNode.elements, function(childClassName, index, collection) {
-                    var scopedChildSelectorText = util.format( _options.useLib ? "+element('%s')" : "\&__%s", childClassName);
-                    scopedChildrenSelectorText += util.format('\n%s%s\n%sempty()', tab(3 + selectorDepth), scopedChildSelectorText, tab(4 + selectorDepth));
-                });
-
-                // join the modifier and children elements
-                var modifierSelectorText = util.format( _options.useLib ? "+modifier('%s')" : "\&--%s", className);
-                text += util.format('\n%s%s%s%s',
-                    tab(1 + selectorDepth),
-                    modifierSelectorText,
-                    (_options.useLib && bemNode.elements.length  > 0) ? "" : util.format("\n%sempty()", tab(2 + selectorDepth)),
-                    scopedChildrenSelectorText);
-            });
-
-            // we have already processed the root selector. so now the depth will start at 1
-            selectorDepth = 1;
+            self.newLine();
+            self.decreaseIndent();
+            self.indent();
         });
 
-        var result = rootText + text + '\n';
+        // pop indentation of `&` reset selector
+        if(isModElements && !_options.useLib){
+            self.deleteLine();
+            self.newLine();
+            self.decreaseIndent();
+            self.indent();
+        }
+    };
 
-        callback.call(null, result);
-        return result;
-    }
+    this.render = function (bemData, callback) {
 
-    return render(data);
+        var self = this,
+            rootText = '',
+            text = '';
+
+        _.forEach(bemData, function (bemNode) {
+            var isRoot = false;
+            if (self.isCustomRoot(bemNode)) {
+                var rootBemNodeName = util.format('%s--%s', bemNode.name, bemNode.modifiers.splice(0, 1));
+                self.block(rootBemNodeName);
+                self.newLine();
+                self.increaseIndent();
+                self.indent();
+                isRoot = true;
+            } else if (self.isRoot()){
+                self.block(bemNode.name);
+                self.newLine();
+                self.increaseIndent();
+                self.indent();
+                isRoot = true;
+            } else {
+                self.block(bemNode.name);
+                self.newLine();
+                self.increaseIndent();
+                self.indent();
+            }
+
+            self.printElements(bemNode.elements);
+
+            _.forEachRight(bemNode.modifiers, function(selector){
+                self.modifier(selector);
+
+                self.newLine();
+                self.increaseIndent();
+                self.indent();
+
+                self.printElements(bemNode.elements);
+
+                self.deleteLine();
+                self.newLine();
+                self.decreaseIndent();
+                self.indent();
+            });
+
+            if(!isRoot){
+                self.deleteLine();
+                self.newLine();
+                self.decreaseIndent();
+                self.indent();
+            }
+            self.print();
+        });
+
+        callback.call(null, this.stylusText);
+        return this.stylusText;
+    };
+
+    return this;
 }
 
-
-module.exports = bem2Stylus;
+module.exports = BemRenderer;
