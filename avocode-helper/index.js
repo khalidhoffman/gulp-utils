@@ -1,37 +1,4 @@
-var fs = require('fs'),
-    path = require('path'),
-    util = require('util'),
 
-    async = require('async'),
-    _ = require('lodash'),
-    color = require('onecolor'),
-
-    dump = require('../dump'),
-
-    cachePath = path.resolve(__dirname, '.cache');
-
-/**
- *
- * @param {Object} obj
- * @param {Object} [options]
- * @param {Function} [options.each]
- * @param {Function} [options.isBaseCase]
- * @param {Function} [options.done]
- */
-function recurseSearch(obj, options) {
-    var _options = options || {};
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            if (typeof obj[key] == "object" && obj[key] !== null) {
-                if (_options.each) _options.each.apply(null, [obj[key], key]);
-                recurseSearch(obj[key], _options);
-            } else {
-
-            }
-        }
-    }
-
-}
 
 /**
  *
@@ -41,96 +8,107 @@ function recurseSearch(obj, options) {
  * @constructor
  */
 function Avocode(projectIdentifier, options) {
-    var self = this,
-        _avcdOptions = _.extend({
-            documentsPath: (function () {
-                var state = JSON.parse(fs.readFileSync(path.resolve(process.env.HOME, '.avocode/state.json')));
+    var fs = require('fs'),
+        path = require('path'),
+        util = require('util'),
 
-                return path.resolve(process.env.HOME, util.format('.avocode/userdata/%s/documents/', state['user']['id']));
-            })()
-        }, options);
+        async = require('async'),
+        _ = require('lodash'),
+        color = require('onecolor'),
+
+        utils = require('./utils'),
+        dump = require('../dump'),
+
+        self = this,
+        _avcdOptions = _.defaults(options, {
+            documentsPath: (function () {
+                var state = JSON.parse(fs.readFileSync(path.join(process.env.HOME, '.avocode/state.json')));
+
+                return path.join(process.env.HOME, util.format('.avocode/userdata/%s/documents/', state['user']['id']));
+            })(),
+            useJSONCache: false,
+            cachePath: path.join(__dirname, '.cache')
+        });
+
     this.state = {
         allFilesParsed: false
     };
+
     this.data = {
         _colorCount: {},
-        project : {
-            index : -1,
-            id : -1
+        project: {
+            index: -1,
+            id: -1
         },
         colors: []
     };
+
     this.config = {
-        namespaces : {
-            project : {
-                settings : 'project_settings',
-                read : 'user_data.projects'
+        namespaces: {
+            project: {
+                settings: 'project_settings',
+                read: 'user_data.projects'
             }
         },
         backup: {
             filename: 'avocode.config.json',
-            dir: path.resolve(__dirname, '.cache')
+            dir: path.join(__dirname, '.cache')
         },
         state: {
-            path: path.resolve(process.env.HOME, '.avocode/state.json')
+            path: path.join(process.env.HOME, '.avocode/state.json')
         },
         documents: {
             path: _avcdOptions.documentsPath
         },
-        defaults: {
-            colors: [
-                {
-                    value: "white",
-                    name: '$color-white',
-                    type: 'color'
-                },
-                {
-                    value: "black",
-                    name: '$color-black',
-                    type: 'color'
-                }
-            ],
-            replaces: [
-                {
-                    value: "([0-9]+\.?[0-9]*)px",
-                    name: "em-auto($1px)",
-                    type: "replace"
-                }
-            ]
-        }
+        defaults: (function () {
+            try {
+                var defaultsStr = fs.readFileSync(path.join(__dirname, '/defaults.json'), {encoding: 'utf8'}),
+                    defaults = JSON.parse(defaultsStr);
+                if (!_.isArray(defaults.replaces)) throw new Error("replaces field is incorrectly formatted");
+                if (!_.isArray(defaults.colors)) throw new Error("colors field is incorrectly formatted");
+                return defaults;
+            } catch (err) {
+                console.error(err);
+                return {}
+            }
+        })()
+
     };
 
     this._stateLocation = this.config.state.path;
-    this._backupPath = path.resolve(this.config.backup.dir, this.config.backup.filename);
+    this._backupPath = path.join(this.config.backup.dir, this.config.backup.filename);
     this._selector = projectIdentifier;
 
-    // fs.access(cachePath, fs.W_OK, function(err){
-    //     if(err) throw err;
-    // });
-    //
-    // fs.mkdir(cachePath, function(err, file){
-    //     if(err) throw err;
-    //     fs.writeFile(path.resolve(cachePath, 'var.json'), JSON.stringify(this.data), function(){
-    //
-    //     })
-    // });
+    if (_avcdOptions.useJSONCache) {
+
+        fs.access(_avcdOptions.cachePath, fs.W_OK, function (err) {
+            if (err) throw err;
+        });
+
+        fs.mkdir(_avcdOptions.cachePath, function (err, file) {
+            if (err) throw err;
+            fs.writeFile(path.join(_avcdOptions.cachePath, 'var.json'), JSON.stringify(self.data), function () {
+
+            })
+        });
+    }
 
     this.state = JSON.parse(fs.readFileSync(this._stateLocation, {encoding: 'utf8'}));
     this.projects = _.result(this.state, self.config.namespaces.project.read);
     this._project = _.find(this.projects, function (project, index, collection) {
-        if (_.isRegExp(self._selector) ?
-                (self._selector.test(project['slug']) ||
-                self._selector.test(project['name']))
-                :
-                (project['slug'].toLowerCase().indexOf(self._selector.toLowerCase()) >= 0 ||
-                project['name'].toLowerCase().indexOf(self._selector.toLowerCase()) >= 0)
-        ) {
-            self.data.project.index = index;
-            self.data.project.id = project['id'];
-            return true;
-        }
-        return false;
-    });
+            if (_.isRegExp(self._selector) ?
+                    (self._selector.test(project['slug']) ||
+                    self._selector.test(project['name']))
+                    :
+                    (project['slug'].toLowerCase().indexOf(self._selector.toLowerCase()) >= 0 ||
+                    project['name'].toLowerCase().indexOf(self._selector.toLowerCase()) >= 0)
+            ) {
+                self.data.project.index = index;
+                self.data.project.id = project['id'];
+                return true;
+            }
+            return false;
+        }) || [];
 
     /**
      *
@@ -155,11 +133,10 @@ function Avocode(projectIdentifier, options) {
             fs.readFile(docPath, {encoding: 'utf8'}, function (err, docJSON) {
                 if (err) {
                     console.log("ignoring '%s'", err.path);
-                    done();
-                    return;
+                    return done();
                 }
                 var docData = JSON.parse(docJSON);
-                recurseSearch(docData, {
+                utils.recurseObject(docData, {
                     each: function (value, key) {
                         switch (key) {
                             case 'color':
@@ -187,7 +164,7 @@ function Avocode(projectIdentifier, options) {
             function each(docMeta, index, done) {
                 async.forEachOf(docMeta['designs'],
                     function perDoc(singleDocMeta, docIndex, onDoneWithSingleDoc) {
-                        _parseDoc(path.resolve(self.config.documents.path, singleDocMeta['latest_revision_id'], 'data.json'), function(){
+                        _parseDoc(path.join(self.config.documents.path, singleDocMeta['latest_revision_id'], 'data.json'), function () {
                             console.log('%s/%s - design groups parsed', index + 1, self._project['design_groups'].length);
                             onDoneWithSingleDoc();
                         })
@@ -212,29 +189,28 @@ function Avocode(projectIdentifier, options) {
                     })
                     .value();
 
-                var _fonts = {};
                 self.data.fonts = _.chain(fonts)
                     .uniqWith(_.isEqual)
-                    .reduce(function (collection, fontMeta, index) {
+                    .reduce(function (fontData, fontMeta, index) {
                         var _name = fontMeta['name'];
                         if (_.isString(_name) && _name.length > 0) {
                             var _camelName = _.camelCase(_name),
                                 _kebabName = _.kebabCase(_name);
-                            _fonts[_camelName] = {
+                            fontData[_camelName] = {
                                 value: util.format("font-family:[\\s]*%s;", _name),
                                 name: (function () {
-                                    return util.format('font-%s();', _kebabName)
+                                    return util.format(self.config.defaults.font.mixin, _kebabName)
                                 })(),
                                 type: 'replace'
                             };
-                            _fonts[_camelName + '_safe'] = _.extend(
+                            fontData[_camelName + '_safe'] = _.extend(
                                 {},
-                                _fonts[_camelName],
+                                fontData[_camelName],
                                 {value: util.format("font-family:[\\s]*\"%s\";", _name)}
                             );
                         }
-                        return _fonts;
-                    })
+                        return fontData;
+                    }, {})
                     .toArray()
                     .value();
                 console.log('\nfonts: %s', dump(self.data.fonts));
@@ -270,7 +246,7 @@ function Avocode(projectIdentifier, options) {
 
     this.save = function (done, options) {
         var _options = _.extend({}, options),
-            _writePath = this._stateLocation || path.resolve(process.cwd(), 'state.json');
+            _writePath = this._stateLocation || path.join(process.cwd(), 'state.json');
         this.data.settings = _.toArray(_.union(this.config.defaults.colors, this.data.colors, this.config.defaults.replaces, this.data.fonts));
         var _settingsPath = util.format('%s.%s.variables', self.config.namespaces.project.settings, self.data.project.id);
         if (done) {
