@@ -43,21 +43,22 @@ A personal dev library for quicker for development
 
 ###### Task Options
 
-Task Names   | Details
--------------|---------
-`pug`        | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
-`stylus`     | [additional helper functions](lib/stylus/lib/stylus/) are included at compilation. compiles to css
-`less`       | compiles to css
-`js`         | beautifies js. Overwrites file
-`js-bundle`  | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
-`compass`    | compiles to css
-`jsx`        | compiles js to same directory as original `.jsx` file
-`sass`       | compiles to css
-`pug-ejs`    | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
-`pug-html`   | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
-`jade`       | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.php` files
-`jade-ejs`   | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.ejs` files
-`jade-html`  | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.html` files
-`html-2-pug` | compiles `.pug` files to `.html` files
-`php-2-pug`  | compiles `.pug` files to `.php` files
-`ftp`        | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process. More Info is posted on [the github page](https://github.com/khalidhoffman/ftp-sync)
+Task Names    | Details
+--------------|---------
+`pug`         | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
+`stylus`      | [additional helper functions](lib/stylus/lib/stylus/) are included at compilation. compiles to css
+`less`        | compiles to css
+`js`          | beautifies js. Overwrites file
+`js-bundle`   | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
+`compass`     | compiles to css
+`jsx`         | compiles js to same directory as original `.jsx` file
+`sass`        | compiles to css
+`pug-ejs`     | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
+`pug-html`    | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
+`pug-beautify`| beautifies pug files. Overwrites file
+`jade`        | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.php` files
+`jade-ejs`    | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.ejs` files
+`jade-html`   | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.html` files
+`html-2-pug`  | compiles `.pug` files to `.html` files
+`php-2-pug`   | compiles `.pug` files to `.php` files
+`ftp`         | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process. More Info is posted on [the github page](https://github.com/khalidhoffman/ftp-sync)

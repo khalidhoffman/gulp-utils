@@ -16,6 +16,10 @@
       "output": "./"
     },
     {
+      "name" : "pug-beautify",
+      "input": "pug/"
+    },
+    {
       "name" : "jade",
       "input": "jade/",
       "output": "./"

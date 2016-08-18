@@ -70,6 +70,8 @@ gulp.task('jade-ejs', gulpLib('jade').ejs);
 
 gulp.task('jade-html', gulpLib('jade').html);
 
+gulp.task('pug-beautify', gulpLib('pug').beautify);
+
 
 // Javascript tasks
 gulp.task('build-js-config', gulpLib('javascript').config);
