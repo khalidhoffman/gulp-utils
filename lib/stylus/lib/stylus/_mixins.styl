@@ -312,7 +312,7 @@ placeholder() {
 }
 
 // pulled from https://github.com/yangsu/nib/blob/98bdae7f2a5620bc56f6b2c9c98f71ce73a35fbf/lib/nib/vendor.styl
-blur(radius, failbackPx=2px)
+compat-filter(radius, failbackPx=2px)
   vendor('filter', '%s' % radius, only: webkit moz ms official)
 
   if support-for-ie
