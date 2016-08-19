@@ -59,6 +59,6 @@ Task Names    | Details
 `jade`        | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.php` files
 `jade-ejs`    | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.ejs` files
 `jade-html`   | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.html` files
-`html-2-pug`  | compiles `.pug` files to `.html` files
-`php-2-pug`   | compiles `.pug` files to `.php` files
+`html-2-pug`  | compiles `.html` files to `.pug` files
+`php-2-pug`   | compiles `.php` files to `.pug` files
 `ftp`         | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process. More Info is posted on [the github page](https://github.com/khalidhoffman/ftp-sync)
