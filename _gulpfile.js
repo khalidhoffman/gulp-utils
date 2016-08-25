@@ -17,7 +17,26 @@ gulp.task('auto', function(){
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['pugjs'], '/**/*.pug'), ['pug-js']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '!(node_modules|vendors)/**/*.jsx'), ['babel']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['sass'], '/**/*.scss'), ['sass']);
-    // gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'!(node_modules|vendors)/**/*.js'), ['beautify-js']);
+    //gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), function(event){
+    //    gulpLib('pug').beautify({
+    //        tasks : [
+    //            {
+    //                input : path.dirname(event.path),
+    //                suffix : path.basename(event.path)
+    //            }
+    //        ]
+    //    });
+    //});
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'!(node_modules|vendors)/**/*.js'), function(event){
+        gulpLib('javascript').beautify({
+            tasks : [
+                {
+                    input : path.dirname(event.path),
+                    suffix : path.basename(event.path)
+                }
+            ]
+        });
+    });
     gulpLib('project/chrome-sync').start();
 });
 // CSS tasks
