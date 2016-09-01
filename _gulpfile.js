@@ -11,11 +11,11 @@ var path = require('path'),
     projectUtils = gulpLib('utils');
 
 // dev task that watches and executes appropriate tasks as necessary
-gulp.task('auto', function(){
+gulp.task('auto', function(done){
     gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), ['pug-php']);
     gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '/**/*.styl'), ['stylus']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['pugjs'], '/**/*.pug'), ['pug-js']);
-    // gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '!(node_modules|vendors)/**/*.jsx'), ['babel']);
+    // gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '{**,!node_modules,!vendors}/**/*.jsx'), ['babel']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['sass'], '/**/*.scss'), ['sass']);
     //gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), function(event){
     //    gulpLib('pug').beautify({
@@ -27,7 +27,7 @@ gulp.task('auto', function(){
     //        ]
     //    });
     //});
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'!(node_modules|vendors)/**/*.js'), function(event){
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'/{**,!node_modules,!vendors}/**/*.js'), function(event){
         gulpLib('javascript').beautify({
             tasks : [
                 {
@@ -37,7 +37,10 @@ gulp.task('auto', function(){
             ]
         });
     });
-    gulpLib('project/chrome-sync').start();
+    gulpLib('project/chrome-sync').start(function(){
+        console.log('watching files...');
+        done();
+    });
 });
 // CSS tasks
 
@@ -98,7 +101,7 @@ gulp.task('build-js-config', gulpLib('javascript').config);
 gulp.task('beautify-js', gulpLib('javascript').beautify);
 
 gulp.task('beautify-js-auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['js'], '!(node_modules|vendors)/**/*.js'), ['beautify-js']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['js'], '{**,!node_modules,!vendors)/*.js'), ['beautify-js']);
 });
 
 gulp.task('test-js', gulpLib('javascript').test);
@@ -118,7 +121,7 @@ gulp.task('init-avocode', gulpLib('avocode').init);
 gulp.task('babel', gulpLib('babel').compile);
 
 gulp.task('babel-auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '!(node_modules|vendors)/**/*.jsx'), ['babel']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '{**,!node_modules,!vendors)/**/*.jsx'), ['babel']);
 });
 
 
