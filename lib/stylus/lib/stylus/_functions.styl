@@ -1,3 +1,10 @@
+generateJoinedSelector($baseClass, $modifiers)
+  $selector = ''
+  for $mod in $modifiers
+    $selector += $baseClass+ '--' + $mod
+  return $selector
+
+
 
 $isMobile = 0 0;
 set-mobile(){
