@@ -9,12 +9,12 @@ block($selector)
 
 
 mod($modifier)
-  $baseClass = selector('^[-1..-1]')
-  $modifier-selector = generateJoinedSelector('^[-1..-1]', arguments)
+  $modifier-selector = generateModifierSelector(arguments)
   unless typeof($modifier) == 'string'
     $modifier-selector = s('%s',$modifier);
-  ^[0..-2] {$modifier-selector}
-    {block}
+  {'&'}
+    {$modifier-selector}
+      {block}
 
 modifier=mod
 
@@ -27,7 +27,7 @@ element($element, $depth=-1)
     &__{$element-selector-part}
       {block}
 
-mod-element($element, $depth=-2)
+mod-element($element, $depth=-3)
   $element-selector-part = $element
   unless typeof($element) == 'string'
     $element-selector-part = "%s" % $element
