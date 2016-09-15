@@ -42,7 +42,7 @@ overlay-before($bg-property = rgba(0, 0, 0, 0.5), $has-content = true) {
   &:before {
     content: ""
     position: absolute;
-    if ($bg-property-type == "color") {
+    if ($bg-property-type == "rgba") {
       background-color: $bg-property;
     }
     else if ($bg-property-type == "literal") {
@@ -68,26 +68,27 @@ overlay-before($bg-property = rgba(0, 0, 0, 0.5), $has-content = true) {
 }
 
 overlay-after($bg-property = rgba(0, 0, 0, 0.5), $has-content = true) {
-  $bg-property-type = type_of($bg-property)
+  $bg-property-type = typeof($bg-property)
+  overflow: hidden;
   position: relative;
 
   &:after {
     content: ""
     position: absolute;
-    if ($bg-property-type == "color") {
+    if ($bg-property-type == "rgba") {
       background-color: $bg-property;
     } else {
       background($bg-property)
       //TODO clean up fallback method for when background is not a gradient/image
       background-image-support($bg-property);
       background-position center;
-      display: block;
-      bottom: -1px;
-      left: -1px;
-      right: -1px;
-      top: -1px;
       {block}
     }
+    display: block;
+    bottom: -1px;
+    left: -1px;
+    right: -1px;
+    top: -1px;
 
     if ($has-content == true) {
       > * {
@@ -290,24 +291,6 @@ custom-heading-size($base-heading = h3, $adjusted-font-size = 40) {
     & {$heading-size} {
       font-size: 1em * $adjustment *  $font-ratio;
     }
-  }
-}
-
-placeholder() {
-  &::-webkit-input-placeholder {
-    {block}
-  }
-
-  &:-moz-placeholder { /* Firefox 18- */
-    {block}
-  }
-
-  &::-moz-placeholder { /* Firefox 19+ */
-    {block}
-  }
-
-  &:-ms-input-placeholder {
-    {block}
   }
 }
 

@@ -29,8 +29,8 @@ is-mobile(){
 }
 
 em-auto(fontSize, baseSize = false) {
-  $parentFontSize = px(baseSize || @font-size || 1em);
-  $mobileAdjustment = 1;
+  $defaultParentSize = baseSize || @font-size || 1em;
+  $parentFontSize = px($defaultParentSize);
   $fontSize = fontSize;
   if (unit(fontSize) == '') {
     $fontSize = fontSize * 1px;
@@ -39,11 +39,12 @@ em-auto(fontSize, baseSize = false) {
   //  debugLog(selector()+' is mobile');
   //  $mobileAdjustment = $ratio-font-reduction;
   //}
-  return round(((1em * $fontSize / $parentFontSize) / $mobileAdjustment), 5)
+  return round((1em * $fontSize / $parentFontSize) , 5)
 }
 
 em-auto-m(fontSize, baseSize = false) {
-  $parentFontSize = px(baseSize || @font-size || 1em);
+  $defaultParentSize = baseSize || @font-size || 1em;
+  $parentFontSize = px($defaultParentSize);
   $mobileAdjustment = $ratio-font-reduction;
   $fontSize = fontSize;
   if (unit(fontSize) == '') {

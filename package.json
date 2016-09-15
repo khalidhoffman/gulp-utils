@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "bin": {
     "dp-setup": "bin/setup.js"
   },
@@ -46,6 +46,7 @@
     "html2pug": "git+https://github.com/khalidhoffman/html2pug.git",
     "jade": "^1.11.0",
     "js-beautify": "^1.5.10",
+    "kouto-swiss": "^0.12.0",
     "less": "^2.7.1",
     "lodash": "^4.6.1",
     "nib": "^1.1.0",
