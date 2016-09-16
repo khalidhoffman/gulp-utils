@@ -45,7 +45,7 @@ overlay-before($bg-property = rgba(0, 0, 0, 0.5), $has-content = true) {
     if ($bg-property-type == "rgba") {
       background-color: $bg-property;
     }
-    else if ($bg-property-type == "literal") {
+    else if ($bg-property-type == "call") {
       background-image($bg-property);
     }
     else {
@@ -77,18 +77,17 @@ overlay-after($bg-property = rgba(0, 0, 0, 0.5), $has-content = true) {
     position: absolute;
     if ($bg-property-type == "rgba") {
       background-color: $bg-property;
+    } else if ($bg-property-type == "call") {
+      background-image($bg-property);
     } else {
       background($bg-property)
-      //TODO clean up fallback method for when background is not a gradient/image
-      background-image-support($bg-property);
-      background-position center;
-      {block}
     }
     display: block;
     bottom: -1px;
     left: -1px;
     right: -1px;
     top: -1px;
+    {block}
 
     if ($has-content == true) {
       > * {
