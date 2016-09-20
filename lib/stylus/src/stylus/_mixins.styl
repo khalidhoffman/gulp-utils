@@ -237,9 +237,9 @@ custom-heading-size($base-heading = h3, $adjusted-font-size = 40)
 
 
 // pulled from https://github.com/yangsu/nib/blob/98bdae7f2a5620bc56f6b2c9c98f71ce73a35fbf/lib/nib/vendor.styl
-compat-filter(radius, failbackPx=2px)
-  vendor('filter', '%s' % radius, only: webkit moz ms official)
+// requires kouto
+compat-filter(radius, fallbackPx=2px)
+  vendor('filter', 'blur(%s)' % fallbackPx, prefixes: moz, official: true)
+  vendor('filter', '%s' % radius, prefixes: webkit ms, official: false)
   if support-for-ie
-    unless typeof(radius) is unit
-      radius= failbackPx;
-    filter '"progid:DXImageTransform.Microsoft.Blur(PixelRadius=%d)"' % radius;
+    filter '"progid:DXImageTransform.Microsoft.Blur(PixelRadius=%d)"' % fallbackPx;
