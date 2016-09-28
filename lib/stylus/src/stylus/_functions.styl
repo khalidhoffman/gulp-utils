@@ -4,13 +4,22 @@ generateJoinedSelector($baseClass, $modifiers)
     $selector += $baseClass+ '--' + $mod
   return $selector
 
-generateModifierSelector($modifiers)
+generateJointModifierSelector($modifiers)
   $selector = ''
   for $mod, $index in $modifiers
     if $index == 0
       $selector += '../'+ '--' + $mod
     else
       $selector += '^[-2..-2]'+ '--' + $mod
+  return $selector
+
+generateSharedModifierSelector($modifiers)
+  $selector = ''
+  for $mod, $index in $modifiers
+    if $index == 0
+      $selector += '../'+ '--' + $mod
+    else
+      $selector += ', ../'+ '--' + $mod
   return $selector
 
 

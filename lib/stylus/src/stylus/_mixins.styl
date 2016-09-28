@@ -9,7 +9,15 @@ block($selector)
 
 
 mod($modifier)
-  $modifier-selector = generateModifierSelector(arguments)
+  $modifier-selector = generateJointModifierSelector(arguments)
+  unless typeof($modifier) == 'string'
+    $modifier-selector = s('%s',$modifier);
+  {'&'}
+    {$modifier-selector}
+      {block}
+
+mod-share($modifier)
+  $modifier-selector = generateSharedModifierSelector(arguments)
   unless typeof($modifier) == 'string'
     $modifier-selector = s('%s',$modifier);
   {'&'}
