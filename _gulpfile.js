@@ -46,14 +46,14 @@ gulp.task('auto', function(done){
 
 gulp.task('stylus', utils('stylus').compile);
 
-gulp.task('stylus-bem', utils('stylus-bem').compileBEM);
+gulp.task('stylus-bem', utils('stylus').compileBEM);
 
 gulp.task('stylus-auto', function(){
     gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '**/*.styl'), ['stylus']);
 });
 
 gulp.task('stylus-bem-auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus-bem'], '**/*.styl'), ['stylus-bem']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '**/*.styl'), ['stylus-bem']);
 });
 
 gulp.task('less', utils('less').compile);
