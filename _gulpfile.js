@@ -1,5 +1,5 @@
 // template gulpfile
-// working gulpfile should be in root of project
+// working gulpfile should be in root of project and named 'gulpfile.js'
 
 var path = require('path'),
 
@@ -11,12 +11,14 @@ var path = require('path'),
     projectUtils = utils('utils');
 
 // dev task that watches and executes appropriate tasks as necessary
-gulp.task('auto', function(done){
+gulp.task('auto', function(){
     gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), ['pug-php']);
     gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '/**/*.styl'), ['stylus']);
-    // gulp.watch(projectUtils.buildGlobArray(project.tasks['pugjs'], '/**/*.pug'), ['pug-js']);
+    // gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-html'], '/**/*.pug'), ['pug-html']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '{**,!node_modules,!vendors}/**/*.jsx'), ['babel']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['sass'], '/**/*.scss'), ['sass']);
+    
+    // autoformat pug files on save
     //gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), function(event){
     //    utils('pug').beautify({
     //        tasks : [
@@ -27,6 +29,8 @@ gulp.task('auto', function(done){
     //        ]
     //    });
     //});
+
+    // autoformat javascript files on save
     gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'/{**,!node_modules,!vendors}/**/*.js'), function(event){
         utils('javascript').beautify({
             tasks : [
@@ -37,9 +41,9 @@ gulp.task('auto', function(done){
             ]
         });
     });
+
     utils('project/chrome-sync').start(function(){
-        console.log('watching files...');
-        done();
+        console.log('chrome-sync active...');
     });
 });
 // CSS tasks
