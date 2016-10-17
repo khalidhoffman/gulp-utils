@@ -21,7 +21,7 @@ A personal dev library for quicker for development
       "output": "relative/path/to/stylesheets/folder/from/basePath"
     },
     {
-      "name" : "pug",
+      "name" : "pug-php",
       "input": "relative/path/to/pug/folder/from/basePath",
       "output": "relative/path/to/php/folder/from/basePath"
     },
@@ -45,7 +45,8 @@ A personal dev library for quicker for development
 
 Task Names    | Details
 --------------|---------
-`pug`         | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
+`pug-php`     | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
+`stylus-bem`  | [additional helper functions](lib/stylus/lib/stylus/) are included at compilation. compiles to css. Read more about [stylus-bem](https://github.com/khaliddpdev/stylus-bem)
 `stylus`      | [additional helper functions](lib/stylus/lib/stylus/) are included at compilation. compiles to css
 `less`        | compiles to css
 `js`          | beautifies js. Overwrites file
@@ -55,8 +56,8 @@ Task Names    | Details
 `sass`        | compiles to css
 `pug-ejs`     | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
 `pug-html`    | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
-`pug-beautify`| beautifies pug files. Overwrites file
-`jade`        | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.php` files
+`pug`         | beautifies pug files. Overwrites file
+`jade-php`    | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.php` files
 `jade-ejs`    | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.ejs` files
 `jade-html`   | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.html` files
 `html-2-pug`  | compiles `.html` files to `.pug` files

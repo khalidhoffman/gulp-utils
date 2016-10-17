@@ -12,8 +12,9 @@ var path = require('path'),
 
 // dev task that watches and executes appropriate tasks as necessary
 gulp.task('auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), ['pug-php']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-php'], '/**/*.pug'), ['pug-php']);
     gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '/**/*.styl'), ['stylus']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus-bem'], '/**/*.styl'), ['stylus-bem']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-html'], '/**/*.pug'), ['pug-html']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '{**,!node_modules,!vendors}/**/*.jsx'), ['babel']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['sass'], '/**/*.scss'), ['sass']);
@@ -57,7 +58,7 @@ gulp.task('stylus-auto', function(){
 });
 
 gulp.task('stylus-bem-auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '**/*.styl'), ['stylus-bem']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus-bem'], '**/*.styl'), ['stylus-bem']);
 });
 
 gulp.task('less', utils('less').compile);
@@ -79,7 +80,7 @@ gulp.task('pug-2-stylus', utils('pug').pug2Stylus);
 gulp.task('pug-php', utils('pug').php);
 
 gulp.task('pug-php-auto', function(){
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['pug'], '/**/*.pug'), ['pug-php']);
+    gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-php'], '/**/*.pug'), ['pug-php']);
 });
 
 gulp.task('pug-html', utils('pug').html);
