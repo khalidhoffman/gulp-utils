@@ -13,7 +13,7 @@ var path = require('path'),
 // dev task that watches and executes appropriate tasks as necessary
 gulp.task('auto', function(){
     gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-php'], '/**/*.pug'), ['pug-php']);
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '/**/*.styl'), ['stylus']);
+    // gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus'], '/**/*.styl'), ['stylus']);
     gulp.watch(projectUtils.buildGlobArray(project.tasks['stylus-bem'], '/**/*.styl'), ['stylus-bem']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['pug-html'], '/**/*.pug'), ['pug-html']);
     // gulp.watch(projectUtils.buildGlobArray(project.tasks['jsx'], '{**,!node_modules,!vendors}/**/*.jsx'), ['babel']);
@@ -32,16 +32,16 @@ gulp.task('auto', function(){
     //});
 
     // autoformat javascript files on save
-    gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'/{**,!node_modules,!vendors}/**/*.js'), function(event){
-        utils('javascript').beautify({
-            tasks : [
-                {
-                    input : path.dirname(event.path),
-                    suffix : path.basename(event.path)
-                }
-            ]
-        });
-    });
+    // gulp.watch(projectUtils.buildGlobArray(project.tasks['js'],'/{**,!node_modules,!vendors}/**/*.js'), function(event){
+    //     utils('javascript').beautify({
+    //         tasks : [
+    //             {
+    //                 input : path.dirname(event.path),
+    //                 suffix : path.basename(event.path)
+    //             }
+    //         ]
+    //     });
+    // });
 
     utils('project/chrome-sync').start(function(){
         console.log('chrome-sync active...');
