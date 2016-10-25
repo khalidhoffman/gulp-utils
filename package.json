@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "bin": {
     "dp-setup": "bin/setup.js"
   },
@@ -20,7 +20,6 @@
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "backbone": "^1.2.3",
-    "pug-bem-lexer": "https://github.com/khalidhoffman/pug-bem-lexer.git",
     "bourbon": "^4.2.7",
     "cheerio": "^0.19.0",
     "cli-color": "^1.1.0",
@@ -59,11 +58,13 @@
     "prompt": "^1.0.0",
     "pug": "^2.0.0-beta4",
     "pug-beautify": "^0.1.1",
+    "pug-bem-lexer": "https://github.com/khalidhoffman/pug-bem-lexer.git",
     "pug-code-gen": "0.0.7",
     "pug-lexer": "^1.2.0",
     "pug-linker": "^1.0.0",
     "pug-load": "^2.0.0",
     "pug-parser": "^1.0.0",
+    "pug-php-filter": "git+https://github.com/khalidhoffman/pug-php-filter.git",
     "pug-runtime": "^2.0.2",
     "pug-strip-comments": "0.0.1",
     "pug-walk": "0.0.3",

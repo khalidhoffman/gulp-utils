@@ -11,7 +11,7 @@
       "output": "js/src/modules/views/"
     },
     {
-      "name" : "pug",
+      "name" : "pug-php",
       "input": "pug/",
       "output": "./"
     },
@@ -20,7 +20,7 @@
       "input": "pug/"
     },
     {
-      "name" : "jade",
+      "name" : "jade-php",
       "input": "jade/",
       "output": "./"
     },
