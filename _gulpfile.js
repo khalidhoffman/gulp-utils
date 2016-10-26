@@ -68,7 +68,7 @@ gulp.task('sass', lib('sass').compile);
 gulp.task('sass-debug', lib('sass').debug);
 
 gulp.task('sass-auto', function(){
-    gulp.watch(utils.buildGlobSelector(project.tasks['stylus'], '**/*.(scss|sass)'), ['sass']);
+    gulp.watch(utils.buildGlobSelector(project.tasks['sass'], '**/*.{scss,sass}'), ['sass']);
 });
 
 gulp.task('compass', lib('sass').compass);
