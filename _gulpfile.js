@@ -43,6 +43,18 @@ gulp.task('auto', function(){
     //     });
     // });
 
+    // render jsx files on save
+    // gulp.watch(utils.buildGlobSelector(project.tasks['jsx'],'/{**, !node_modules,!vendors}/**/*.jsx'), function(event){
+    //     lib('babel').compile({
+    //         tasks : [
+    //             {
+    //                 input : path.dirname(event.path),
+    //                 output : path.basename(event.path)
+    //             }
+    //         ]
+    //     });
+    // });
+
     lib('project/chrome-sync').start(function(){
         console.log('chrome-sync active...');
     });

@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "bin": {
     "dp-setup": "bin/setup.js"
   },
