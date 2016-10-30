@@ -135,6 +135,10 @@ gulp.task('test-js', lib('javascript').test);
 
 gulp.task('build-js', lib('javascript').build);
 
+gulp.task('build-webpack', lib('javascript').buildWebpack);
+
+gulp.task('build-rjs', lib('javascript').buildRequireJS);
+
 gulp.task('jsx', lib('babel').compile);
 
 //WordPress tasks
