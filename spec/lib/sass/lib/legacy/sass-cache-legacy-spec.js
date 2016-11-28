@@ -1,13 +1,11 @@
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
-
-describe('SassCache', function () {
-    var SassCache = require('../../lib/sass/lib/sass-cache'),
+describe('SassCache (Legacy)', function () {
+    var SassCache = require('../../../../../lib/sass/lib/sass-cache/legacy'),
         sassCache;
 
     beforeAll(function () {
         sassCache = new SassCache();
     });
-    
+
     afterAll(function () {
         sassCache._printDOM();
     });

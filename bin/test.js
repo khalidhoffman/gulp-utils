@@ -10,5 +10,5 @@ jrunner.addReporter(new SpecReporter({
     displaySpecDuration: true
 }));
 jrunner.jasmine.DEFAULT_TIMEOUT_INTERVAL = 10 * 1000;
-jrunner.loadConfigFile(path.join(process.cwd(), "tests/spec/support/jasmine.json"));
+jrunner.loadConfigFile(path.join(process.cwd(), "spec/support/jasmine.json"));
 jrunner.execute();

@@ -1,5 +1,5 @@
 var path = require('path');
-describe('pug-2-stylus task', function () {
+describe('pug lib utils', function () {
 
     describe("regex filename matcher", function () {
         var utils = require(path.resolve(process.cwd(), 'lib/pug/lib/utils.js')),
