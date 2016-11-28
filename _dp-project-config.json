@@ -1,13 +1,5 @@
 {
   "name": "boilerplate",
-  "wordpress": {
-    "dbTablePrefix": "boilerplate",
-    "dbNamePrefix": "hugoazz_"
-  },
-  "avocode": {
-    "userSelector": "Khalid Hoffman",
-    "projectSelector": "boilerplate"
-  },
   "workingDir": "default",
   "tasks" : [
     {
