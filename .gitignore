@@ -1,4 +1,3 @@
-#/tests/avocode-helper/
 *.swp
 /*.php
 *.sql
@@ -8,7 +7,6 @@
 /build
 /tmp
 /backups
-tmp/
 /wp-content/themes/[a-ce-z][a-oq-z]*/
 
 /wp-content/plugins/*
