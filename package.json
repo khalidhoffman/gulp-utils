@@ -1,6 +1,6 @@
 {
   "name": "gulp-utils",
-  "version": "1.2.11",
+  "version": "2.0.0",
   "bin": {
     "dp-setup": "bin/setup.js"
   },
@@ -10,12 +10,13 @@
   },
   "main": "./index.html",
   "scripts": {
-    "test": "jasmine JASMINE_CONFIG_PATH=tests/spec/support/jasmine.json",
+    "test": "node bin/test.js",
     "setup": "node bin/setup.js"
   },
   "dependencies": {
     "ansi-256-colors": "^1.1.0",
     "async": "^2.0.0-rc.6",
+    "avocode-toolkit": "git+https://github.com/khalidhoffman/avocode-toolkit.git",
     "babel-core": "^6.7.4",
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
@@ -78,5 +79,8 @@
     "through2": "^2.0.0",
     "yargs": "^3.25.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jasmine": "^2.5.2",
+    "jasmine-spec-reporter": "^2.7.0"
+  }
 }

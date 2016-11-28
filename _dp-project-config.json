@@ -1,9 +1,14 @@
 {
   "name": "boilerplate",
-  "dbTablePrefix": "boilerplate",
-  "dbNamePrefix" : "hugoazz_",
-  "avocodeSelector" : "boilerplate",
-  "basePath" : "default",
+  "wordpress": {
+    "dbTablePrefix": "boilerplate",
+    "dbNamePrefix": "hugoazz_"
+  },
+  "avocode": {
+    "userSelector": "Khalid Hoffman",
+    "projectSelector": "boilerplate"
+  },
+  "workingDir": "default",
   "tasks" : [
     {
       "name" : "pug-ejs",

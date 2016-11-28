@@ -2,7 +2,7 @@
 A personal dev library for quicker for development
 
 #### How To Use
-1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
+1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git#dev`
 2. Run `dp-setup` within the project's npm environment (add `dp-setup` to npm scripts).
 3. Run `gulp --tasks` from root folder to see list of tasks.
  
@@ -10,36 +10,42 @@ A personal dev library for quicker for development
 ```
 {
   "name": "project_name"
-  "prefix": "wp_table_prefix",
-  "dbNamePrefix" : "for_wordpress_dev",
-  "avocodeSelector" : "for_avocode_dev",
-  "basePath" "/an/absolute/path",
+  "wordpress": {
+      "wpThemePrefix": "for_DPPAD_themes",
+      "dbTablePrefix": "wp_table_prefix",
+      "dbNamePrefix" : "for_wordpress_dev"
+  },
+  "avocode" : {
+      "userSelector": "User's Full Name",
+      "projectSelector": "Project_name_to_match_against"
+  },
+  "workingDir" "/an/absolute/path|default|wordpress",
   "tasks" : [
     {
       "name" : "stylus",
-      "input": "relative/path/to/stylus/folder/from/basePath",
-      "output": "relative/path/to/stylesheets/folder/from/basePath"
+      "input": "relative/path/to/stylus/folder/from/workingDir",
+      "output": "relative/path/to/stylesheets/folder/from/workingDir"
     },
     {
       "name" : "pug-php",
-      "input": "relative/path/to/pug/folder/from/basePath",
-      "output": "relative/path/to/php/folder/from/basePath"
+      "input": "relative/path/to/pug/folder/from/workingDir",
+      "output": "relative/path/to/php/folder/from/workingDir"
     },
     {
       "name" : "jsx",
-      "input": "relative/path/to/jsx/folder/from/basePath",
+      "input": "relative/path/to/jsx/folder/from/workingDir",
       "ignore": ["glob/pattern/to/ignore", "**/node_modules/**"]
     }
   ]
 }
 ```
-* 
+ 
 
 ##### Config Details
-* All paths are relative to `basePath`. `basePath` is an absolute path.
-* `basePath` when set to `"default"`, uses the `process.cwd()` (the current working directory)
+* All paths are relative to `workingDir`. `workingDir` is an absolute path.
+* `workingDir` when set to `"default"`, uses the `process.cwd()` (the current working directory)
 * `jsx`, `stylus`, `less`, and `js` tasks support an ignore field which is a [glob pattern](https://github.com/isaacs/node-glob#glob-primer) to exclude
-* using the predefined value `"wordpress"` for `basePath`  to `{current working directory}/wp-content/themes/dp-{projectName}`
+* using the predefined value `"wordpress"` for `workingDir`  to `{current working directory}/wp-content/themes/{wpThemePrefix}{projectName}`
 
 ###### Task Options
 
@@ -51,6 +57,7 @@ Task Names    | Details
 `less`        | compiles to css
 `js`          | beautifies js. Overwrites file
 `js-bundle`   | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
+`js-webpack`  | bundles with webpack. input path should be a path to a webpack config file
 `compass`     | compiles to css
 `jsx`         | compiles js to same directory as original `.jsx` file
 `sass`        | compiles to css

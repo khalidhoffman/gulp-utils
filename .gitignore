@@ -1,3 +1,4 @@
+#/tests/avocode-helper/
 *.swp
 /*.php
 *.sql
