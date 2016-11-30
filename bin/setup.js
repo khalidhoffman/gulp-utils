@@ -19,14 +19,22 @@ prompt.get({
     properties: {
         isMainConfigOverwrite: {
             description: colors.red('Create a new dp-project-config.json file?'),
-            default: 'yes'
+            default: (function () {
+                try {
+                    fs.accessSync(path.join(process.cwd(), 'dp-project-config.json'));
+                    return 'no';
+                } catch (err) {
+                    return 'yes';
+                }
+            })()
         },
         isFTPConfigOverwrite: {
             description: colors.red('Create a new dp-ftp-config.json file? (necessary for ftp tasks)'),
-            default: 'yes'
+            default: 'no'
         }
     }
 }, function (err, result) {
+    prompt.stop();
     if (err) throw err;
     if (/^\s*(yes|y)\s*$/.test(result.isMainConfigOverwrite)) {
         fs.readFile(path.resolve(__dirname, '../', '_dp-project-config.json'), {encoding: 'utf8'}, function (err, configSrc) {
