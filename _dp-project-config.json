@@ -52,6 +52,11 @@
       "output": "stylesheets/"
     },
     {
+      "name": "css",
+      "input": "stylesheets/",
+      "output": "stylesheets/"
+    },
+    {
       "name": "less",
       "input": "less/",
       "output": "stylesheets/"

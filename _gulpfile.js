@@ -17,7 +17,7 @@ gulp.task('auto', function(){
     gulp.watch(utils.buildGlobSelector(project.tasks['stylus-bem'], '/**/*.styl'), ['stylus-bem']);
     // gulp.watch(utils.buildGlobSelector(project.tasks['pug-html'], '/**/*.pug'), ['pug-html']);
     // gulp.watch(utils.buildGlobSelector(project.tasks['jsx'], '{**,!node_modules,!vendors}/**/*.jsx'), ['babel']);
-    // gulp.watch(utils.buildGlobSelector(project.tasks['sass'], '/**/*.scss'), ['sass']);
+    // gulp.watch(utils.buildGlobSelector(project.tasks['sass'], '**/*.{scss,sass}'), ['sass']);
     
     // autoformat pug files on save
     //gulp.watch(utils.buildGlobSelector(project.tasks['pug'], '/**/*.pug'), function(event){
@@ -60,6 +60,7 @@ gulp.task('auto', function(){
     });
 });
 // CSS tasks
+gulp.task('css', lib('css').minify);
 
 gulp.task('stylus', lib('stylus').compile);
 
@@ -128,7 +129,16 @@ gulp.task('build-js-config', lib('javascript').config);
 gulp.task('beautify-js', lib('javascript').beautify);
 
 gulp.task('beautify-js-auto', function(){
-    gulp.watch(utils.buildGlobSelector(project.tasks['js'], '{**,!node_modules,!vendors)/*.js'), ['beautify-js']);
+    gulp.watch(utils.buildGlobSelector(project.tasks['js'],'/{**,!node_modules,!vendors}/**/*.js'), function(event){
+        lib('javascript').beautify({
+            tasks : [
+                {
+                    input : path.dirname(event.path),
+                    suffix : path.basename(event.path)
+                }
+            ]
+        });
+    });
 });
 
 gulp.task('test-js', lib('javascript').test);

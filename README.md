@@ -54,12 +54,13 @@ Task Names    | Details
 `pug-php`     | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
 `stylus-bem`  | [additional helper functions](lib/stylus/lib/stylus/) are included at compilation. compiles to css. Read more about [stylus-bem](https://github.com/khaliddpdev/stylus-bem)
 `stylus`      | [additional helper functions](lib/stylus/lib/stylus/) are included at compilation. compiles to css
-`less`        | compiles to css
-`js`          | beautifies js. Overwrites file
+`css`         | minifies css with cssnano. Will rewrite files with `.min.css` extension. Accepts path to single file or folder relative to workingDir for input
+`less`        | compiles less to css. will prompt for filename.
+`js`          | beautifies js, overwriting file
 `js-bundle`   | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
 `js-webpack`  | bundles with webpack. input path should be a path to a webpack config file
 `compass`     | compiles to css
-`jsx`         | compiles js to same directory as original `.jsx` file
+`jsx`         | compiles to `.js` in same directory as original `.jsx` file
 `sass`        | compiles to css
 `pug-ejs`     | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
 `pug-html`    | [additional helper functions](lib/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
@@ -69,4 +70,3 @@ Task Names    | Details
 `jade-html`   | [additional helper functions](lib/jade/helpers/_functions.jade) are saved  and included before compilation. compiles to `.html` files
 `html-2-pug`  | compiles `.html` files to `.pug` files
 `php-2-pug`   | compiles `.php` files to `.pug` files
-`ftp`         | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process. More Info is posted on [the github page](https://github.com/khalidhoffman/ftp-sync)
