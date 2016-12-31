@@ -3,7 +3,7 @@ var history = [];
 //process.stdin.resume();//so the program will not close instantly
 
 function print() {
-    console.log('\nlog:');
+    if (history.length) console.log('\nlog:\n');
     for (var i = 0; i < history.length; i++) {
         if(typeof history[i][0] === 'string' || history[i][0] instanceof String) history[i][0] = "\n"+history[i][0];
         console.log.apply(null, history[i]);
