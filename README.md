@@ -57,8 +57,8 @@ Task Names    | Details
 `css`         | minifies css with cssnano. Will rewrite files with `.min.css` extension. Accepts path to single file or folder relative to workingDir for input
 `less`        | compiles less to css. will prompt for filename.
 `js`          | beautifies js, overwriting file
-`js-bundle`   | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
-`js-webpack`  | bundles with webpack. input path should be a path to a webpack config file
+`requirejs`   | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
+`webpack`  | bundles with webpack. input path should be a path to a webpack config file
 `compass`     | compiles to css
 `jsx`         | compiles to `.js` in same directory as original `.jsx` file
 `sass`        | compiles to css
