@@ -1,63 +1,67 @@
 # gulp-utils [![Build Status](https://travis-ci.org/khalidhoffman/gulp-utils.svg?branch=master)](https://travis-ci.org/khalidhoffman/gulp-utils)
-A personal dev library for quicker for development
+A cli/gulp library for quicker for quicker front-end development
 
 #### How To Use
 1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
-2. Run `dp-setup` within the project's npm environment (add `dp-setup` to npm scripts).
-3. Run `gulp --tasks` from root folder to see list of tasks.
+2. Run `gulp` from root folder to see list of tasks.
+3. Run `gulp setup` within the project's npm environment (add `gulp-setup` to npm scripts).
  
 #### Example Config
 ```
 {
   "name": "project_name"
-  "prefix": "wp_table_prefix",
-  "dbNamePrefix" : "for_wordpress_dev",
-  "avocodeSelector" : "for_avocode_dev",
-  "basePath" "/an/absolute/path",
+  "avocode" : {
+      "userSelector": "User's Full Name",
+      "projectSelector": "Project_name_to_match_against"
+  },
+  "workingDir" "/an/absolute/path|default|wordpress",
   "tasks" : [
     {
       "name" : "stylus",
-      "input": "relative/path/to/stylus/folder/from/basePath",
-      "output": "relative/path/to/stylesheets/folder/from/basePath"
+      "input": "relative/path/to/stylus/folder/from/workingDir",
+      "output": "relative/path/to/stylesheets/folder/from/workingDir"
     },
     {
-      "name" : "pug",
-      "input": "relative/path/to/pug/folder/from/basePath",
-      "output": "relative/path/to/php/folder/from/basePath"
+      "name" : "pug-php",
+      "input": "relative/path/to/pug/folder/from/workingDir",
+      "output": "relative/path/to/php/folder/from/workingDir",
+      "options": {
+        "pretty": true
+      }
     },
     {
       "name" : "jsx",
-      "input": "relative/path/to/jsx/folder/from/basePath",
-      "ignore": ["glob/pattern/to/ignore", "**/node_modules/**"]
+      "input": "relative/path/to/jsx/folder/from/workingDir",
+      "options": {
+        "ignore": ["glob/pattern/to/ignore", "**/node_modules/**"]
+       }
     }
   ]
 }
 ```
-* 
+ 
 
 ##### Config Details
-* All paths are relative to `basePath`. `basePath` is an absolute path.
-* `basePath` when set to `"default"`, uses the `process.cwd()` (the current working directory)
-* `jsx`, `stylus`, `less`, and `js` tasks support an ignore field which is a [glob pattern](https://github.com/isaacs/node-glob#glob-primer) to exclude
-* using the predefined value `"wordpress"` for `basePath`  to `{current working directory}/wp-content/themes/dp-{projectName}`
+* All paths are relative to `workingDir`. `workingDir` is an absolute path.
+* `workingDir` when set to `"default"`, uses the `process.cwd()` (the current working directory)
+* `jsx`, `stylus`, `less`, and `js` tasks support `options.ignore` field which is a [glob pattern](https://github.com/isaacs/node-glob#glob-primer) to exclude
 
 ###### Task Options
 
-Task Names   | Details
--------------|---------
-`pug`        | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
-`stylus`     | [additional helper functions](commands/stylus/lib/stylus/) are included at compilation. compiles to css
-`less`       | compiles to css
-`js`         | beautifies js. Overwrites file
-`js-bundle`  | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
-`compass`    | compiles to css
-`jsx`        | compiles js to same directory as original `.jsx` file
-`sass`       | compiles to css
-`pug-ejs`    | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
-`pug-html`   | [additional helper functions](commands/pug/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
-`jade`       | [additional helper functions](commands/jade/helpers/_functions.pug) are saved  and included before compilation. compiles to `.php` files
-`jade-ejs`   | [additional helper functions](commands/jade/helpers/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
-`jade-html`  | [additional helper functions](commands/jade/helpers/_functions.pug) are saved  and included before compilation. compiles to `.html` files
-`html-2-pug` | compiles `.pug` files to `.html` files
-`php-2-pug`  | compiles `.pug` files to `.php` files
-`ftp`        | uploads files from input to output relative to ftp root. ftp root is configured with `dp-ftp-config.json`. `dp-ftp-config.json` is generated during the setup process. More Info is posted on [the github page](https://github.com/khalidhoffman/ftp-sync)
+Task Names    | Details
+--------------|---------
+`pug-php`     | [additional helper functions](lib/pug/templates/_functions.pug) are saved  and included before compilation. compiles to `.php` files
+`pug-ejs`     | [additional helper functions](lib/pug/templates/_functions.pug) are saved  and included before compilation. compiles to `.ejs` files
+`pug-html`    | [additional helper functions](lib/pug/templates/_functions.pug) are saved  and included before compilation. compiles to `.html` files
+`stylus`      | [additional helper functions](lib/stylus/templates/) are included at compilation. compiles to css
+`stylus-bem`  | [additional helper functions](lib/stylus/templates/) are included at compilation. compiles to css. Read more about [stylus-bem](https://github.com/khalidhoffman/stylus-bem)
+`sass`        | compiles to css
+`compass`     | compiles to css
+`less`        | compiles less to css. will prompt for filename.
+`css`         | minifies css with cssnano. Will rewrite files with `.min.css` extension. Accepts path to single file or folder relative to workingDir for input
+`js`          | beautifies js, overwriting file
+`rjs`         | bundles and minfies with requirejs. input path should be a path to a requirejs config `build.js`
+`webpack`     | bundles with webpack. input path should be a path to a webpack config file
+`jsx`         | compiles to `.js` in same directory as original `.jsx` file
+`html2pug`    | compiles `.html` files to `.pug` files
+`php2pug`     | compiles `.php` files to `.pug` files

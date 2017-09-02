@@ -1,3 +1,0 @@
-[submodule "dump"]
-	path = dump
-	url = ssh://kah8br@khalidhoffman.net:/home/kah8br/nodejs/dump.git
