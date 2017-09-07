@@ -6,7 +6,7 @@ const jsonConfig = (function () {
     try {
         return JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'kdev-config.json')));
     } catch (err) {
-        return {};
+        return {tasks: []};
     }
 })();
 const avocodeDefaults = {
