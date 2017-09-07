@@ -1,10 +1,10 @@
-# gulp-utils [![Build Status](https://travis-ci.org/khalidhoffman/gulp-utils.svg?branch=master)](https://travis-ci.org/khalidhoffman/gulp-utils)
-A cli/gulp library for quicker for quicker front-end development
+# kdev-utils [![Build Status](https://travis-ci.org/weblee-solutions/weblee-utils.svg?branch=master)](https://travis-ci.org/weblee-solutions/weblee-utils)
+A cli/gulp library for quicker front-end development
 
 #### How To Use
 1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
-2. Run `gulp` from root folder to see list of tasks.
-3. Run `gulp setup` within the project's npm environment (add `gulp-setup` to npm scripts).
+2. Run `kdev` from root folder to see list of tasks.
+3. Run `kdev setup` within the project's npm environment (add `gulp-setup` to npm scripts).
  
 #### Example Config
 ```
