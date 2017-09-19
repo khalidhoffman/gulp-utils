@@ -4,7 +4,7 @@
 *.sql
 *.bak
 /gulpfile.js
-/kdev-config.json
+/kdev.config.json
 /archive
 /replacedb
 /build

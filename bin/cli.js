@@ -77,10 +77,10 @@ function setup() {
     const promptParams = {
         properties: {
             createNew: {
-                description: colors.red('Create a new kdev-config.json file?'),
+                description: colors.red('Create a new kdev.config.json file?'),
                 default: (function () {
                     try {
-                        fs.accessSync(path.join(process.cwd(), 'kdev-config.json'));
+                        fs.accessSync(path.join(process.cwd(), 'kdev.config.json'));
                         return 'no';
                     } catch (err) {
                         return 'yes';
@@ -108,12 +108,12 @@ function setup() {
         }
 
         if (/^\s*(yes|y)\s*$/.test(result.createNew)) {
-            fs.readFile(path.resolve(__dirname, '../templates/kdev-config.json'), {encoding: 'utf8'})
+            fs.readFile(path.resolve(__dirname, '../templates/kdev.config.json'), {encoding: 'utf8'})
                 .then(function (configSrc) {
-                    return fs.writeFile(path.resolve(process.cwd(), 'kdev-config.json'), configSrc)
+                    return fs.writeFile(path.resolve(process.cwd(), 'kdev.config.json'), configSrc)
                 })
                 .then(function () {
-                    console.log('created new kdev-config.json file.');
+                    console.log('created new kdev.config.json file.');
                 })
                 .catch(err => console.error(err));
         }
