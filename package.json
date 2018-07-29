@@ -1,5 +1,5 @@
 {
-  "name": "kdev-utils",
+  "name": "@khalidhoffman/kdev-utils",
   "version": "4.0.0",
   "bin": {
     "kdev": "bin/cli.js"
