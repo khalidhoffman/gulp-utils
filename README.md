@@ -2,9 +2,9 @@
 A cli/gulp library for quicker front-end development
 
 #### How To Use
-1. run `npm i --save-dev git://github.com/khalidhoffman/gulp-utils.git`
+1. run `npm i -g @khalidhoffman/kdev-utils` for `kdev` cli (or without `-g` via package.json script).
 2. Run `kdev` from root folder to see list of tasks.
-3. Run `kdev setup` within the project's npm environment (add `gulp-setup` to npm scripts).
+3. Run `kdev setup` to generate project `kdev.config.json` file
  
 #### Example Config
 ```
@@ -65,3 +65,4 @@ Task Names    | Details
 `jsx`         | compiles to `.js` in same directory as original `.jsx` file
 `html2pug`    | compiles `.html` files to `.pug` files
 `php2pug`     | compiles `.php` files to `.pug` files
+`ts/clean`    | removes typescript build files (`.js`, `.d.ts`)
