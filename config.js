@@ -2,10 +2,14 @@ const path = require('path');
 const fs = require('fs');
 
 const rootDirectory = process.cwd();
-const jsonConfig = (function () {
+const jsonConfig = (function getJsonConfig () {
+    const jsonConfigFilePath = path.resolve(process.cwd(), 'kdev.config.json');
     try {
-        return JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'kdev.config.json')));
+        const config = JSON.parse(fs.readFileSync(jsonConfigFilePath));
+        console.log(`using json config @ ${jsonConfigFilePath}`);
+        return config
     } catch (err) {
+        console.warn(`Could not find config file @ ${jsonConfigFilePath}`);
         return {tasks: []};
     }
 })();
