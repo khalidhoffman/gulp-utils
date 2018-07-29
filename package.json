@@ -1,6 +1,6 @@
 {
   "name": "@khalidhoffman/kdev-utils",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "bin": {
     "kdev": "bin/cli.js"
   },
@@ -43,6 +43,7 @@
     "pug-bem-lexer": "0.0.9",
     "pug-bemify": "^1.0.4",
     "pug-php-filter": "0.0.1",
+    "pug-plugin-ng": "0.0.2",
     "requirejs": "^2.3.5",
     "sass-cache": "0.0.1",
     "socket.io": "^1.3.7",
